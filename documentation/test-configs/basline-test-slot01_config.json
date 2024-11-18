@@ -1,13 +1,13 @@
 {
   "ServerInfo": {
-    "Host": "10.8.113.152",
+    "Host": "192.168.1.251",
     "User": "svc_crestron",
     "Key": "sftp-crestron"
   },
   "RoomInfo": {
-    "Id": "ROOM02",
-    "RoomName": "GCU 4-Series Test Room 2",
-    "HelpContact": "602-639-7700",
+    "Id": "ROOM01",
+    "RoomName": "Test Room 101",
+    "HelpContact": "555-555-5555",
     "SystemType": "baseline",
     "Logic": {
       "AppServiceLibrary": "",
@@ -16,89 +16,53 @@
   },
   "UserInterfaces": [
     {
-      "Id": "ui01",
-      "IpId": 3,
-      "Model": "tsw770-HTML",
-      "ClassName": "GcuVueUserInterface",
-      "Library": "GcuVueUi.dll",
-      "Sgd": "gcu-tsw760-v2-5-0.sgd",
-      "DefaultActivity": "av-routing",
-      "Menu": [
-        {
-          "Id": "MENUHOME",
-          "Visible": true,
-          "Label": "Sources",
-          "Icon": "routing",
-          "Control": "av-routing",
-          "SourceSelect": ""
-        },
-        {
-          "Id": "MENU01",
-          "Visible": true,
-          "Label": "Display Controls",
-          "Icon": "projector",
-          "Control": "displays",
-          "SourceSelect": ""
-        },
-        {
-          "Id": "MENU03",
-          "Visible": true,
-          "Label": "Mics",
-          "Icon": "mics",
-          "Control": "mics",
-          "SourceSelect": ""
-        },
-        {
-          "Id": "MENU02",
-          "Visible": true,
-          "Label": "Lighting",
-          "Icon": "lights",
-          "Control": "lighting",
-          "SourceSelect": ""
-        }
-      ]
-    },
-    {
-      "Id": "ui02",
-      "IpId": 64,
-      "Model": "xpanel",
-      "Sgd": "gcu-tsw760-v2-5-0.sgd",
-      "DefaultActivity": "av-routing",
-      "Menu": [
-        {
-          "Id": "MENUHOME",
-          "Visible": true,
-          "Label": "Sources",
-          "Icon": "Shuffle",
-          "Control": "av-routing",
-          "SourceSelect": ""
-        },
-        {
-          "Id": "MENU01",
-          "Visible": true,
-          "Label": "Display Controls",
-          "Icon": "Projector",
-          "Control": "displays",
-          "SourceSelect": ""
-        },
-        {
-          "Id": "MENU03",
-          "Visible": true,
-          "Label": "Mics",
-          "Icon": "Mic",
-          "Control": "mics",
-          "SourceSelect": ""
-        },
-        {
-          "Id": "MENU02",
-          "Visible": 1,
-          "label": "lighting",
-          "Icon": "Lights",
-          "Control": "lights",
-          "SourceSelect": 0
-        }
-      ]
-    }
+        "Id": "ui01",
+        "IpId": 3,
+        "Model": "TSW-770",
+        "ClassName": "GcuVueUserInterface",
+        "Library": "GcuVueUi.dll",
+        "Sgd": "",
+        "DefaultActivity": "av-routing",
+        "Menu": [
+          {
+            "Id": "MENUHOME",
+            "Visible": true,
+            "Label": "Sources",
+            "Icon": "routing",
+            "Control": "av-routing",
+            "SourceSelect": "",
+            "Tags": []
+          },
+          {
+            "Id": "MENU01",
+            "Visible": true,
+            "Label": "Display Controls",
+            "Icon": "projector",
+            "Control": "displays",
+            "SourceSelect": "",
+            "Tags": []
+          },
+          {
+            "Id": "MENU03",
+            "Visible": true,
+            "Label": "Mics",
+            "Icon": "mics",
+            "Control": "mics",
+            "SourceSelect": "",
+            "Tags": []
+          },
+          {
+            "Id": "MENU02",
+            "Visible": true,
+            "Label": "Lighting",
+            "Icon": "lights",
+            "Control": "lighting",
+            "SourceSelect": "",
+            "Tags": []
+          }
+        ],
+        "Tags": []
+      }  
   ],
   "Displays": [
     {
@@ -114,7 +78,7 @@
         "Id": "con01",
         "Transport": "DisplayEmulatorTcp",
         "Driver": "DisplayEmulator.dll",
-        "Host": "10.16.6.16",
+        "Host": "192.168.1.252",
         "Port": 7142,
         "Authentication": {
           "Id": "auth01",
@@ -147,7 +111,7 @@
     },
     {
       "Id": "disp02",
-      "Label": "Flat-Panel Display",
+      "Label": "Display 1",
       "Icon": "",
       "Tags": ["station"],
       "HasScreen": false,
@@ -160,7 +124,53 @@
         "Id": "con01",
         "Transport": "DisplayEmulatorTcp",
         "Driver": "DisplayEmulator.dll",
-        "Host": "10.16.6.17",
+        "Host": "192.168.1.252",
+        "Port": 7142,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        },
+        "ComSpec": {
+          "Protocol": "rs232",
+          "BaudRate": 9600,
+          "DataBits": 8,
+          "StopBits": 1,
+          "HwHandshake": "none",
+          "SwHandshake": "none",
+          "Parity": "none"
+        }
+      },
+      "UserAttributes": [
+        {
+          "Id": "ID",
+          "DataType": "string",
+          "Value": "0"
+        }
+      ],
+      "CustomCommands": {
+        "FreezeOnTx": "",
+        "FreezeOnRx": "",
+        "FreezeOffTx": "",
+        "FreezeOffRx": ""
+      }
+    },
+    {
+      "Id": "disp03",
+      "Label": "Display 2",
+      "Icon": "",
+      "Tags": ["station"],
+      "HasScreen": false,
+      "RelayController": "",
+      "ScreenUpRelay": 3,
+      "ScreenDownRelay": 4,
+      "LecternInput": 1,
+      "StationInput": 2,
+      "Connection": {
+        "Id": "con01",
+        "Transport": "DisplayEmulatorTcp",
+        "Driver": "DisplayEmulator.dll",
+        "Host": "192.168.1.252",
         "Port": 7142,
         "Authentication": {
           "Id": "auth01",
@@ -203,7 +213,7 @@
         "Control": "",
         "Matrix": "rtr01",
         "Input": 1,
-        "Tags": ["pc"]
+        "Tags": ["pc","event01"]
       },
       {
         "Id": "SRC02",
@@ -212,7 +222,7 @@
         "Control": "",
         "Matrix": "rtr01",
         "Input": 5,
-        "Tags": ["vga"]
+        "Tags": ["vga","event02"]
       },
       {
         "Id": "SRC03",
@@ -230,7 +240,7 @@
         "Control": "tv01",
         "Matrix": "rtr01",
         "Input": 3,
-        "Tags": []
+        "Tags": ["tech"]
       }
     ],
     "Destinations": [
@@ -280,12 +290,12 @@
         "Presets": [
           {
             "Id": "startup",
-            "Bank": "01-Startup/Shutdown",
+            "Bank": "StartupShutdown",
             "Index": 1
           },
           {
             "Id": "shutdown",
-            "Bank": "01-Startup/Shutdown",
+            "Bank": "StartupShutdown",
             "Index": 2
           }
         ],
@@ -293,7 +303,7 @@
           "Id": "con02",
           "Transport": "QscDspTcp",
           "Driver": "QscDsp.dll",
-          "Host": "10.16.6.12",
+          "Host": "192.168.1.105",
           "Port": 1710,
           "Authentication": {
             "Id": "auth02",
@@ -307,8 +317,8 @@
       {
         "Id": "CHAN01",
         "DspId": "dsp01",
-        "LevelControlTag": "01-NVX-GAIN",
-        "MuteControlTag": "01-NVX-MUTE",
+        "LevelControlTag": "ZONE-01-LEVEL",
+        "MuteControlTag": "ZONE-01-MUTE",
         "RouterControlTag": "",
         "RouterIndex": 1,
         "BankIndex": 1,
@@ -320,8 +330,8 @@
       {
         "Id": "CHAN02",
         "DspId": "dsp01",
-        "LevelControlTag": "01-POD-MIC-GAIN",
-        "MuteControlTag": "01-POD-MIC-MUTE",
+        "LevelControlTag": "MIC-01-LEVEL",
+        "MuteControlTag": "MIC-01-MUTE",
         "RouterControlTag": "",
         "RouterIndex": 0,
         "BankIndex": 0,
@@ -340,7 +350,7 @@
       "Connection": {
         "Id": "con06",
         "Transport": "DirecTvCableBoxIr",
-        "Driver": "DirecTvCableBox.dll",
+        "Driver": "DirecTVCableBox.dll",
         "Host": "control",
         "Port": 1,
         "Authentication": {
@@ -402,7 +412,7 @@
         "Id": "lcon01",
         "Transport": "tcp",
         "Driver": "VirtualLighting.dll",
-        "Host": "10.16.198.26",
+        "Host": "192.168.1.253",
         "Port": 23,
         "Authentication": {
           "Id": "auth01",
@@ -496,7 +506,7 @@
   ],
   "FusionInfo": {
     "Id": "Fusion01",
-    "RoomName": "GCU 4-Series Test Classroom",
+    "RoomName": "Test Classroom 101",
     "GUID": "01c57d66-21d4-4aeb-ae55-5ae6a4664ac9",
     "IpId": 48
   }

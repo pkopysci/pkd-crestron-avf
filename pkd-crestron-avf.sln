@@ -5,6 +5,18 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-crestron-avf", "pkd-crestron-avf.csproj", "{40581C62-82FC-4EE6-AAF0-28DBFCD0F7D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-common-utils", "pkd-common-utils\pkd-common-utils.csproj", "{1CA28737-5C85-44A1-8AA2-33C1B343AB27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-domain-service", "pkd-domain-service\pkd-domain-service.csproj", "{07F63240-7BFB-4C24-882C-467F0713FB52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-hardware-service", "pkd-hardware-service\pkd-hardware-service.csproj", "{EA5E90EB-B696-4A64-A4B4-39E71F40ACBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-application-service", "pkd-application-service\pkd-application-service.csproj", "{062B8281-4907-4A87-92E2-8CACA73ED893}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-ui-service", "pkd-ui-service\pkd-ui-service.csproj", "{60CC6F65-D713-4C55-A9FD-BA16EF933FCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-config-service", "pkd-config-service\pkd-config-service.csproj", "{DC04D709-8187-4557-A7F2-E539B785D112}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +27,30 @@ Global
 		{40581C62-82FC-4EE6-AAF0-28DBFCD0F7D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40581C62-82FC-4EE6-AAF0-28DBFCD0F7D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40581C62-82FC-4EE6-AAF0-28DBFCD0F7D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CA28737-5C85-44A1-8AA2-33C1B343AB27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CA28737-5C85-44A1-8AA2-33C1B343AB27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CA28737-5C85-44A1-8AA2-33C1B343AB27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CA28737-5C85-44A1-8AA2-33C1B343AB27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07F63240-7BFB-4C24-882C-467F0713FB52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07F63240-7BFB-4C24-882C-467F0713FB52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07F63240-7BFB-4C24-882C-467F0713FB52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07F63240-7BFB-4C24-882C-467F0713FB52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA5E90EB-B696-4A64-A4B4-39E71F40ACBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA5E90EB-B696-4A64-A4B4-39E71F40ACBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA5E90EB-B696-4A64-A4B4-39E71F40ACBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA5E90EB-B696-4A64-A4B4-39E71F40ACBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{062B8281-4907-4A87-92E2-8CACA73ED893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{062B8281-4907-4A87-92E2-8CACA73ED893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{062B8281-4907-4A87-92E2-8CACA73ED893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{062B8281-4907-4A87-92E2-8CACA73ED893}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60CC6F65-D713-4C55-A9FD-BA16EF933FCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60CC6F65-D713-4C55-A9FD-BA16EF933FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60CC6F65-D713-4C55-A9FD-BA16EF933FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60CC6F65-D713-4C55-A9FD-BA16EF933FCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC04D709-8187-4557-A7F2-E539B785D112}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC04D709-8187-4557-A7F2-E539B785D112}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC04D709-8187-4557-A7F2-E539B785D112}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC04D709-8187-4557-A7F2-E539B785D112}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

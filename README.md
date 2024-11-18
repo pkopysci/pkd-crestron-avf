@@ -1,5 +1,5 @@
 # pkd-crestron-avf
-- .NET framwork for Crestron AV control systems.
+- .NET framework for Crestron AV control systems.
 - Currently uses .NET FW 4.2
 - Will be updated to .NET 6 in the next major update
 

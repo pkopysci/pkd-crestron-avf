@@ -209,7 +209,7 @@
       {
         "Id": "SRC01",
         "Label": "PC",
-        "Icon": "laptop",
+        "Icon": "computer",
         "Control": "",
         "Matrix": "rtr01",
         "Input": 1,
@@ -218,7 +218,7 @@
       {
         "Id": "SRC02",
         "Label": "VGA",
-        "Icon": "vga",
+        "Icon": "laptop",
         "Control": "",
         "Matrix": "rtr01",
         "Input": 5,
@@ -227,7 +227,7 @@
       {
         "Id": "SRC03",
         "Label": "HDMI",
-        "Icon": "hdmi",
+        "Icon": "laptop",
         "Control": "",
         "Matrix": "rtr01",
         "Input": 2,
@@ -300,7 +300,7 @@
         "MuteControlTag": "",
         "RouterControlTag": "",
         "RouterIndex": 0,
-        "BankIndex": 1,
+        "BankIndex": 0,
         "Label": "Podium",
         "Icon": "Mic",
         "ZoneEnableToggles": [],

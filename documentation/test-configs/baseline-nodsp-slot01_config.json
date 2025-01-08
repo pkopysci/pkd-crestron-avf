@@ -59,6 +59,33 @@
             "Control": "lighting",
             "SourceSelect": "",
             "Tags": []
+          },
+          {
+            "Id": "MENU04",
+            "Visible": true,
+            "Label": "Video",
+            "Icon": "tv",
+            "Control": "video-matrix",
+            "SourceSelect": "",
+            "Tags": []
+          },
+          {
+            "Id": "MENU04",
+            "Visible": true,
+            "Label": "Audio",
+            "Icon": "note",
+            "Control": "audio-matrix",
+            "SourceSelect": "",
+            "Tags": []
+          },
+          {
+            "Id": "MENU05",
+            "Visible": true,
+            "Label": "Video Wall",
+            "Icon": "grid",
+            "Control": "video-wall",
+            "SourceSelect": "",
+            "Tags": []
           }
         ],
         "Tags": []
@@ -240,16 +267,43 @@
         "Control": "tv01",
         "Matrix": "rtr01",
         "Input": 3,
-        "Tags": ["tech"]
+        "Tags": []
       }
     ],
     "Destinations": [
       {
         "Id": "DEST01",
-        "Label": "Main Content",
-        "Icon": "Projector",
+        "Label": "Projector",
+        "Icon": "tv",
         "Matrix": "rtr01",
         "Output": 1,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST02",
+        "Label": "Display 1",
+        "Icon": "Projector",
+        "Matrix": "rtr01",
+        "Output": 2,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST03",
+        "Label": "Display 2",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 3,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST04",
+        "Label": "Patio",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 4,
         "RoutingGroup": 0,
         "Tags": []
       }

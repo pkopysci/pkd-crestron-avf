@@ -181,8 +181,6 @@
 				Remote = ROOT + remoteSubDir + "/" + fileName
 			};
 
-			Logger.Debug("Checking dependency {0}", data.Local);
-
 			if (allFiles.Contains(data.Local))
 			{
 				return;
@@ -197,6 +195,7 @@
 				}
 			}
 
+			Logger.Debug($"Missing dependency {data.Local}");
 			this.missingDependencies.Enqueue(data);
 		}
 

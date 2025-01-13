@@ -1,21 +1,21 @@
 ﻿namespace pkd_application_service.AudioControl
 {
-	using pkd_application_service.Base;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_hardware_service.AudioDevices;
-	using pkd_hardware_service.BaseDevice;
-	using pkd_hardware_service.Routable;
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Linq;
+    using pkd_application_service.Base;
+    using pkd_common_utils.GenericEventArgs;
+    using pkd_common_utils.Logging;
+    using pkd_common_utils.Validation;
+    using pkd_hardware_service.AudioDevices;
+    using pkd_hardware_service.BaseDevice;
+    using pkd_hardware_service.Routable;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
 
-	/// <summary>
-	/// Class for handling audio adjustments and updates.
-	/// </summary>
-	internal class AudioControlApp : IAudioControlApp, IAudioPresetApp, IDisposable
+    /// <summary>
+    /// Class for handling audio adjustments and updates.
+    /// </summary>
+    internal class AudioControlApp : IAudioControlApp, IAudioPresetApp, IDisposable
 	{
 		private readonly DeviceContainer<IAudioControl> dspDevices;
 		private readonly List<AudioChannelInfoContainer> inputChannels;
@@ -355,7 +355,6 @@
 				Logger.Error("AudioControlApp.SetAudioOutputRoute({0}, {1}) - srcId and destId cannot be null or empty.", srcId, destId);
 				return;
 			}
-
 			foreach (var dsp in this.dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioOutputIds().Contains(destId) && (dsp is IAudioRoutable))

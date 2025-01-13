@@ -19,8 +19,8 @@
         "Id": "ui01",
         "IpId": 3,
         "Model": "TSW-770",
-        "ClassName": "GcuVueUserInterface",
-        "Library": "GcuVueUi.dll",
+        "ClassName": "CrComLibUserInterface",
+        "Library": "CrComLibUi.dll",
         "Sgd": "",
         "DefaultActivity": "av-routing",
         "Menu": [
@@ -57,6 +57,33 @@
             "Label": "Lighting",
             "Icon": "lights",
             "Control": "lighting",
+            "SourceSelect": "",
+            "Tags": []
+          },
+          {
+            "Id": "MENU04",
+            "Visible": true,
+            "Label": "Video",
+            "Icon": "tv",
+            "Control": "video-matrix",
+            "SourceSelect": "",
+            "Tags": []
+          },
+          {
+            "Id": "MENU04",
+            "Visible": true,
+            "Label": "Audio",
+            "Icon": "note",
+            "Control": "audio-matrix",
+            "SourceSelect": "",
+            "Tags": []
+          },
+          {
+            "Id": "MENU05",
+            "Visible": true,
+            "Label": "Video Wall",
+            "Icon": "grid",
+            "Control": "video-wall",
             "SourceSelect": "",
             "Tags": []
           }
@@ -236,7 +263,7 @@
       {
         "Id": "SRC04",
         "Label": "CableTv",
-        "Icon": "satellite",
+        "Icon": "cable-tv",
         "Control": "tv01",
         "Matrix": "rtr01",
         "Input": 3,
@@ -250,6 +277,33 @@
         "Icon": "Projector",
         "Matrix": "rtr01",
         "Output": 1,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST02",
+        "Label": "Display 1",
+        "Icon": "Projector",
+        "Matrix": "rtr01",
+        "Output": 2,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST03",
+        "Label": "Display 2",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 3,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST04",
+        "Label": "Patio",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 4,
         "RoutingGroup": 0,
         "Tags": []
       }
@@ -303,7 +357,7 @@
           "Id": "con02",
           "Transport": "QscDspTcp",
           "Driver": "QscDsp.dll",
-          "Host": "192.168.1.105",
+          "Host": "192.168.1.125",
           "Port": 1710,
           "Authentication": {
             "Id": "auth02",
@@ -319,7 +373,7 @@
         "DspId": "dsp01",
         "LevelControlTag": "ZONE-01-LEVEL",
         "MuteControlTag": "ZONE-01-MUTE",
-        "RouterControlTag": "",
+        "RouterControlTag": "ZONE-01-RTR",
         "RouterIndex": 1,
         "BankIndex": 1,
         "Label": "Room Volume",
@@ -330,15 +384,131 @@
       {
         "Id": "CHAN02",
         "DspId": "dsp01",
+        "LevelControlTag": "ZONE-02-LEVEL",
+        "MuteControlTag": "ZONE-02-MUTE",
+        "RouterControlTag": "ZONE-02-RTR",
+        "RouterIndex": 1,
+        "BankIndex": 1,
+        "Label": "Room Volume",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [],
+        "Tags": ["output"]
+      },
+      {
+        "Id": "CHAN03",
+        "DspId": "dsp01",
+        "LevelControlTag": "ZONE-03-LEVEL",
+        "MuteControlTag": "ZONE-03-MUTE",
+        "RouterControlTag": "ZONE-03-RTR",
+        "RouterIndex": 1,
+        "BankIndex": 1,
+        "Label": "Room Volume",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [],
+        "Tags": ["output"]
+      },
+      {
+        "Id": "CHAN04",
+        "DspId": "dsp01",
+        "LevelControlTag": "ZONE-04-LEVEL",
+        "MuteControlTag": "ZONE-04-MUTE",
+        "RouterControlTag": "ZONE-04-RTR",
+        "RouterIndex": 1,
+        "BankIndex": 1,
+        "Label": "Room Volume",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [],
+        "Tags": ["output"]
+      },
+      {
+        "Id": "CHAN05",
+        "DspId": "dsp01",
         "LevelControlTag": "MIC-01-LEVEL",
         "MuteControlTag": "MIC-01-MUTE",
         "RouterControlTag": "",
         "RouterIndex": 0,
-        "BankIndex": 0,
+        "BankIndex": 1,
         "Label": "Podium",
         "Icon": "Mic",
         "ZoneEnableToggles": [],
         "Tags": ["microphone", "input"]
+      },
+      {
+        "Id": "CHAN10",
+        "DspId": "dsp01",
+        "LevelControlTag": "MIC-02-LEVEL",
+        "MuteControlTag": "MIC-02-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 0,
+        "BankIndex": 1,
+        "Label": "Wireless 1",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input"]
+      },{
+        "Id": "CHAN011",
+        "DspId": "dsp01",
+        "LevelControlTag": "MIC-03-LEVEL",
+        "MuteControlTag": "MIC-03-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 0,
+        "BankIndex": 1,
+        "Label": "Wireless 2",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input"]
+      },
+      {
+        "Id": "CHAN06",
+        "DspId": "dsp01",
+        "LevelControlTag": "SRC-01-LEVEL",
+        "MuteControlTag": "SRC-01-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 1,
+        "BankIndex": 0,
+        "Label": "PC",
+        "Icon": "laptop",
+        "ZoneEnableToggles": [],
+        "Tags": ["input"]
+      },
+      {
+        "Id": "CHAN07",
+        "DspId": "dsp01",
+        "LevelControlTag": "SRC-02-LEVEL",
+        "MuteControlTag": "SRC-02-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 2,
+        "BankIndex": 0,
+        "Label": "HDMI",
+        "Icon": "laptop",
+        "ZoneEnableToggles": [],
+        "Tags": ["input"]
+      },
+      {
+        "Id": "CHAN08",
+        "DspId": "dsp01",
+        "LevelControlTag": "SRC-03-LEVEL",
+        "MuteControlTag": "SRC-03-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 3,
+        "BankIndex": 0,
+        "Label": "VGA",
+        "Icon": "laptop",
+        "ZoneEnableToggles": [],
+        "Tags": ["input"]
+      },
+      {
+        "Id": "CHAN09",
+        "DspId": "dsp01",
+        "LevelControlTag": "SRC-04-LEVEL",
+        "MuteControlTag": "SRC-04-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 4,
+        "BankIndex": 0,
+        "Label": "Cable TV",
+        "Icon": "cable-tv",
+        "ZoneEnableToggles": [],
+        "Tags": ["input"]
       }
     ]
   },
@@ -421,44 +591,7 @@
         }
       },
       "Tags": ["component-141"],
-      "Zones": [
-        {
-          "Id": "l01z01",
-          "Label": "Zone 1",
-          "Index": 1,
-          "Tags": []
-        },
-        {
-          "Id": "l01z02",
-          "Label": "Zone 2",
-          "Index": 2,
-          "Tags": []
-        },
-        {
-          "Id": "l01z03",
-          "Label": "Zone 3",
-          "Index": 3,
-          "Tags": []
-        },
-        {
-          "Id": "l01z04",
-          "Label": "Zone 4",
-          "Index": 4,
-          "Tags": []
-        },
-        {
-          "Id": "l01z05",
-          "Label": "Zone 5",
-          "Index": 5,
-          "Tags": []
-        },
-        {
-          "Id": "l01z06",
-          "Label": "Zone 6",
-          "Index": 6,
-          "Tags": []
-        }
-      ],
+      "Zones": [],
       "Scenes": [
         {
           "Id": "l01s01",

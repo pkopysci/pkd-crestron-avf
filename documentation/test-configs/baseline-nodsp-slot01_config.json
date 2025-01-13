@@ -441,44 +441,7 @@
         }
       },
       "Tags": ["component-141"],
-      "Zones": [
-        {
-          "Id": "l01z01",
-          "Label": "Zone 1",
-          "Index": 1,
-          "Tags": []
-        },
-        {
-          "Id": "l01z02",
-          "Label": "Zone 2",
-          "Index": 2,
-          "Tags": []
-        },
-        {
-          "Id": "l01z03",
-          "Label": "Zone 3",
-          "Index": 3,
-          "Tags": []
-        },
-        {
-          "Id": "l01z04",
-          "Label": "Zone 4",
-          "Index": 4,
-          "Tags": []
-        },
-        {
-          "Id": "l01z05",
-          "Label": "Zone 5",
-          "Index": 5,
-          "Tags": []
-        },
-        {
-          "Id": "l01z06",
-          "Label": "Zone 6",
-          "Index": 6,
-          "Tags": []
-        }
-      ],
+      "Zones": [],
       "Scenes": [
         {
           "Id": "l01s01",

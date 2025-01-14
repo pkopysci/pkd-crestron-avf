@@ -267,7 +267,7 @@
         "Control": "tv01",
         "Matrix": "rtr01",
         "Input": 3,
-        "Tags": ["tech"]
+        "Tags": []
       }
     ],
     "Destinations": [
@@ -376,7 +376,7 @@
         "RouterControlTag": "ZONE-01-RTR",
         "RouterIndex": 1,
         "BankIndex": 1,
-        "Label": "Room Volume",
+        "Label": "Zone 1",
         "Icon": "Volume",
         "ZoneEnableToggles": [],
         "Tags": ["pgm", "output"]
@@ -389,7 +389,7 @@
         "RouterControlTag": "ZONE-02-RTR",
         "RouterIndex": 1,
         "BankIndex": 1,
-        "Label": "Room Volume",
+        "Label": "Zone 2",
         "Icon": "Volume",
         "ZoneEnableToggles": [],
         "Tags": ["output"]
@@ -402,7 +402,7 @@
         "RouterControlTag": "ZONE-03-RTR",
         "RouterIndex": 1,
         "BankIndex": 1,
-        "Label": "Room Volume",
+        "Label": "Zone 3",
         "Icon": "Volume",
         "ZoneEnableToggles": [],
         "Tags": ["output"]
@@ -415,7 +415,7 @@
         "RouterControlTag": "ZONE-04-RTR",
         "RouterIndex": 1,
         "BankIndex": 1,
-        "Label": "Room Volume",
+        "Label": "Zone 4",
         "Icon": "Volume",
         "ZoneEnableToggles": [],
         "Tags": ["output"]

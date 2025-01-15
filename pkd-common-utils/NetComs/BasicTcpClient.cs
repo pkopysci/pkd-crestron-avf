@@ -13,11 +13,11 @@
 	/// </summary>
 	public class BasicTcpClient : IDisposable
 	{
-		private TCPClient client;
-		private CTimer retryTimer;
-		private string hostname;
-		private int port;
-		private int bufferSize;
+		private readonly TCPClient client;
+		private CTimer? retryTimer;
+		private readonly string hostname;
+		private readonly int port;
+		private readonly int bufferSize;
 		private bool userDisconnect;
 		private bool disposed;
 
@@ -73,7 +73,7 @@
 		{
 			if (String.IsNullOrEmpty(hostname))
 			{
-				throw new ArgumentNullException("BasicTcpClient.Ctor() - arugment 'hostname' cannot be null or empty.");
+				throw new ArgumentNullException(hostname, "BasicTcpClient.Ctor() - arugment 'hostname' cannot be null or empty.");
 			}
 
 			if (port < 0 || port > 65535 || bufferSize < 0)
@@ -93,30 +93,30 @@
 		/// <summary>
 		/// Triggered each time a connection attempt fails. Data package contains the SocketStatus enum for the failure.
 		/// </summary>
-		public event EventHandler<GenericSingleEventArgs<SocketStatus>> ConnectionFailed;
+		public event EventHandler<GenericSingleEventArgs<SocketStatus>>? ConnectionFailed;
 
 		/// <summary>
 		/// Triggered on a successful connection with the host.
 		/// </summary>
-		public event EventHandler ClientConnected;
+		public event EventHandler? ClientConnected;
 
 		/// <summary>
 		/// Triggered whenever the connection status changes. Current status can be obtained
 		/// from the ClientStatusMessage property.
 		/// </summary>
-		public event EventHandler StatusChanged;
+		public event EventHandler? StatusChanged;
 
 		/// <summary>
 		/// Triggered whenever any data is recieved from the server. Arguments packages has the stringified data.
 		/// Subscribe to this event if stringified data is desired rather than the raw bytes.
 		/// </summary>
-		public event EventHandler<GenericSingleEventArgs<string>> RxRecieved;
+		public event EventHandler<GenericSingleEventArgs<string>>? RxRecieved;
 
 		/// <summary>
 		/// Triggered whenever any data is recieved from the server.
 		/// Subscribe to this event the raw byte data is desired rather than stringified data.
 		/// </summary>
-		public event EventHandler<GenericSingleEventArgs<byte[]>> RxBytesRecieved;
+		public event EventHandler<GenericSingleEventArgs<byte[]>>? RxBytesRecieved;
 
 		/// <summary>
 		/// The hostname or IP address set at object creation.
@@ -132,12 +132,12 @@
 		/// <summary>
 		/// Gets the last set of data sent by the server.
 		/// </summary>
-		public string RxData { get; private set; }
+		public string RxData { get; private set; } = string.Empty;
 
 		/// <summary>
 		/// Gets the most recent response from the server as an array of bytes.
 		/// </summary>
-		public byte[] RxBytes { get; private set; }
+		public byte[] RxBytes { get; private set; } = [];
 
 		/// <summary>
 		/// Gets the current connection status. <see cref="SocketStatus"/>.

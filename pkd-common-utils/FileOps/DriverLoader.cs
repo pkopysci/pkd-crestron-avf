@@ -2,17 +2,17 @@
 {
 	using Crestron.RAD.Common.Enums;
 	using Crestron.RAD.Common.Interfaces;
-	using Crestron.SimplSharp.Reflection;
 	using pkd_common_utils.Logging;
 	using pkd_common_utils.Validation;
 	using System;
 	using System.Globalization;
 	using System.Linq;
+    using System.Reflection;
 
-	/// <summary>
-	/// Helper class used to load a Crestron Certified Driver from a DLL using reflection.
-	/// </summary>
-	public class DriverLoader
+    /// <summary>
+    /// Helper class used to load a Crestron Certified Driver from a DLL using reflection.
+    /// </summary>
+    public class DriverLoader
 	{
 
 		/// <summary>
@@ -24,7 +24,7 @@
 		/// <param name="transportName">The CCD transport type to search for in the driver dll.</param>
 		/// <returns>The target T object, if found in the assembly, or T default if no matching driver is found.</returns>
 		/// <exception cref="Exception">Will propagate exceptions from System.Reflection.</exception>
-		public static T LoadDriverInstance<T>(string assemblyName, string interfaceName, string transportName)
+		public static T? LoadDriverInstance<T>(string assemblyName, string interfaceName, string transportName)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(assemblyName, "LoadDriverInstance", "assemblyName");
 			ParameterValidator.ThrowIfNullOrEmpty(interfaceName, "LoadDriverInstance", "interfaceName");
@@ -46,14 +46,14 @@
 				}
 				else
 				{
-					foreach (var type in dll.GetTypes())
+					foreach (Type type in dll.GetTypes())
 					{
-						CType[] interfaces = type.GetInterfaces();
+						Type[] interfaces = type.GetInterfaces();
 
 						if (interfaces.Any(x => x.Name.Equals(interfaceName))
 							&& interfaces.Any(x => x.Name.Equals(transportName)))
 						{
-							return (T)dll.CreateInstance(type.FullName);
+							return type.FullName != null ? (T?)dll.CreateInstance(type.FullName) : default;
 						}
 					}
 				}
@@ -75,12 +75,12 @@
 		/// <param name="interfaceName">The interface to search for in the assembly dll.</param>
 		/// <returns>The target T object, if found in the assembly, or T default if no matching driver is found.</returns>
 		/// <exception cref="Exception">Will propagate exceptions from System.Reflection.</exception>
-		public static T LoadClassByInterface<T>(string assemblyName, string className, string interfaceName)
+		public static T? LoadClassByInterface<T>(string assemblyName, string className, string interfaceName)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(assemblyName, "LoadClassByInterface", "assemblyName");
 			ParameterValidator.ThrowIfNullOrEmpty(interfaceName, "LoadClassByInterface", "interfaceName");
 
-			T device = default;
+			T? device = default;
 			try
 			{
 				string dllPath = DirectoryHelper.NormalizePath(string.Format(
@@ -104,8 +104,9 @@
 					{
 						if (type.GetInterfaces().Any(x => x.Name.Equals(interfaceName, StringComparison.InvariantCulture)))
 						{
-							device = (T)dll.CreateInstance(type.FullName);
-						}
+							device = type.FullName != null ? (T?)dll.CreateInstance(type.FullName) : default;
+							break;
+                        }
 					}
 				}
 

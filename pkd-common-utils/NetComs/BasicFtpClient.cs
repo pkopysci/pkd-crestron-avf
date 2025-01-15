@@ -29,8 +29,8 @@
 			ParameterValidator.ThrowIfNullOrEmpty(username, "Ctor", "username");
 			ParameterValidator.ThrowIfNullOrEmpty(password, "Ctor", "password");
 
-			this.client = new SftpClient(host, username, password);
-			this.LastErrorMessage = string.Empty;
+			client = new SftpClient(host, username, password);
+			LastErrorMessage = string.Empty;
 		}
 
 		/// <summary>
@@ -46,60 +46,57 @@
 			ParameterValidator.ThrowIfNullOrEmpty(username, "Ctor", "username");
 			ParameterValidator.ThrowIfNull(sshKey, "Ctor", "sshKey");
 
-			this.client = new SftpClient(host, username, sshKey);
-			this.LastErrorMessage = string.Empty;
+			client = new SftpClient(host, username, sshKey);
+			LastErrorMessage = string.Empty;
 		}
-
-		// NO DEFAULT FOR YOU!
-		private BasicFtpClient() { }
 
 		~BasicFtpClient()
 		{
-			this.Dispose(false);
+			Dispose(false);
 		}
 
 		/// <summary>
 		/// Triggered when a response is received from the server after calling QueryFileNames() successfully.
 		/// Response data will stored in the FileNamesReceived property.
 		/// </summary>
-		public event EventHandler<EventArgs> FileQueryComplete;
+		public event EventHandler<EventArgs>? FileQueryComplete;
 
 		/// <summary>
 		/// Triggered whenever there is an error querying, downloading, or connected to the the SFTP server.
 		/// Error information will be stored in the LastErrorMessage property.
 		/// </summary>
-		public event EventHandler<EventArgs> ErrorOccurred;
+		public event EventHandler<EventArgs>? ErrorOccurred;
 
 		/// <summary>
 		/// Triggered when a file download from the remote server has completed successfully.
 		/// </summary>
-		public event EventHandler<EventArgs> DownloadComplete;
+		public event EventHandler<EventArgs>? DownloadComplete;
 
 		/// <summary>
 		/// Error information on the last error event.
 		/// </summary>
-		public string LastErrorMessage { get; private set; }
+		public string LastErrorMessage { get; private set; } = string.Empty;
 
 		/// <summary>
 		/// A collection of file names (including extension) that were in the directory provided in the most recent
 		/// call to QueryFileNames(). This will be empty if there are no files or QueryFileName() has not been called.
 		/// </summary>
-		public List<string> FilesNamesReceived { get; private set; }
+		public List<string> FilesNamesReceived { get; private set; } = new List<string>();
 
 		/// <summary>
 		/// Gets a value indicating whethere or not there is an active connection with the remote server.
 		/// </summary>
-		public bool IsConnected { get { return this.client.IsConnected; } }
+		public bool IsConnected { get { return client.IsConnected; } }
 
 		/// <summary>
 		/// Attempts to connect to the remote SFTP server. Does nothing if the client is already connected.
 		/// </summary>
 		public void Connect()
 		{
-			if (!this.client.IsConnected)
+			if (!client.IsConnected)
 			{
 				Logger.Debug("BasicFtpClient.Connect()");
-				this.client.Connect();
+				client.Connect();
 			}
 		}
 
@@ -108,10 +105,10 @@
 		/// </summary>
 		public void Disconnect()
 		{
-			if (this.client.IsConnected)
+			if (client.IsConnected)
 			{
 				Logger.Debug("BasicFtpClient.Disconnect()");
-				this.client.Disconnect();
+				client.Disconnect();
 			}
 		}
 
@@ -126,7 +123,7 @@
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(remoteDirectory, "QueryFileNames", "remoteDirectory");
 
-			if (!this.client.IsConnected)
+			if (!client.IsConnected)
 			{
 				Logger.Warn("BasicFtpClient.QueryFileNames() - SFTP Client is not connected.");
 				return;
@@ -135,7 +132,7 @@
 			List<string> allFiles = new List<string>();
 			try
 			{
-				var fileObjs = this.client.ListDirectory(remoteDirectory, (numFiles) => { Logger.Debug("num files = {0}", numFiles); });
+				var fileObjs = client.ListDirectory(remoteDirectory, (numFiles) => { Logger.Debug("num files = {0}", numFiles); });
 				foreach (var file in fileObjs)
 				{
 					if (!file.IsDirectory)
@@ -144,13 +141,13 @@
 					}
 				}
 
-				this.FilesNamesReceived = allFiles;
-				this.Notify(this.FileQueryComplete);
+				FilesNamesReceived = allFiles;
+				Notify(FileQueryComplete);
 			}
 			catch (Exception ex)
 			{
-				this.LastErrorMessage = ex.Message;
-				this.Notify(this.ErrorOccurred);
+				LastErrorMessage = ex.Message;
+				Notify(ErrorOccurred);
 			}
 		}
 
@@ -166,7 +163,7 @@
 			ParameterValidator.ThrowIfNullOrEmpty(remoteFilePath, "DownloadFile", "remoteFilePath");
 			ParameterValidator.ThrowIfNullOrEmpty(localFilePath, "DownloadFile", "localFilePath");
 
-			if (!this.client.IsConnected)
+			if (!client.IsConnected)
 			{
 				Logger.Error("BasicFtpClient.DownloadFile() - SFTP Client is not connected.");
 				return;
@@ -180,49 +177,49 @@
 				{
 					string msg = string.Format("Cannot download file {0} - it does not exist on remote server.", remoteFilePath);
 					Logger.Error(msg);
-					this.LastErrorMessage = msg;
-					this.Notify(this.ErrorOccurred);
+					LastErrorMessage = msg;
+					Notify(ErrorOccurred);
 					return;
 				}
 
 				FileStream stream = new FileStream(localFilePath, FileMode.Create);
-				client.BeginDownloadFile(remoteFilePath, stream, this.DownloadCallback);
+				client.BeginDownloadFile(remoteFilePath, stream, DownloadCallback);
 			}
 			catch (Exception ex)
 			{
-				this.LastErrorMessage = ex.Message;
-				this.Notify(this.ErrorOccurred);
+				LastErrorMessage = ex.Message;
+				Notify(ErrorOccurred);
 			}
 		}
 
 		///<inheritdoc />
 		public void Dispose()
 		{
-			this.Dispose(true);
+			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
 		private void Dispose(bool disposing)
 		{
-			if (this.disposed)
+			if (disposed)
 			{
 				return;
 			}
 
 			if (disposing)
 			{
-				if (this.client.IsConnected)
+				if (client.IsConnected)
 				{
-					this.client.Disconnect();
+					client.Disconnect();
 				}
 
-				this.client.Dispose();
+				client.Dispose();
 			}
-
-			this.disposed = true;
+		
+			disposed = true;
 		}
 
-		private void Notify(EventHandler<EventArgs> handler)
+		private void Notify(EventHandler<EventArgs>? handler)
 		{
 			handler?.Invoke(this, EventArgs.Empty);
 		}
@@ -230,17 +227,11 @@
 		private void DownloadCallback(Crestron.SimplSharp.CrestronIO.IAsyncResult result)
 		{
 			Logger.Debug("BasicFtpClient.DownloadCallback() - result = {0}", result.IsCompleted);
-			this.client.EndDownloadFile(result);
+			client.EndDownloadFile(result);
 			if (result.IsCompleted)
 			{
-				this.Notify(this.DownloadComplete);
+				Notify(DownloadComplete);
 			}
-		}
-
-		private void SyncronousDownloadCallback(ulong bytesRead)
-		{
-			Logger.Debug("BasicFtpClient.DownloadCallback() - result = {0}", bytesRead);
-			this.Notify(this.DownloadComplete);
 		}
 	}
 }

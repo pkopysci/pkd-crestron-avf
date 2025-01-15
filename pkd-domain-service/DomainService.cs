@@ -39,7 +39,7 @@
 		public DomainService(DataContainer configuration)
 		{
 			ParameterValidator.ThrowIfNull(configuration, "DomainService.Ctor()", "configuration");
-			this.config = configuration;
+			config = configuration;
 		}
 
 		/// <inheritdoc/>
@@ -47,12 +47,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.Displays == null)
+				if (config == null || config.Displays == null)
 				{
 					return new List<Display>().AsReadOnly();
 				}
 
-				return this.config.Displays.AsReadOnly();
+				return config.Displays.AsReadOnly();
 			}
 		}
 
@@ -61,12 +61,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.Audio.Dsps == null)
+				if (config == null || config.Audio.Dsps == null)
 				{
 					return new List<Dsp>().AsReadOnly();
 				}
 
-				return this.config.Audio.Dsps.AsReadOnly();
+				return config.Audio.Dsps.AsReadOnly();
 			}
 		}
 
@@ -75,12 +75,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.Audio.Channels == null)
+				if (config == null || config.Audio.Channels == null)
 				{
 					return new List<Channel>().AsReadOnly();
 				}
 
-				return this.config.Audio.Channels.AsReadOnly();
+				return config.Audio.Channels.AsReadOnly();
 			}
 		}
 
@@ -89,12 +89,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.Cameras == null)
+				if (config == null || config.Cameras == null)
 				{
 					return new List<Camera>().AsReadOnly();
 				}
 
-				return this.config.Cameras.AsReadOnly();
+				return config.Cameras.AsReadOnly();
 			}
 		}
 
@@ -103,12 +103,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.LightingControllers == null)
+				if (config == null || config.LightingControllers == null)
 				{
 					return new List<LightingInfo>().AsReadOnly();
 				}
 
-				return this.config.LightingControllers.AsReadOnly();
+				return config.LightingControllers.AsReadOnly();
 			}
 		}
 
@@ -117,12 +117,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.UserInterfaces == null)
+				if (config == null || config.UserInterfaces == null)
 				{
 					return new List<UserInterface>().AsReadOnly();
 				}
 
-				return this.config.UserInterfaces.AsReadOnly();
+				return config.UserInterfaces.AsReadOnly();
 			}
 		}
 
@@ -131,12 +131,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.Endpoints == null)
+				if (config == null || config.Endpoints == null)
 				{
 					return new List<Endpoint>().AsReadOnly();
 				}
 
-				return this.config.Endpoints.AsReadOnly();
+				return config.Endpoints.AsReadOnly();
 			}
 		}
 
@@ -145,12 +145,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.Blurays == null)
+				if (config == null || config.Blurays == null)
 				{
 					return new List<Bluray>().AsReadOnly();
 				}
 
-				return this.config.Blurays.AsReadOnly();
+				return config.Blurays.AsReadOnly();
 			}
 		}
 
@@ -159,12 +159,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.CableBoxes == null)
+				if (config == null || config.CableBoxes == null)
 				{
 					return new List<CableBox>().AsReadOnly();
 				}
 
-				return this.config.CableBoxes.AsReadOnly();
+				return config.CableBoxes.AsReadOnly();
 			}
 		}
 
@@ -173,12 +173,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.FusionInfo == null)
+				if (config == null || config.FusionInfo == null)
 				{
 					return new FusionInfo();
 				}
 
-				return this.config.FusionInfo;
+				return config.FusionInfo;
 			}
 		}
 
@@ -187,12 +187,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.Routing == null)
+				if (config == null || config.Routing == null)
 				{
 					return new Routing();
 				}
 
-				return this.config.Routing;
+				return config.Routing;
 			}
 		}
 
@@ -201,12 +201,12 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.RoomInfo == null)
+				if (config == null || config.RoomInfo == null)
 				{
 					return new RoomInfo();
 				}
 
-				return this.config.RoomInfo;
+				return config.RoomInfo;
 			}
 		}
 
@@ -215,26 +215,26 @@
 		{
 			get
 			{
-				if (this.config == null || this.config.ServerInfo == null)
+				if (config == null || config.ServerInfo == null)
 				{
 					return new ServerInfo();
 				}
 
-				return this.config.ServerInfo;
+				return config.ServerInfo;
 			}
 		}
 
 		/// <inheritdoc/>
 		public Display GetDisplay(string id)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "GetDisplay()", "id");
-			if (this.config == null)
+			ParameterValidator.ThrowIfNullOrEmpty(id, "GetDisplay()", nameof(id));
+			if (config == null)
 			{
 				Logger.Error(string.Format("DomainService.GetDisplay() - No configuration data present when requesting ID {0}.", id));
 				return new Display();
 			}
 
-			Display found = this.config.Displays.Find(x => x.Id == id);
+			Display? found = config.Displays.Find(x => x.Id == id);
 			if (found == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetDisplay() - Unable to find display with ID {0}.", id));
@@ -247,14 +247,14 @@
 		/// <inheritdoc/>
 		public Dsp GetDsp(string id)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "GetDsp()", "id");
-			if (this.config == null)
+			ParameterValidator.ThrowIfNullOrEmpty(id, "GetDsp()", nameof(id));
+			if (config == null)
 			{
 				Logger.Error(string.Format("DomainService.GetDsp() - No configuration data present when requesting DSP {0}", id));
 				return new Dsp();
 			}
 
-			Dsp found = this.config.Audio.Dsps.Find(x => x.Id.Equals(id));
+			Dsp? found = config.Audio.Dsps.Find(x => x.Id.Equals(id));
 			if (found == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetDsp() - Unable to find DSP with ID {0}", id));
@@ -267,15 +267,15 @@
 		/// <inheritdoc/>
 		public Camera GetCamera(string id)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "GetCamera()", "id");
+			ParameterValidator.ThrowIfNullOrEmpty(id, "GetCamera()", nameof(id));
 
-			if (this.config == null)
+			if (config == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetCamera()() - Unable to find camera with ID {0}", id));
 				return new Camera();
 			}
 
-			Camera found = this.config.Cameras.Find(x => x.Id.Equals(id));
+			Camera? found = config.Cameras.Find(x => x.Id.Equals(id));
 			if (found == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetCamera() - Unable to find DSP with ID {0}", id));
@@ -288,14 +288,14 @@
 		/// <inheritdoc/>
 		public LightingInfo GetLightingInfo(string id)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "GetLightingInfo()", "id");
-			if (this.config == null)
+			ParameterValidator.ThrowIfNullOrEmpty(id, "GetLightingInfo()", nameof(id));
+			if (config == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetLightingInfo() - Unable to find lighting data with ID {0}", id));
 				return new LightingInfo();
 			}
 
-			LightingInfo found = this.config.LightingControllers.Find(x => x.Id.Equals(id));
+			LightingInfo? found = config.LightingControllers.Find(x => x.Id.Equals(id));
 			if (found == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetLightingInfo() - Unable to find Lighting info with ID {0}", id));
@@ -308,14 +308,14 @@
 		/// <inheritdoc/>
 		public UserInterface GetUserInterface(string id)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "GetUserInterface()", "id");
-			if (this.config == null)
+			ParameterValidator.ThrowIfNullOrEmpty(id, "GetUserInterface()", nameof(id));
+			if (config == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetUserInterface() - Unable to find user interface data with ID {0}", id));
 				return new UserInterface();
 			}
 
-			UserInterface found = this.config.UserInterfaces.Find(x => x.Id.Equals(id));
+			UserInterface? found = config.UserInterfaces.Find(x => x.Id.Equals(id));
 			if (found == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetUserInterface() - Unable to find user interface with ID {0}", id));
@@ -328,15 +328,15 @@
 		/// <inheritdoc/>
 		public Endpoint GetEndpoint(string id)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "GetEndpoint()", "id");
+			ParameterValidator.ThrowIfNullOrEmpty(id, "GetEndpoint()", nameof(id));
 
-			if (this.config == null)
+			if (config == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetEndpoint() - Unable to find endpoint with ID {0}", id));
 				return new Endpoint();
 			}
 
-			Endpoint found = this.config.Endpoints.Find(x => x.Id.Equals(id));
+			Endpoint? found = config.Endpoints.Find(x => x.Id.Equals(id));
 			if (found == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetEndpoint() - Unable to find Endpoint with ID {0}", id));
@@ -349,14 +349,14 @@
 		/// <inheritdoc/>
 		public Bluray GetBluray(string id)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "GetBluray()", "id");
-			if (this.config == null)
+			ParameterValidator.ThrowIfNullOrEmpty(id, "GetBluray()", nameof(id));
+			if (config == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetBluray() - Unable to find Blu-ray with ID {0}", id));
 				return new Bluray();
 			}
 
-			Bluray found = this.config.Blurays.Find(x => x.Id.Equals(id));
+			Bluray? found = config.Blurays.Find(x => x.Id.Equals(id));
 			if (found == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetBluray() - Unable to find Bluray info with ID {0}", id));
@@ -369,14 +369,14 @@
 		/// <inheritdoc/>
 		public CableBox GetCableBox(string id)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "GetCableBox()", "id");
-			if (this.config == null)
+			ParameterValidator.ThrowIfNullOrEmpty(id, "GetCableBox()", nameof(id));
+			if (config == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetCableBox() - Unable to find cable box info with ID {0}", id));
 				return new CableBox();
 			}
 
-			CableBox found = this.config.CableBoxes.Find(x => x.Id == id);
+			CableBox? found = config.CableBoxes.Find(x => x.Id == id);
 			if (found == null)
 			{
 				Logger.Warn(string.Format("DomainService.GetCableBox() - Unable to find Bluray info with ID {0}", id));

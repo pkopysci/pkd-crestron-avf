@@ -21,10 +21,10 @@
 		{
 			try
 			{
-				ParameterValidator.ThrowIfNullOrEmpty(data, "DomainFactory.CreateDomainFromJson", "data");
+				ParameterValidator.ThrowIfNullOrEmpty(data, "DomainFactory.CreateDomainFromJson", nameof(data));
 
 				Logger.Info("Deserializing JSON configuration...");
-				DataContainer service = JsonConvert.DeserializeObject<DataContainer>(data);
+				DataContainer service = JsonConvert.DeserializeObject<DataContainer>(data) ?? new();
 
 				Logger.Info("Creating Domain service from configuration...");
 				return new DomainService(service);

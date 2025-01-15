@@ -1,30 +1,13 @@
 ﻿namespace pkd_domain_service.Data.DisplayData
 {
-	using Newtonsoft.Json;
-
-	[JsonObject(MemberSerialization.OptIn)]
 	public class CustomCommands
 	{
-		[JsonProperty("FreezeOnTx")]
-		public string FreezeOnTx { get; set; }
+		public string FreezeOnTx { get; set; } = string.Empty;
 
-		[JsonProperty("FreezeOnRx")]
-		public string FreezeOnRx { get; set; }
+		public string FreezeOnRx { get; set; } = string.Empty;
 
-		[JsonProperty("FreezeOffTx")]
-		public string FreezeOffTx { get; set; }
+		public string FreezeOffTx { get; set; } = string.Empty;
 
-		[JsonProperty("FreezeOffRx")]
-		public string FreezeOffRx { get; set; }
-
-		public override string ToString()
-		{
-			return string.Format(
-				"CustomCommands: FreezeOnTx: {0}, FreezeOnRx: {1}, FreezeOffTx: {2}, FreezeOffTx: {3}",
-				FreezeOnTx ?? "NULL",
-				FreezeOnRx ?? "NULL",
-				FreezeOffTx ?? "NULL",
-				FreezeOffTx ?? "NULL");
-		}
+		public string FreezeOffRx { get; set; } = string.Empty;
 	}
 }

@@ -2,30 +2,30 @@
 {
 	internal class DependencyData
 	{
-		public string Local { get; set; }
-		public string Remote { get; set; }
+		public string Local { get; set; } = string.Empty;
+		public string Remote { get; set; } = string.Empty;
 
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 		{
-			if (obj == null || !(obj is DependencyData))
+			if (obj == null || obj is not DependencyData)
 			{
 				return false;
 			}
 
-			DependencyData other = obj as DependencyData;
-			bool localEquals = this.Local.Equals(other.Local, System.StringComparison.InvariantCulture);
-			bool remoteEquals = this.Remote.Equals(other.Remote, System.StringComparison.InvariantCulture);
+			DependencyData? other = obj as DependencyData;
+			bool localEquals = Local.Equals(other?.Local, StringComparison.InvariantCulture);
+			bool remoteEquals = Remote.Equals(other?.Remote, StringComparison.InvariantCulture);
 			return localEquals && remoteEquals;
 		}
 
 		public override int GetHashCode()
 		{
-			return (this.Local + this.Remote).GetHashCode();
+			return (Local + Remote).GetHashCode();
 		}
 
 		public override string ToString()
 		{
-			string output = string.Format("Local = {0} || remote = {1}", this.Local, this.Remote);
+			string output = string.Format("Local = {0} || remote = {1}", Local, Remote);
 			return output;
 		}
 	}

@@ -14,7 +14,7 @@
 		/// <param name="methodName"></param>
 		/// <param name="paramName">The name of the parameter being checked.</param>
 		/// <exception cref="ArgumentNullException">If 'param' is null.</exception>
-		public static void ThrowIfNull(object param, string methodName, string paramName)
+		public static void ThrowIfNull(object? param, string methodName, string paramName)
 		{
 			if (param == null)
 			{

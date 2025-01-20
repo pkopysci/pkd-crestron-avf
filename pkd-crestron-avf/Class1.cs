@@ -1,6 +1,6 @@
 ﻿namespace pkd_crestron_avf
 {
-    public class ControlSystem
+    public class Class1
     {
 
     }

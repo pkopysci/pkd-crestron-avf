@@ -48,7 +48,7 @@
 		}
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, int>> RelayChanged;
+		public event EventHandler<GenericDualEventArgs<string, int>>? RelayChanged;
 
 		/// <inheritdoc/>
 		public bool IsRegistered
@@ -92,7 +92,7 @@
 		}
 
 		/// <inheritdoc/>
-		public bool GetCurrentRelayState(int index)
+		public bool? GetCurrentRelayState(int index)
 		{
 			if (!this.CheckRegistered())
 			{
@@ -126,15 +126,15 @@
 				return;
 			}
 
-			this.device.RelayPorts[(uint)index].Close();
-			CTimer t = new CTimer((obj) =>
+			this.device.RelayPorts[(uint)index]?.Close();
+			CTimer t = new((obj) =>
 			{
 				if (!this.CheckRegistered())
 				{
 					return;
 				}
 
-				this.device.RelayPorts[(uint)index].Open();
+				this.device.RelayPorts[(uint)index]?.Open();
 			}, timeMs);
 		}
 
@@ -153,7 +153,7 @@
 				return;
 			}
 
-			this.device.RelayPorts[(uint)index].Close();
+			this.device.RelayPorts[(uint)index]?.Close();
 		}
 
 		/// <inheritdoc/>
@@ -171,7 +171,7 @@
 				return;
 			}
 
-			this.device.RelayPorts[(uint)index].Open();
+			this.device.RelayPorts[(uint)index]?.Open();
 		}
 
 		public void Dispose()
@@ -193,12 +193,11 @@
 				{
 					foreach (var relay in this.device.RelayPorts)
 					{
-						relay.Open();
+						relay?.Open();
 					}
 
 					this.device.UnRegister();
 					this.device.Dispose();
-					this.device = null;
 				}
 			}
 
@@ -221,7 +220,7 @@
 
 		private bool CheckRegistered()
 		{
-			return this.device != null || this.device.Registered;
+			return this.device != null && this.device.Registered;
 		}
 	}
 

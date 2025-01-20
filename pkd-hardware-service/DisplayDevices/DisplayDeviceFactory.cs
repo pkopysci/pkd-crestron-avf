@@ -16,7 +16,7 @@
 	{
 		private const int WARMUP_COODLOWN_TIME = 30;
 
-		public static IDisplayDevice CreateDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
+		public static IDisplayDevice? CreateDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
 		{
 			ParameterValidator.ThrowIfNull(displayData, "CreateDisplay", "displayData");
 			ParameterValidator.ThrowIfNull(processor, "CreateDisplay", "processor");
@@ -34,13 +34,13 @@
 			}
 		}
 
-		private static IDisplayDevice LoadCcdDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
+		private static CcdDisplayDevice? LoadCcdDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
 		{
 			Logger.Info(string.Format(
 				"DisplayDeviceFactory.CreateDisplay() - Creating Crestron certified driver for {0}.",
 				displayData.Id));
 
-			IBasicVideoDisplay device = null;
+			IBasicVideoDisplay? device = null;
 			string transport = DriverLoader.GetTransportType(displayData.Connection.Transport);
 			string driverPath = DirectoryHelper.NormalizePath(displayData.Connection.Driver);
 
@@ -49,24 +49,28 @@
 				"IBasicVideoDisplay",
 				transport);
 
-			if (device is IBasicVideoDisplay2)
+			if (device == default)
 			{
-				SetUserAttributes(device as IBasicVideoDisplay2, displayData.UserAttributes);
+				Logger.Error("DisplayDeviceFactory.LoadCcdDisplay() - failed to load driver for display {0}", displayData.Id);
+				return null;
 			}
 
-			if (device is ITcp2)
+			if (device is IBasicVideoDisplay2 basicDisplayDevice)
 			{
-				var tcpDevice = device as ITcp2;
-				tcpDevice.Initialize(displayData.Connection.Host, displayData.Connection.Port);
+				SetUserAttributes(basicDisplayDevice, displayData.UserAttributes);
 			}
-			else if (device is ITcp)
+
+			if (device is ITcp2 tcpDevice2)
 			{
-				var tcpDevice = device as ITcp;
+                tcpDevice2.Initialize(displayData.Connection.Host, displayData.Connection.Port);
+			}
+			else if (device is ITcp tcpDevice)
+			{
 				tcpDevice.Initialize(IPAddress.Parse(displayData.Connection.Host), displayData.Connection.Port);
 			}
 			else if (device is ISerialComport)
 			{
-				Logger.Warn(string.Format("DisplayDeviceFactory.CreateDisplay({0}) - Serial drivers are not supported.", displayData.Id));
+				Logger.Warn(string.Format("DisplayDeviceFactory.CreateDisplay({0}) - Serial drivers are not supported yet.", displayData.Id));
 			}
 
 			device.WarmUpTime = WARMUP_COODLOWN_TIME;
@@ -127,14 +131,14 @@
 			}
 		}
 
-		private static IDisplayDevice LoadPluginDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
+		private static IDisplayDevice? LoadPluginDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
 		{
 			Logger.Info(string.Format(
 				"DisplayDeviceFactory.CreateDisplay() - Creating display from plugin library for {0}...",
 				displayData.Id));
 
 			string driverPath = DirectoryHelper.NormalizePath(displayData.Connection.Driver);
-			IDisplayDevice device = DriverLoader.LoadClassByInterface<IDisplayDevice>(
+			IDisplayDevice? device = DriverLoader.LoadClassByInterface<IDisplayDevice>(
 				driverPath,
 				displayData.Connection.Transport,
 				"IDisplayDevice");

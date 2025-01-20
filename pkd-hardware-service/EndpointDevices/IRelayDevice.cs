@@ -19,7 +19,7 @@
 		/// </summary>
 		/// <param name="index">The 0-based index representing which relay on the device to query.</param>
 		/// <returns>True if the rleay is closed, false if the relay is open</returns>
-		bool GetCurrentRelayState(int index);
+		bool? GetCurrentRelayState(int index);
 
 		/// <summary>
 		/// Close the relay for the specified amount of time.

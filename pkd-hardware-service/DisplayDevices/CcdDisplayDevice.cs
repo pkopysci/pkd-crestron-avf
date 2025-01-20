@@ -33,7 +33,7 @@
 		private readonly IBasicVideoDisplay driver;
 		private readonly Display config;
 		private bool freezeActive;
-		private CTimer offlineTimer;
+		private CTimer? offlineTimer;
 		private bool disposed;
 
 		public CcdDisplayDevice(IBasicVideoDisplay driver, Display config)
@@ -54,19 +54,19 @@
 		}
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> PowerChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? PowerChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> VideoBlankChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? VideoBlankChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> VideoFreezeChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? VideoFreezeChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> HoursUsedChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? HoursUsedChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, uint>> VideoRouteChanged;
+		public event EventHandler<GenericDualEventArgs<string, uint>>? VideoRouteChanged;
 
 		/// <inheritdoc/>
 		public bool PowerState
@@ -327,7 +327,7 @@
 			}
 		}
 
-		private void NotifyEvent(EventHandler<GenericSingleEventArgs<string>> handler)
+		private void NotifyEvent(EventHandler<GenericSingleEventArgs<string>>? handler)
 		{
 			var temp = handler;
 			temp?.Invoke(this, new GenericSingleEventArgs<string>(this.Id));
@@ -345,7 +345,7 @@
 			}
 		}
 
-		private void OfflineTimerTriggered(object obj)
+		private void OfflineTimerTriggered(object? obj)
 		{
 			this.IsOnline = this.driver.Connected;
 			if (!IsOnline)

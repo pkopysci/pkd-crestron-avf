@@ -9,7 +9,7 @@
 
 	internal static class TransportDeviceFactory
 	{
-		public static ITransportDevice CreateCableBox(CableBox cableBoxData, CrestronControlSystem processor, IInfrastructureService hwService)
+		public static ITransportDevice? CreateCableBox(CableBox cableBoxData, CrestronControlSystem processor, IInfrastructureService hwService)
 		{
 			ParameterValidator.ThrowIfNull(cableBoxData, "TransportDeviceFactory.CreateCableBox", "cableBoxData");
 			ParameterValidator.ThrowIfNull(processor, "TransportDeviceFactory.CreateCableBox", "processor");
@@ -18,7 +18,7 @@
 			Logger.Info("TransportDeviceFactory.CreateCableBox() - creating device with ID {0}", cableBoxData.Id);
 
 			string path = DirectoryHelper.NormalizePath(cableBoxData.Connection.Driver);
-			ITransportDevice device = DriverLoader.LoadClassByInterface<ITransportDevice>(
+			ITransportDevice? device = DriverLoader.LoadClassByInterface<ITransportDevice>(
 				path,
 				cableBoxData.Connection.Transport,
 				"ITransportDevice");

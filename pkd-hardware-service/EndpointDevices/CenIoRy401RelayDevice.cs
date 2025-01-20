@@ -17,7 +17,6 @@
 
 	public class CenIoRy401RelayDevice : BaseDevice, IEndpointDevice, IRelayDevice, IDisposable
 	{
-		private readonly Endpoint data;
 		private readonly CrestronControlSystem processor;
 		private CenIoRy104 device;
 		private bool disposed;
@@ -27,30 +26,32 @@
 			ParameterValidator.ThrowIfNull(controlSystem, "Ctor", "controlSystem");
 			ParameterValidator.ThrowIfNull(data, "Ctor", "data");
 
-			this.data = data;
-			this.processor = controlSystem;
-			this.Id = data.Id;
-			this.Label = data.Id;
-			this.device = new CenIoRy104((uint)this.data.Port, this.processor);
-			this.device.OnlineStatusChange += new OnlineStatusChangeEventHandler(OnlineStatusChangeHandler);
-			foreach (var relay in this.device.RelayPorts)
+			processor = controlSystem;
+			Id = data.Id;
+			Label = data.Id;
+			device = new CenIoRy104((uint)data.Port, processor);
+			device.OnlineStatusChange += new OnlineStatusChangeEventHandler(OnlineStatusChangeHandler);
+
+			if (device.RelayPorts is null) return;
+			foreach (var relay in device.RelayPorts)
 			{
+				if (relay == null) continue;
 				relay.StateChange += new RelayEventHandler(RelayStateChangeHandler);
 			}
 		}
 
 		~CenIoRy401RelayDevice()
 		{
-			this.Dispose(false);
+			Dispose(false);
 		}
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, int>> RelayChanged;
+		public event EventHandler<GenericDualEventArgs<string, int>>? RelayChanged;
 
 		/// <inheritdoc/>
 		public bool IsRegistered
 		{
-			get { return this.CheckRegistered(); }
+			get { return CheckRegistered(); }
 		}
 
 		/// <inheritdoc/>
@@ -76,30 +77,30 @@
 		{
 			Logger.Debug("CenIoRy401RelayDevice {0} - Register()");
 
-			if (!this.CheckRegistered())
+			if (!CheckRegistered())
 			{
-				Logger.Error("CenIoRy401RelayDevice {0} is already registered.", this.Id);
+				Logger.Error("CenIoRy401RelayDevice {0} is already registered.", Id);
 				return;
 			}
 
-			if (this.device.Register() != eDeviceRegistrationUnRegistrationResponse.Success)
+			if (device.Register() != eDeviceRegistrationUnRegistrationResponse.Success)
 			{
-				Logger.Error("CenIoRy401RelayDevice {0} - failed to register with control system: {0}", this.device.RegistrationFailureReason);
+				Logger.Error("CenIoRy401RelayDevice {0} - failed to register with control system: {0}", device.RegistrationFailureReason);
 			}
 		}
 
 		/// <inheritdoc/>
-		public bool GetCurrentRelayState(int index)
+		public bool? GetCurrentRelayState(int index)
 		{
-			if (!this.CheckRegistered())
+			if (!CheckRegistered())
 			{
 				return false;
 			}
 
-			if (index <= this.device.RelayPorts.Count)
+			if (index <= device.RelayPorts.Count)
 			{
-				return this.device.RelayPorts[(uint)index].State;
-			}
+                return device.RelayPorts[(uint)index].State;
+            }
 			else
 			{
 				return false;
@@ -111,114 +112,113 @@
 		{
 			Logger.Debug("CenIoRy401RelayDevice {0} - PulseRelay({0}, {1})", index, timeMs);
 
-			if (!this.CheckRegistered())
+			if (!CheckRegistered())
 			{
-				Logger.Error("CenIoRy401RelayDevice {0} - PulseRelay()- device is not registered.", this.Id);
+				Logger.Error("CenIoRy401RelayDevice {0} - PulseRelay()- device is not registered.", Id);
 				return;
 			}
 
-			if (index > this.device.RelayPorts.Count)
+			if (index > device.RelayPorts.Count)
 			{
-				Logger.Error("CenIoRy401RelayDevice {0} - PulseRelay() - index {1} more than the number of supported relays.", this.Id, index);
+				Logger.Error("CenIoRy401RelayDevice {0} - PulseRelay() - index {1} more than the number of supported relays.", Id, index);
 				return;
 			}
 
-			this.device.RelayPorts[(uint)index].Close();
+			device.RelayPorts[(uint)index].Close();
 			CTimer t = new CTimer((obj) =>
 			{
-				if (!this.CheckRegistered())
+				if (!CheckRegistered())
 				{
 					return;
 				}
 
-				this.device.RelayPorts[(uint)index].Open();
+				device.RelayPorts[(uint)index].Open();
 			}, timeMs);
 		}
 
 		/// <inheritdoc/>
 		public void LatchRelayClosed(int index)
 		{
-			if (!this.CheckRegistered())
+			if (!CheckRegistered())
 			{
-				Logger.Error("CenIoRy401RelayDevice {0} - PulseRelay()- device is not registered.", this.Id);
+				Logger.Error("CenIoRy401RelayDevice {0} - PulseRelay()- device is not registered.", Id);
 				return;
 			}
 
-			if (index > this.device.RelayPorts.Count)
+			if (index > device.RelayPorts.Count)
 			{
-				Logger.Error("CenIoRy401RelayDevice {0} - LatchRelayClosed() - index {1} more than the number of supported relays.", this.Id, index);
+				Logger.Error("CenIoRy401RelayDevice {0} - LatchRelayClosed() - index {1} more than the number of supported relays.", Id, index);
 				return;
 			}
 
-			this.device.RelayPorts[(uint)index].Close();
+			device.RelayPorts[(uint)index].Close();
 		}
 
 		/// <inheritdoc/>
 		public void LatchRelayOpen(int index)
 		{
-			if (!this.CheckRegistered())
+			if (!CheckRegistered())
 			{
-				Logger.Error("CenIoRy401RelayDevice {0} - LatchRelayOpen()- device is not registered.", this.Id);
+				Logger.Error("CenIoRy401RelayDevice {0} - LatchRelayOpen()- device is not registered.", Id);
 				return;
 			}
 
-			if (index > this.device.RelayPorts.Count)
+			if (index > device.RelayPorts.Count)
 			{
-				Logger.Error("CenIoRy401RelayDevice {0} - LatchRelayOpen() - index {1} more than the number of supported relays.", this.Id, index);
+				Logger.Error("CenIoRy401RelayDevice {0} - LatchRelayOpen() - index {1} more than the number of supported relays.", Id, index);
 				return;
 			}
 
-			this.device.RelayPorts[(uint)index].Open();
+			device.RelayPorts[(uint)index].Open();
 		}
 
 		public void Dispose()
 		{
-			this.Dispose(true);
+			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
 		private void Dispose(bool disposing)
 		{
-			if (this.disposed)
+			if (disposed)
 			{
 				return;
 			}
 
 			if (disposing)
 			{
-				if (this.CheckRegistered())
+				if (CheckRegistered())
 				{
-					foreach (var relay in this.device.RelayPorts)
+					foreach (var relay in device.RelayPorts)
 					{
-						relay.Open();
+						relay?.Open();
 					}
 
-					this.device.UnRegister();
-					this.device.Dispose();
-					this.device = null;
+					device.UnRegister();
+					device.Dispose();
 				}
 			}
 
-			this.disposed = true;
+			disposed = true;
 		}
 
 		private void OnlineStatusChangeHandler(GenericBase currentDevice, OnlineOfflineEventArgs args)
 		{
-			this.IsOnline = args.DeviceOnLine;
-			this.NotifyOnlineStatus();
+			IsOnline = args.DeviceOnLine;
+			NotifyOnlineStatus();
 		}
 
 		private void RelayStateChangeHandler(Relay relay, RelayEventArgs args)
 		{
 			Logger.Debug("CenIoRy401RelayDevice {0} relay event: {0} -> {1}", relay.ID, args.State);
 
-			var temp = this.RelayChanged;
-			temp?.Invoke(this, new GenericDualEventArgs<string, int>(this.Id, (int)relay.ID));
+			var temp = RelayChanged;
+			temp?.Invoke(this, new GenericDualEventArgs<string, int>(Id, (int)relay.ID));
 		}
 
 		private bool CheckRegistered()
 		{
-			return this.device != null || this.device.Registered;
+			return device != null && device.Registered;
 		}
 	}
 

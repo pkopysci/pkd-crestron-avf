@@ -4,7 +4,7 @@
 	using pkd_common_utils.GenericEventArgs;
 
 	/// <summary>
-	/// events, properties, and methods for controling which audio output channels a given input channel should be sending signal
+	/// events, properties, and methods for controlling which audio output channels a given input channel should be sending signal
 	/// to.
 	/// </summary>
 	public interface IAudioZoneEnabler

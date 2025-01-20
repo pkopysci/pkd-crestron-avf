@@ -2,8 +2,8 @@
 {
 	using Crestron.SimplSharp.CrestronIO;
 	using Crestron.SimplSharp.Ssh;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
+	using Logging;
+	using Validation;
 	using System;
 	using System.Collections.Generic;
 
@@ -25,9 +25,9 @@
 		/// <exception cref="ArgumentException">If any argument is null or empty.</exception>
 		public BasicFtpClient(string host, string username, string password)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(host, "Ctor", "host");
-			ParameterValidator.ThrowIfNullOrEmpty(username, "Ctor", "username");
-			ParameterValidator.ThrowIfNullOrEmpty(password, "Ctor", "password");
+			ParameterValidator.ThrowIfNullOrEmpty(host, "Ctor", nameof(host));
+			ParameterValidator.ThrowIfNullOrEmpty(username, "Ctor", nameof(username));
+			ParameterValidator.ThrowIfNullOrEmpty(password, "Ctor", nameof(password));
 
 			client = new SftpClient(host, username, password);
 			LastErrorMessage = string.Empty;
@@ -42,9 +42,9 @@
 		/// <exception cref="ArgumentException">If any argument is null or empty.</exception>
 		public BasicFtpClient(string host, string username, PrivateKeyFile sshKey)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(host, "Ctor", "host");
-			ParameterValidator.ThrowIfNullOrEmpty(username, "Ctor", "username");
-			ParameterValidator.ThrowIfNull(sshKey, "Ctor", "sshKey");
+			ParameterValidator.ThrowIfNullOrEmpty(host, "Ctor", nameof(host));
+			ParameterValidator.ThrowIfNullOrEmpty(username, "Ctor", nameof(username));
+			ParameterValidator.ThrowIfNull(sshKey, "Ctor", nameof(sshKey));
 
 			client = new SftpClient(host, username, sshKey);
 			LastErrorMessage = string.Empty;
@@ -57,7 +57,7 @@
 
 		/// <summary>
 		/// Triggered when a response is received from the server after calling QueryFileNames() successfully.
-		/// Response data will stored in the FileNamesReceived property.
+		/// Response data will be stored in the FileNamesReceived property.
 		/// </summary>
 		public event EventHandler<EventArgs>? FileQueryComplete;
 
@@ -75,29 +75,27 @@
 		/// <summary>
 		/// Error information on the last error event.
 		/// </summary>
-		public string LastErrorMessage { get; private set; } = string.Empty;
+		public string LastErrorMessage { get; private set; }
 
 		/// <summary>
 		/// A collection of file names (including extension) that were in the directory provided in the most recent
 		/// call to QueryFileNames(). This will be empty if there are no files or QueryFileName() has not been called.
 		/// </summary>
-		public List<string> FilesNamesReceived { get; private set; } = new List<string>();
+		public List<string> FilesNamesReceived { get; private set; } = [];
 
 		/// <summary>
-		/// Gets a value indicating whethere or not there is an active connection with the remote server.
+		/// Gets a value indicating whether there is an active connection with the remote server.
 		/// </summary>
-		public bool IsConnected { get { return client.IsConnected; } }
+		public bool IsConnected => client.IsConnected;
 
 		/// <summary>
 		/// Attempts to connect to the remote SFTP server. Does nothing if the client is already connected.
 		/// </summary>
 		public void Connect()
 		{
-			if (!client.IsConnected)
-			{
-				Logger.Debug("BasicFtpClient.Connect()");
-				client.Connect();
-			}
+			if (client.IsConnected) return;
+			Logger.Debug("BasicFtpClient.Connect()");
+			client.Connect();
 		}
 
 		/// <summary>
@@ -105,11 +103,9 @@
 		/// </summary>
 		public void Disconnect()
 		{
-			if (client.IsConnected)
-			{
-				Logger.Debug("BasicFtpClient.Disconnect()");
-				client.Disconnect();
-			}
+			if (!client.IsConnected) return;
+			Logger.Debug("BasicFtpClient.Disconnect()");
+			client.Disconnect();
 		}
 
 		/// <summary>
@@ -129,18 +125,11 @@
 				return;
 			}
 
-			List<string> allFiles = new List<string>();
+			var allFiles = new List<string>();
 			try
 			{
 				var fileObjs = client.ListDirectory(remoteDirectory, (numFiles) => { Logger.Debug("num files = {0}", numFiles); });
-				foreach (var file in fileObjs)
-				{
-					if (!file.IsDirectory)
-					{
-						allFiles.Add(file.Name);
-					}
-				}
-
+				allFiles.AddRange(from file in fileObjs where !file.IsDirectory select file.Name);
 				FilesNamesReceived = allFiles;
 				Notify(FileQueryComplete);
 			}
@@ -175,14 +164,14 @@
 			{
 				if (!client.Exists(remoteFilePath))
 				{
-					string msg = string.Format("Cannot download file {0} - it does not exist on remote server.", remoteFilePath);
+					var msg = $"Cannot download file {remoteFilePath} - it does not exist on remote server.";
 					Logger.Error(msg);
 					LastErrorMessage = msg;
 					Notify(ErrorOccurred);
 					return;
 				}
 
-				FileStream stream = new FileStream(localFilePath, FileMode.Create);
+				var stream = new FileStream(localFilePath, FileMode.Create);
 				client.BeginDownloadFile(remoteFilePath, stream, DownloadCallback);
 			}
 			catch (Exception ex)

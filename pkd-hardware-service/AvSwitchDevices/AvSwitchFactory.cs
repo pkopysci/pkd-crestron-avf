@@ -5,9 +5,9 @@
 	using pkd_common_utils.Logging;
 	using pkd_common_utils.Validation;
 	using pkd_domain_service.Data.RoutingData;
-	using pkd_hardware_service.AvIpMatrix;
-	using pkd_hardware_service.AvSwitchDevices.DmMd400;
-	using pkd_hardware_service.AvSwitchDevices.DmMd8x1;
+	using AvIpMatrix;
+	using DmMd400;
+	using DmMd8x1;
 	using System.Collections.Generic;
 
 	/// <summary>
@@ -19,6 +19,8 @@
 		/// Attempts to create an Audio/video switcher hardware control based on the given configuration data.
 		/// If the Model defined in the configuration data is not supported then null is returned.
 		/// </summary>
+		/// <param name="sources">The domain data containing all routable sources in the system.</param>
+		/// <param name="destinations">The domain data containing all routable destinations in the system.</param>
 		/// <param name="switchData">the deserialized AV switch configuration data.</param>
 		/// <param name="processor">The host control system running this program.</param>
 		/// <param name="hwService">The hardware control service that will contain the final control object.</param>
@@ -37,7 +39,7 @@
 			switch (switchData.ClassName.ToUpper())
 			{
 				case "DMMD8X1":
-					return Get8x1Switch(switchData, processor, hwService);
+					return Get8X1Switch(switchData, processor, hwService);
 
 				case "HDMD400":
 					return GetMd400Switch(switchData, processor, hwService);
@@ -47,7 +49,7 @@
 			}
 		}
 
-		private static IAvSwitcher Get8x1Switch(
+		private static DmMd8x1AvSwitch Get8X1Switch(
 			MatrixData switchData,
 			CrestronControlSystem processor,
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -55,11 +57,10 @@
 #pragma warning restore IDE0060 // Remove unused parameter
 		{
 			Logger.Info("Create Dm-MD-8x1 switch with device ID {0}", switchData.Id);
-			DmMd8x1AvSwitch device = new DmMd8x1AvSwitch(switchData, processor);
-			return device;
+			return new DmMd8x1AvSwitch(switchData, processor);
 		}
 
-		private static IAvSwitcher GetMd400Switch(
+		private static DmMd400AvSwitch GetMd400Switch(
 			MatrixData switchData,
 			CrestronControlSystem processor,
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -67,8 +68,7 @@
 #pragma warning restore IDE0060 // Remove unused parameter
 		{
 			Logger.Info("Create DM-MD-400 switch with device ID {0}", switchData.Id);
-			DmMd400AvSwitch device = new DmMd400AvSwitch(switchData, processor);
-			return device;
+			return new DmMd400AvSwitch(switchData, processor);
 		}
 
 		private static IAvSwitcher? LoadSwitchDriver(
@@ -80,9 +80,9 @@
 			IInfrastructureService hwService)
 #pragma warning restore IDE0060 // Remove unused parameter
 		{
-			string path = DirectoryHelper.NormalizePath(switchData.Connection.Driver);
+			var path = DirectoryHelper.NormalizePath(switchData.Connection.Driver);
 
-			IAvSwitcher? device = DriverLoader.LoadClassByInterface<IAvSwitcher>(
+			var device = DriverLoader.LoadClassByInterface<IAvSwitcher>(
 				path,
 				switchData.ClassName,
 				"IAvSwitcher");
@@ -93,6 +93,9 @@
 				return null;
 			}
 
+			// disabling warning since plugins may implement both interfaces and the framework uses this factory
+			// to create both objects.
+			// ReSharper disable once SuspiciousTypeConversion.Global
 			if (device is IAvIpMatrix deviceAsIpMatrix)
 			{
 				foreach (var source in sources)

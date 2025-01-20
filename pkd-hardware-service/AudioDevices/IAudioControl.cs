@@ -3,7 +3,7 @@
 	using System;
 	using System.Collections.Generic;
 	using pkd_common_utils.GenericEventArgs;
-	using pkd_hardware_service.BaseDevice;
+	using BaseDevice;
 
 	/// <summary>
 	/// Common properties and methods for basic audio level control.
@@ -35,7 +35,7 @@
 		event EventHandler<GenericDualEventArgs<string, string>> AudioOutputMuteChanged;
 
 		/// <summary>
-		/// Gets the Ids of all of the presets that were added to this device when created.
+		/// Gets the Ids of all the presets that were added to this device when created.
 		/// </summary>
 		IEnumerable<string> GetAudioPresetIds();
 

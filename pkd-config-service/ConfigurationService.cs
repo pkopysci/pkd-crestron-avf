@@ -22,7 +22,7 @@
     /// <param name="programSlot">The program slot number to search for when loading configuration.</param>
     public sealed class ConfigurationService(uint programSlot, CrestronControlSystem parent) : IDisposable
 	{
-		private static readonly string ROOT = "/user/4s-plugins/";
+		private const string Root = "/user/4s-plugins/";
 		private readonly uint programSlot = programSlot;
 		private readonly Queue<DependencyData> missingDependencies = new Queue<DependencyData>();
 		private readonly CrestronControlSystem parent = parent;
@@ -57,12 +57,13 @@
 		{
 			Logger.Info("Reading config file...");
 
-			string configFormat = string.Format("*slot{0:D2}_config*", programSlot);
+			var configFormat = $"*slot{programSlot:D2}_config*";
 
 			try
 			{
-				string configPath = Directory.GetFiles(DirectoryHelper.GetUserFolder(), configFormat)
-					.Where(file => file.EndsWith(".json")).FirstOrDefault() ?? string.Empty;
+				var configPath = Directory
+					.GetFiles(DirectoryHelper.GetUserFolder(), configFormat)
+					.FirstOrDefault(file => file.EndsWith(".json")) ?? string.Empty;
 
 				if (configPath.Equals(string.Empty))
 				{
@@ -79,7 +80,7 @@
 					return;
 				}
 
-				// Check local user folder for all libaries and dependencies.
+				// Check local user folder for all libraries and dependencies.
 				if (!TryFindMissingDependencies())
 				{
 					Notify(ConfigLoadFailed);
@@ -112,14 +113,12 @@
 
 		private void CleanupClient()
 		{
-			if (client != null)
-			{
-				client.Disconnect();
-				client.DownloadComplete -= ClientDownloadCompleteHandler;
-				client.ErrorOccurred -= ClientErrorHandler;
-				client.Dispose();
-				client = null;
-			}
+			if (client == null) return;
+			client.Disconnect();
+			client.DownloadComplete -= ClientDownloadCompleteHandler;
+			client.ErrorOccurred -= ClientErrorHandler;
+			client.Dispose();
+			client = null;
 		}
 
 		private void CreateClient()
@@ -130,8 +129,8 @@
 				return;
 			}
 
-			string keyPath = DirectoryHelper.NormalizePath(DirectoryHelper.GetUserFolder() + "/" + Domain.ServerInfo.Key);
-			PrivateKeyFile key = new PrivateKeyFile(keyPath);
+			var keyPath = DirectoryHelper.NormalizePath(DirectoryHelper.GetUserFolder() + "/" + Domain.ServerInfo.Key);
+			var key = new PrivateKeyFile(keyPath);
 			client = new BasicFtpClient(
 				Domain.ServerInfo.Host,
 				Domain.ServerInfo.User,
@@ -147,12 +146,8 @@
 			if (missingDependencies.Count == 0)
 			{
 				CleanupClient();
-
 				Logger.Info("All dependencies downloaded. Restarting program...");
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
-				var bldr = new StringBuilder();
-				CrestronConsole.SendControlSystemCommand("progreset -p:" + programSlot, out bldr);
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
+				CrestronConsole.SendControlSystemCommand("progreset -p:" + programSlot, out _);
 			}
 			else
 			{
@@ -178,10 +173,10 @@
 
 		private void CheckDependency(string fileName, string remoteSubDir, string[] allFiles)
 		{
-			DependencyData data = new DependencyData()
+			var data = new DependencyData()
 			{
 				Local = DirectoryHelper.NormalizePath(DirectoryHelper.GetUserFolder() + "/" + fileName),
-				Remote = ROOT + remoteSubDir + "/" + fileName
+				Remote = Root + remoteSubDir + "/" + fileName
 			};
 
 			if (allFiles.Contains(data.Local))
@@ -204,13 +199,13 @@
 
 		private void CheckLogicLibrary(string[] allFiles)
 		{
-			string appService = Domain?.RoomInfo.Logic.AppServiceLibrary ?? string.Empty;
+			var appService = Domain?.RoomInfo.Logic.AppServiceLibrary ?? string.Empty;
 			if (string.IsNullOrEmpty(appService))
 			{
 				return;
 			}
 
-			Logger.Debug("Application pluggin set in config. Getting dependency...");
+			Logger.Debug("Application plugin set in config. Getting dependency...");
 			CheckDependency(appService, "services", allFiles);
 		}
 
@@ -298,22 +293,22 @@
 			}
 		}
 
-		private void CheckCableboxLibrary(string[] allFiles)
+		private void CheckCableBoxLibrary(string[] allFiles)
 		{
             if (Domain == null)
             {
-                Logger.Error("ConfigurationService.CheckCableboxLibrary() - Domain data not populated.");
+                Logger.Error("ConfigurationService.CheckCableBoxLibrary() - Domain data not populated.");
                 return;
             }
 
-            foreach (var cbox in Domain.CableBoxes)
+            foreach (var cableBox in Domain.CableBoxes)
 			{
-				if (string.IsNullOrEmpty(cbox.Connection.Driver))
+				if (string.IsNullOrEmpty(cableBox.Connection.Driver))
 				{
 					continue;
 				}
 
-				CheckDependency(cbox.Connection.Driver, "cableboxes", allFiles);
+				CheckDependency(cableBox.Connection.Driver, "cableboxes", allFiles);
 			}
 		}
 
@@ -357,7 +352,7 @@
 				CheckProjectorLibrary(allFiles);
 				CheckAvRouterLibrary(allFiles);
 				CheckDspLibrary(allFiles);
-				CheckCableboxLibrary(allFiles);
+				CheckCableBoxLibrary(allFiles);
 				CheckLightingLibrary(allFiles);
 				return true;
 			}
@@ -374,17 +369,17 @@
 			{
 				try
 				{
-					StringBuilder bldr = new StringBuilder();
+					var builder = new StringBuilder();
 					using (StreamReader reader = new(configPath))
 					{
 						string? line;
 						while ((line = reader.ReadLine()) != null)
 						{
-							bldr.Append(line);
+							builder.Append(line);
 						}
 					}
 
-					Domain = DomainFactory.CreateDomainFromJson(bldr.ToString());
+					Domain = DomainFactory.CreateDomainFromJson(builder.ToString());
 					return true;
 				}
 				catch (Exception ex)
@@ -412,7 +407,7 @@
 				|| string.IsNullOrEmpty(Domain.ServerInfo.Host)
 				|| string.IsNullOrEmpty(Domain.ServerInfo.Key))
 			{
-				Logger.Error("No manifester server information in config file. Cannot download dependencies.");
+				Logger.Error("No manifest server information in config file. Cannot download dependencies.");
 				Notify(ConfigLoadFailed);
 				return;
 			}

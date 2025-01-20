@@ -1,16 +1,16 @@
 ﻿namespace pkd_domain_service
 {
-	using pkd_domain_service.Data;
-	using pkd_domain_service.Data.CameraData;
-	using pkd_domain_service.Data.DisplayData;
-	using pkd_domain_service.Data.DspData;
-	using pkd_domain_service.Data.EndpointData;
-	using pkd_domain_service.Data.FusionData;
-	using pkd_domain_service.Data.LightingData;
-	using pkd_domain_service.Data.RoomInfoData;
-	using pkd_domain_service.Data.RoutingData;
-	using pkd_domain_service.Data.TransportDeviceData;
-	using pkd_domain_service.Data.UserInterfaceData;
+	using Data;
+	using Data.CameraData;
+	using Data.DisplayData;
+	using Data.DspData;
+	using Data.EndpointData;
+	using Data.FusionData;
+	using Data.LightingData;
+	using Data.RoomInfoData;
+	using Data.RoutingData;
+	using Data.TransportDeviceData;
+	using Data.UserInterfaceData;
 	using System.Collections.ObjectModel;
 
 	/// <summary>
@@ -19,7 +19,7 @@
 	public interface IDomainService
 	{
 		/// <summary>
-		/// Gets a collection all of display devices defined in the configuration.
+		/// Gets a collection all display devices defined in the configuration.
 		/// </summary>
 		ReadOnlyCollection<Display> Displays { get; }
 
@@ -131,7 +131,7 @@
 		/// <summary>
 		/// Search through all AV endpoints in the configuration for one with an ID that matches
 		/// 'id'.
-		/// If an AV endpointcannot be found a warning is written to the logging system.
+		/// If an AV endpoint cannot be found a warning is written to the logging system.
 		/// </summary>
 		/// <param name="id">The ID of the AV endpoint to search for.</param>
 		/// <returns>The first instance that matches id, or an empty AV endpoint object.</returns>

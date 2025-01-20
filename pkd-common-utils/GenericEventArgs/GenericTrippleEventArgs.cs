@@ -7,7 +7,7 @@
     /// </summary>
     /// <param name="arg1">the first data object supplied when the event was thrown.</param>
     /// <param name="arg2">the second data object supplied when the event was thrown.</param>
-    /// <param name="arg3">the thrid data object supplied when the event was thrown.</param>
+    /// <param name="arg3">the third data object supplied when the event was thrown.</param>
     public class GenericTrippleEventArgs<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3) : EventArgs
 	{
 

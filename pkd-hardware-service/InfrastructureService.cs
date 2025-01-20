@@ -1,4 +1,5 @@
-﻿namespace pkd_hardware_service
+﻿// ReSharper disable SuspiciousTypeConversion.Global
+namespace pkd_hardware_service
 {
 	using Crestron.SimplSharpPro;
 	using pkd_common_utils.Logging;
@@ -9,17 +10,17 @@
 	using pkd_domain_service.Data.LightingData;
 	using pkd_domain_service.Data.RoutingData;
 	using pkd_domain_service.Data.TransportDeviceData;
-	using pkd_hardware_service.AudioDevices;
-	using pkd_hardware_service.AvSwitchDevices;
-	using pkd_hardware_service.BaseDevice;
-	using pkd_hardware_service.DisplayDevices;
-	using pkd_hardware_service.EndpointDevices;
-	using pkd_hardware_service.LightingDevices;
-	using pkd_hardware_service.TransportDevices;
+	using AudioDevices;
+	using AvSwitchDevices;
+	using BaseDevice;
+	using DisplayDevices;
+	using EndpointDevices;
+	using LightingDevices;
+	using TransportDevices;
 	using System;
 
 	/// <summary>
-	/// Hardware managment service for controlling real-world hardware devices.
+	/// Hardware management service for controlling real-world hardware devices.
 	/// </summary>
 	public class InfrastructureService : IInfrastructureService
 	{
@@ -32,7 +33,7 @@
 		/// <param name="controlSystem">A reference to the Crestron control processor running the system.</param>
 		public InfrastructureService(CrestronControlSystem controlSystem)
 		{
-			ParameterValidator.ThrowIfNull(controlSystem, "Ctor", "controlSystem");
+			ParameterValidator.ThrowIfNull(controlSystem, "Ctor", nameof(controlSystem));
 
 			this.controlSystem = controlSystem;
 			Dsps = new DeviceContainer<IAudioControl>();
@@ -74,16 +75,18 @@
 			try
 			{
 				ParameterValidator.ThrowIfNull(avSwitch, "AddAvSwitch", nameof(avSwitch));
-				Logger.Info(string.Format("Adding Av Swtich {0} To collection.", avSwitch.Id));
-				IAvSwitcher device = AvSwitchFactory.CreateAvSwitcher(
+				Logger.Info($"Adding Av Switch {avSwitch.Id} To collection.");
+				var device = AvSwitchFactory.CreateAvSwitcher(
 					routingData.Sources,
 					routingData.Destinations,
 					avSwitch,
 					controlSystem,
 					this);
 
-				// If the switcher is also an audio control, add it to the collection of dsp devices.
+				if (device == null) return;
 				AvSwitchers.AddDevice(avSwitch.Id, device);
+				
+				// If the switcher is also an audio control, add it to the collection of dsp devices.
 				if (device is IAudioControl dspDevice)
 				{
 					Dsps.AddDevice(avSwitch.Id, dspDevice);
@@ -91,7 +94,7 @@
 			}
 			catch (Exception ex)
 			{
-				Logger.Error(ex, "Infrastructureservice.AddAvSwitch()");
+				Logger.Error(ex, "InfrastructureService.AddAvSwitch()");
 			}
 		}
 
@@ -101,9 +104,9 @@
 			try
 			{
 				ParameterValidator.ThrowIfNull(display, "AddDisplay", nameof(display));
-				Logger.Info(string.Format("Adding display {0} to collection.", display.Id));
+				Logger.Info("Adding display {0} to collection.", display.Id);
 				var device = DisplayDeviceFactory.CreateDisplay(display, controlSystem, this);
-				if (device != null && device != default(IDisplayDevice))
+				if (device != null)
 				{
 					Displays.AddDevice(display.Id, device);
 				}
@@ -126,7 +129,7 @@
 			try
 			{
 				ParameterValidator.ThrowIfNull(dsp, "AddDsp", nameof(dsp));
-				Logger.Info(string.Format("Adding DSP {0} to collection.", dsp.Id));
+				Logger.Info("Adding DSP {0} to collection.", dsp.Id);
 				var device = AudioDeviceFactory.CreateDspDevice(dsp, controlSystem, this);
 				if (device != null)
 				{
@@ -146,7 +149,7 @@
 			{
 				ParameterValidator.ThrowIfNull(channel, "AddChannel", nameof(channel));
 				Logger.Info("Adding Audio channel {0} to DSP {1}...", channel.Id, channel.DspId);
-				IAudioControl found = Dsps.GetDevice(channel.DspId);
+				var found = Dsps.GetDevice(channel.DspId);
 				if (found == null)
 				{
 					Logger.Error("No DSP with ID {0} found. Skipping channel {1}", channel.DspId, channel.Id);
@@ -201,8 +204,9 @@
 			try
 			{
 				ParameterValidator.ThrowIfNull(endpointData, "AddEndpoint", nameof(endpointData));
-				Logger.Info(string.Format("Adding endpoint {0} to collection.", endpointData.Id));
+				Logger.Info("Adding endpoint {0} to collection.", endpointData.Id);
 				var endpoint = EndpointDeviceFactory.CreateEndpointDevice(endpointData, controlSystem);
+				if (endpoint == null) return;
 				Endpoints.AddDevice(endpoint.Id, endpoint);
 				endpoint.Register();
 			}
@@ -219,11 +223,9 @@
 			{
 				ParameterValidator.ThrowIfNull(cableBox, "AddCableBox", nameof(cableBox));
 				Logger.Info("Adding cable box {0} to collection.", cableBox.Id);
-				var cbox = TransportDeviceFactory.CreateCableBox(cableBox, controlSystem, this);
-				if (cbox != null)
-				{
-					CableBoxes.AddDevice(cableBox.Id, cbox);
-				}
+				var device = TransportDeviceFactory.CreateCableBox(cableBox, controlSystem, this);
+				if (device == null) return;
+				CableBoxes.AddDevice(cableBox.Id, device);
 			}
 			catch (Exception e)
 			{
@@ -235,17 +237,9 @@
 		{
 			try
 			{
-				if (lighting == null)
-				{
-					Logger.Error("InfrastructureService.AddLightingDevice() - 'lighting' cannot be null.");
-					return;
-				}
-
 				var lightingObj = LightingDeviceFactory.CreateLightingDevice(lighting, controlSystem, this);
-				if (lighting != null)
-				{
-					LightingDevices.AddDevice(lighting.Id, lightingObj);
-				}
+				if (lightingObj == null) return;
+				LightingDevices.AddDevice(lighting.Id, lightingObj);
 			}
 			catch (Exception e)
 			{
@@ -266,9 +260,9 @@
 					}
 				}
 
-				foreach (var disp in Displays.GetAllDevices())
+				foreach (var display in Displays.GetAllDevices())
 				{
-					disp.Connect();
+					display.Connect();
 				}
 
 				foreach (var endpoint in Endpoints.GetAllDevices())
@@ -281,9 +275,9 @@
 					rtr.Connect();
 				}
 
-				foreach (var cbox in CableBoxes.GetAllDevices())
+				foreach (var cableBox in CableBoxes.GetAllDevices())
 				{
-					cbox.Connect();
+					cableBox.Connect();
 				}
 
 				foreach (var lightingControl in LightingDevices.GetAllDevices())
@@ -306,19 +300,17 @@
 
 		private void Dispose(bool disposing)
 		{
-			if (!isDisposed)
+			if (isDisposed) return;
+			if (disposing)
 			{
-				if (disposing)
-				{
-					Dsps?.Dispose();
-					Displays?.Dispose();
-					AvSwitchers?.Dispose();
-					Endpoints?.Dispose();
-					LightingDevices?.Dispose();
-				}
-
-				isDisposed = true;
+				Dsps.Dispose();
+				Displays.Dispose();
+				AvSwitchers.Dispose();
+				Endpoints.Dispose();
+				LightingDevices.Dispose();
 			}
+
+			isDisposed = true;
 		}
 	}
 }

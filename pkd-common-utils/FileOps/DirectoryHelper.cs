@@ -2,7 +2,7 @@
 {
 	using Crestron.SimplSharp;
 	using Crestron.SimplSharp.CrestronIO;
-	using pkd_common_utils.Validation;
+	using Validation;
 	using System;
 
 	/// <summary>
@@ -15,7 +15,7 @@
 		/// If the platform is a server then all '\' are replaced with '/', otherwise all '/' are replaced with '\'.
 		/// </summary>
 		/// <param name="currentPath">The relative or absolute file path to correct.</param>
-		/// <returns>The same file path given as an argument but formatted correctly based on the plaform.</returns>
+		/// <returns>The same file path given as an argument but formatted correctly based on the platform.</returns>
 		public static string NormalizePath(string currentPath)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(currentPath, "NormalizePath", "currentPath");
@@ -41,10 +41,10 @@
 			switch (CrestronEnvironment.DevicePlatform)
 			{
 				case eDevicePlatform.Server:
-					return NormalizePath(string.Format("{0}/User", Directory.GetApplicationRootDirectory()));
+					return NormalizePath($"{Directory.GetApplicationRootDirectory()}/User");
 
 				default:
-					return NormalizePath(string.Format("{0}/user", Directory.GetApplicationRootDirectory()));
+					return NormalizePath($"{Directory.GetApplicationRootDirectory()}/user");
 			}
 		}
 

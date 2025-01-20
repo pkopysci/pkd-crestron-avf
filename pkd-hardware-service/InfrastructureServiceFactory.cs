@@ -5,7 +5,7 @@
 	using pkd_domain_service;
 
 	/// <summary>
-	/// Helper class for creating the Ifrastracture service that will control the actual hardware in the system.
+	/// Helper class for creating the IInfrastructureService object that will control the actual hardware in the system.
 	/// </summary>
 	public static class InfrastructureServiceFactory
 	{
@@ -22,7 +22,7 @@
 			ParameterValidator.ThrowIfNull(domain, "Ctor", nameof(domain));
 			ParameterValidator.ThrowIfNull(control, "Ctor", nameof(control));
 
-			InfrastructureService hwService = new InfrastructureService(control);
+			var hwService = new InfrastructureService(control);
 			foreach (var display in domain.Displays)
 			{
 				hwService.AddDisplay(display);

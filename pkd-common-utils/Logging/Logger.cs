@@ -128,14 +128,10 @@
 		/// Write an exception stack trace to the logging system.
 		/// </summary>
 		/// <param name="e">the .NET exception that will be logged to the system.</param>
-		/// <param name="message">The custom message to include with the exeption log.</param>
+		/// <param name="message">The custom message to include with the exception log.</param>
 		public static void Error(Exception e, string message)
 		{
-			string line = string.Format(
-				"|{0}| {1} - {2}",
-				programId,
-				message,
-				e);
+			var line = $"|{programId}| {message} - {e}";
 
 			ErrorLog.Error(line);
 			CrestronConsole.PrintLine($"|{programId}| {message} - {e.Message} - See error log for stack trace.");
@@ -154,7 +150,7 @@
 				return;
 			}
 
-			StringBuilder builder = new StringBuilder();
+			var builder = new StringBuilder();
 			builder.Append("|")
 				.Append(programId)
 				.Append("| ")
@@ -164,7 +160,7 @@
 				.Append(" || ")
 				.Append(e.StackTrace);
 
-			string line = builder.ToString();
+			var line = builder.ToString();
 			ErrorLog.Error(line);
 			CrestronConsole.PrintLine($"|{programId}| {message} - {e.Message} - See error log for stack trace.");
 		}
@@ -180,20 +176,17 @@
 				return;
 			}
 
-			string line = string.Format(
-				"|{0}| {1}",
-				programId,
-				message);
+			var line = $"|{programId}| {message}";
 
 			ErrorLog.Warn(line);
 			CrestronConsole.PrintLine(line);
 		}
 
 		/// <summary>
-		/// Write a warning messgae to the logging system as a formatted string.
+		/// Write a warning message to the logging system as a formatted string.
 		/// </summary>
-		/// <param name="message">The string format to use when writting to the log.</param>
-		/// <param name="args">paramters to include in the formatted string.</param>
+		/// <param name="message">The string format to use when writing to the log.</param>
+		/// <param name="args">parameters to include in the formatted string.</param>
 		public static void Warn(string message, params object[] args)
 		{
 			if (string.IsNullOrEmpty(message))
@@ -201,13 +194,13 @@
 				return;
 			}
 
-			StringBuilder builder = new StringBuilder();
-			builder.Append("|")
+			var builder = new StringBuilder();
+			builder.Append('|')
 				.Append(programId)
 				.Append("| ")
 				.Append(string.Format(message, args));
 
-			string line = builder.ToString();
+			var line = builder.ToString();
 			ErrorLog.Warn(line);
 			CrestronConsole.PrintLine(line);
 		}
@@ -215,17 +208,16 @@
 		/// <summary>
 		/// Write a debug message to the logging system. This will only display if debug mode is enabled.
 		/// </summary>
-		/// <param name="message">The string format to use when writting to the log.</param>
-		/// <param name="args">paramters for the formatted string.</param>
+		/// <param name="message">The string format to use when writing to the log.</param>
+		/// <param name="args">parameters for the formatted string.</param>
 		public static void Debug(string message, params object[] args)
 		{
 #if DEBUG
-			StringBuilder builder = new StringBuilder();
+			var builder = new StringBuilder();
 			builder.Append("| ").Append(programId).Append(" DEBUG LOG | ")
 				.Append(string.Format(message, args));
-
-			string line = builder.ToString();
-			CrestronConsole.PrintLine(line);
+			
+			CrestronConsole.PrintLine(builder.ToString());
 #else
 
 
@@ -234,33 +226,29 @@
                 return;
             }
 
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             builder.Append("| ").Append(programId).Append(" DEBUG LOG | ")
                 .Append(string.Format(message, args));
 
-            string line = builder.ToString();
-            CrestronConsole.PrintLine(line);
+            CrestronConsole.PrintLine(builder.ToString();
 #endif
 		}
 
 		/// <summary>
-		/// Write a debug message to the logging systme. This will only display if debug mode is enabled.
+		/// Write a debug message to the logging system. This will only display if debug mode is enabled.
 		/// </summary>
 		/// <param name="message">The message to write to the debug log.</param>
 		public static void Debug(string message)
 		{
-
 #if DEBUG
-			string line = string.Format("| {0} DEBUG LOG | {1}", programId, message);
-			CrestronConsole.PrintLine(line);
+			CrestronConsole.PrintLine($"| {programId} DEBUG LOG | {message}");
 #else
             if (!DebugEnabled || string.IsNullOrEmpty(message))
             {
                 return;
             }
 
-            string line = string.Format("| {0} DEBUG LOG | {1}", programId, message);
-            CrestronConsole.PrintLine(line);
+            CrestronConsole.PrintLine($"| {programId} DEBUG LOG | {message}");
 #endif
 		}
 

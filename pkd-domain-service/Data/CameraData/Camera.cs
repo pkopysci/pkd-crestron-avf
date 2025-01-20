@@ -1,6 +1,6 @@
 ﻿namespace pkd_domain_service.Data.CameraData
 {
-	using pkd_domain_service.Data.ConnectionData;
+	using ConnectionData;
 
 	public class Camera : BaseData
 	{

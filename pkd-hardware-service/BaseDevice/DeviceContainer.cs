@@ -96,23 +96,21 @@
 		/// Dispose stored objects.
 		/// </summary>
 		/// <param name="disposing">Flag indicating disposing state.</param>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
-			if (!disposed)
+			if (disposed) return;
+			if (disposing)
 			{
-				if (disposing)
+				foreach (var dev in GetAllDevices())
 				{
-					foreach (var dev in GetAllDevices())
+					if (dev is IDisposable disposable)
 					{
-						if (dev is IDisposable)
-						{
-							(dev as IDisposable)?.Dispose();
-						}
-					}
+						disposable.Dispose();
+					}	
 				}
-
-				disposed = true;
 			}
+
+			disposed = true;
 		}
 	}
 }

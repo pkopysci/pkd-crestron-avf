@@ -18,7 +18,7 @@
 		{
 			if (param == null)
 			{
-				throw new ArgumentNullException(string.Format("{0}() - {1} cannot be null.", methodName, paramName));
+				throw new ArgumentNullException($"{methodName}() - {paramName} cannot be null.");
 			}
 		}
 
@@ -27,13 +27,13 @@
 		/// </summary>
 		/// <param name="param">The object to evaluate.</param>
 		/// <param name="methodName">Name of the method running the check.</param>
-		/// <param name="paramName">Name of the paramter being cheecked.</param>
+		/// <param name="paramName">Name of the parameter being cheecked.</param>
 		/// <exception cref="ArgumentException">if 'param' is null or empty.</exception>
 		public static void ThrowIfNullOrEmpty(string param, string methodName, string paramName)
 		{
 			if (string.IsNullOrEmpty(param))
 			{
-				throw new ArgumentException(string.Format("{0}() - {1} cannot be null or empty.", methodName, paramName));
+				throw new ArgumentException($"{methodName}() - {paramName} cannot be null or empty.");
 			}
 		}
 	}

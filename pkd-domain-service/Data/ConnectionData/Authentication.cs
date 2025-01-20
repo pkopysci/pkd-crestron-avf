@@ -7,7 +7,7 @@
 	public class Authentication : BaseData
 	{
 		/// <summary>
-		/// Gets or sets the user name used to log into the target device for control.
+		/// Gets or sets the username used to log into the target device for control.
 		/// </summary>
 		public string UserName { get; set; } = string.Empty;
 

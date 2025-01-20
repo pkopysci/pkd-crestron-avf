@@ -14,12 +14,7 @@
 		/// <returns>A new string with all whitespaces and hyphens removed.</returns>
 		public static string NormalizeDeviceModel(string arg)
 		{
-			if (string.IsNullOrEmpty(arg))
-			{
-				return string.Empty;
-			}
-
-			return arg.Trim().ToUpper(CultureInfo.InvariantCulture).Replace("-", string.Empty);
+			return string.IsNullOrEmpty(arg) ? string.Empty : arg.Trim().ToUpper(CultureInfo.InvariantCulture).Replace("-", string.Empty);
 		}
 	}
 }

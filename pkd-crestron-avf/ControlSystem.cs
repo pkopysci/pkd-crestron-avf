@@ -3,19 +3,28 @@
 	using Crestron.SimplSharp;
 	using Crestron.SimplSharpPro;
 	using Crestron.SimplSharpPro.CrestronThread;
+	using pkd_application_service;
+	using pkd_common_utils.Logging;
+	using pkd_config_service;
+	using pkd_hardware_service;
+	using pkd_ui_service;
 	using System;
 
 	public class ControlSystem : CrestronControlSystem
 	{
 		private Thread? startupThread;
+		private ConfigurationService? configService;
+
+		private IInfrastructureService? infrastructureService;
+		private IApplicationService? applicationService;
+		private IPresentationService? presentationService;
 		
 		public ControlSystem()
-			: base()
 		{
 			try
 			{
 				Thread.MaxNumberOfUserThreads = 20;
-				CrestronEnvironment.ProgramStatusEventHandler += new ProgramStatusEventHandler(ControllerProgramEventHandler);
+				CrestronEnvironment.ProgramStatusEventHandler += ControllerProgramEventHandler;
 
 				CrestronConsole.AddNewConsoleCommand(
 					SetDebugMode,
@@ -33,7 +42,8 @@
 		{
 			try
 			{
-
+				Logger.SetProgramId($"PGM {ProgramNumber}");
+				Logger.Info("GCU Main - Initializing System...");
 				startupThread = new Thread(Startup, new object());
 			}
 			catch (Exception e)
@@ -46,37 +56,60 @@
 		{
 			if (args.ToUpper().Equals("ON", StringComparison.InvariantCulture))
 			{
-				// TODO: Add logger to entry point.
+				Logger.SetDebugOn();
 			}
 			else
 			{
-				// TODO: disable logger
+				Logger.SetDebugOff();
 			}
 		}
 
 		private object Startup(object userObj)
 		{
-
+			Logger.Info("GCU Main - Startup()");
+			configService = new ConfigurationService(this.ProgramNumber, this);
+			configService.ConfigLoadComplete += ConfigLoadCompleteHandler;
+			configService.ConfigLoadFailed += ConfigLoadFailedHandler;
 			try
 			{
-				// TODO: Startup system.
+				configService.LoadConfig();
 			}
 			catch (Exception e)
 			{
-				// TODO: Catch startup errors
+				Logger.Error("GCU Main - Boot up failed:\n{0}", e.Message);
 			}
 
 			return userObj;
 		}
 
-		private void ConfigLoadCompleteHandler(object sender, EventArgs args)
+		private void ConfigLoadCompleteHandler(object? sender, EventArgs args)
 		{
-			// TODO: ControlSystem.ConfigLoadCompleteHandler()
+			var domainService = configService?.Domain;
+			if (domainService == null)
+			{
+				Logger.Error("ControlSystem.ConfigLoadCompleteHandler: failed to get domain service from config.");
+				return;
+			}
+			
+			infrastructureService = InfrastructureServiceFactory.CreateInfrastructureService(domainService, this);
+			applicationService = ApplicationControlFactory.CreateAppService(infrastructureService, domainService);
+			if (applicationService == null)
+			{
+				Logger.Error("ControlSystem.ConfigLoadCompleteHandler: failed to create application service.");
+				return;
+			}
+			
+			applicationService.SetAutoShutdownTime(23, 0);
+			presentationService = PresentationServiceFactory.CreatePresentationService(applicationService, this);
+			presentationService.Initialize();
+			infrastructureService.ConnectAllDevices();
+
+			Logger.Info("GCU Main - startup Complete.");
 		}
 
-		private void ConfigLoadFailedHandler(object sender, EventArgs args)
+		private void ConfigLoadFailedHandler(object? sender, EventArgs args)
 		{
-			// TODO: Log failure to logging system.
+			Logger.Error("GCU Main - startup Failed.");
 		}
 
 		private void ControllerProgramEventHandler(eProgramStatusEventType programStatusEventType)
@@ -90,10 +123,11 @@
 					//The program has been resumed. Resume all the user threads/timers as needed.
 					break;
 				case (eProgramStatusEventType.Stopping):
-					// TODO: Dispose of all services
+					(presentationService as IDisposable)?.Dispose();
+					(applicationService as IDisposable)?.Dispose();
+					configService?.Dispose();
 					break;
 			}
-
 		}
 	}
 }

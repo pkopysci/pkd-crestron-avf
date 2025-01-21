@@ -25,7 +25,7 @@
 		/// <summary>
 		/// Gets or sets the TCP/IP, rs-232, or ir port used to control the device.
 		/// </summary>
-		public int Port { get; set; }
+		public int Port { get; set; } = 0;
 
 		/// <summary>
 		/// Gets or sets the credentials used to log into the device.

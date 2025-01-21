@@ -1,7 +1,7 @@
 ﻿namespace pkd_hardware_service.TransportDevices
 {
 	using Crestron.SimplSharpPro;
-	using pkd_hardware_service.BaseDevice;
+	using BaseDevice;
 
 	/// <summary>
 	/// Interface to be implemented by any class that uses transport commands (Blu-ray, DVD player, etc.).

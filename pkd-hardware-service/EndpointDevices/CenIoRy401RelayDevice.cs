@@ -7,7 +7,7 @@
 	using pkd_common_utils.Logging;
 	using pkd_common_utils.Validation;
 	using pkd_domain_service.Data.EndpointData;
-	using pkd_hardware_service.BaseDevice;
+	using BaseDevice;
 	using System;
 
 
@@ -17,26 +17,23 @@
 
 	public class CenIoRy401RelayDevice : BaseDevice, IEndpointDevice, IRelayDevice, IDisposable
 	{
-		private readonly CrestronControlSystem processor;
-		private CenIoRy104 device;
+		private readonly CenIoRy104 device;
 		private bool disposed;
 
 		public CenIoRy401RelayDevice(Endpoint data, CrestronControlSystem controlSystem)
 		{
-			ParameterValidator.ThrowIfNull(controlSystem, "Ctor", "controlSystem");
-			ParameterValidator.ThrowIfNull(data, "Ctor", "data");
+			ParameterValidator.ThrowIfNull(controlSystem, "Ctor", nameof(controlSystem));
+			ParameterValidator.ThrowIfNull(data, "Ctor", nameof(data));
 
-			processor = controlSystem;
 			Id = data.Id;
 			Label = data.Id;
-			device = new CenIoRy104((uint)data.Port, processor);
-			device.OnlineStatusChange += new OnlineStatusChangeEventHandler(OnlineStatusChangeHandler);
-
-			if (device.RelayPorts is null) return;
+			device = new CenIoRy104((uint)data.Port, controlSystem);
+			device.OnlineStatusChange += OnlineStatusChangeHandler;
+			
 			foreach (var relay in device.RelayPorts)
 			{
 				if (relay == null) continue;
-				relay.StateChange += new RelayEventHandler(RelayStateChangeHandler);
+				relay.StateChange += RelayStateChangeHandler;
 			}
 		}
 
@@ -49,28 +46,16 @@
 		public event EventHandler<GenericDualEventArgs<string, int>>? RelayChanged;
 
 		/// <inheritdoc/>
-		public bool IsRegistered
-		{
-			get { return CheckRegistered(); }
-		}
+		public bool IsRegistered => CheckRegistered();
 
 		/// <inheritdoc/>
-		public bool SupportsRelays
-		{
-			get { return true; }
-		}
+		public bool SupportsRelays => true;
 
 		/// <inheritdoc/>
-		public bool SupportsIr
-		{
-			get { return false; }
-		}
+		public bool SupportsIr => false;
 
 		/// <inheritdoc/>
-		public bool SupportsRs232
-		{
-			get { return false; }
-		}
+		public bool SupportsRs232 => false;
 
 		/// <inheritdoc/>
 		public void Register()
@@ -97,14 +82,7 @@
 				return false;
 			}
 
-			if (index <= device.RelayPorts.Count)
-			{
-                return device.RelayPorts[(uint)index].State;
-            }
-			else
-			{
-				return false;
-			}
+			return index <= device.RelayPorts.Count ? device.RelayPorts[(uint)index]?.State : false;
 		}
 
 		/// <inheritdoc/>
@@ -124,7 +102,7 @@
 				return;
 			}
 
-			device.RelayPorts[(uint)index].Close();
+			device.RelayPorts[(uint)index]?.Close();
 			CTimer t = new CTimer((obj) =>
 			{
 				if (!CheckRegistered())
@@ -132,7 +110,7 @@
 					return;
 				}
 
-				device.RelayPorts[(uint)index].Open();
+				device.RelayPorts[(uint)index]?.Open();
 			}, timeMs);
 		}
 
@@ -151,7 +129,7 @@
 				return;
 			}
 
-			device.RelayPorts[(uint)index].Close();
+			device.RelayPorts[(uint)index]?.Close();
 		}
 
 		/// <inheritdoc/>
@@ -169,7 +147,7 @@
 				return;
 			}
 
-			device.RelayPorts[(uint)index].Open();
+			device.RelayPorts[(uint)index]?.Open();
 		}
 
 		public void Dispose()
@@ -218,7 +196,7 @@
 
 		private bool CheckRegistered()
 		{
-			return device != null && device.Registered;
+			return device.Registered;
 		}
 	}
 

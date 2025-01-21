@@ -6,13 +6,13 @@
 	using pkd_domain_service.Data.LightingData;
 	using pkd_domain_service.Data.RoutingData;
 	using pkd_domain_service.Data.TransportDeviceData;
-	using pkd_hardware_service.AudioDevices;
-	using pkd_hardware_service.AvSwitchDevices;
-	using pkd_hardware_service.BaseDevice;
-	using pkd_hardware_service.DisplayDevices;
-	using pkd_hardware_service.EndpointDevices;
-	using pkd_hardware_service.LightingDevices;
-	using pkd_hardware_service.TransportDevices;
+	using AudioDevices;
+	using AvSwitchDevices;
+	using BaseDevice;
+	using DisplayDevices;
+	using EndpointDevices;
+	using LightingDevices;
+	using TransportDevices;
 	using System;
 
 	/// <summary>
@@ -58,7 +58,7 @@
 		void AddDsp(Dsp dsp);
 
 		/// <summary>
-		/// Add an audio input or output channel to a DSP in the current collecton. This will look for a DSP
+		/// Add an audio input or output channel to a DSP in the current collection. This will look for a DSP
 		/// with a matching ID and then configure that device with the channel.
 		/// </summary>
 		/// <param name="channel">The channel data object used to configure the DSP control.</param>

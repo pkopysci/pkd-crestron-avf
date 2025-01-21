@@ -1,7 +1,7 @@
 ﻿namespace pkd_hardware_service.EndpointDevices
 {
 	using pkd_common_utils.GenericEventArgs;
-	using pkd_hardware_service.BaseDevice;
+	using BaseDevice;
 	using System;
 
 	/// <summary>
@@ -15,7 +15,7 @@
 		event EventHandler<GenericDualEventArgs<string, int>> RelayChanged;
 
 		/// <summary>
-		/// Gets a value indicating whether or not the relay is closed or open.
+		/// Gets a value indicating whether the relay is closed or open.
 		/// </summary>
 		/// <param name="index">The 0-based index representing which relay on the device to query.</param>
 		/// <returns>True if the rleay is closed, false if the relay is open</returns>

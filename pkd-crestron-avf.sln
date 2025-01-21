@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-domain-service", "pkd-d
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-hardware-service", "pkd-hardware-service\pkd-hardware-service.csproj", "{D63016B8-2871-4026-8596-0341AB751870}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-application-service", "pkd-application-service\pkd-application-service.csproj", "{65D1301A-1094-441F-B865-F9F1C5CDAD22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-ui-service", "pkd-ui-service\pkd-ui-service.csproj", "{A0F139EE-F736-4541-A489-C944ABCBF7DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{D63016B8-2871-4026-8596-0341AB751870}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D63016B8-2871-4026-8596-0341AB751870}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D63016B8-2871-4026-8596-0341AB751870}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65D1301A-1094-441F-B865-F9F1C5CDAD22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65D1301A-1094-441F-B865-F9F1C5CDAD22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65D1301A-1094-441F-B865-F9F1C5CDAD22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65D1301A-1094-441F-B865-F9F1C5CDAD22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0F139EE-F736-4541-A489-C944ABCBF7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0F139EE-F736-4541-A489-C944ABCBF7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0F139EE-F736-4541-A489-C944ABCBF7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0F139EE-F736-4541-A489-C944ABCBF7DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

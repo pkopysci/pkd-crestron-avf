@@ -1,7 +1,7 @@
 ﻿namespace pkd_hardware_service.LightingDevices
 {
 	using pkd_common_utils.GenericEventArgs;
-	using pkd_hardware_service.BaseDevice;
+	using BaseDevice;
 	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;

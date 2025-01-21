@@ -17,7 +17,7 @@
 		/// </summary>
 		/// <param name="ep">The Endpoint configuration data used to create the object.</param>
 		/// <param name="processor">The host control system for interfacing with the endpoint.</param>
-		/// <returns>A new Endpoing control object registered with the processor. Returns null on a failure.</returns>
+		/// <returns>A new Endpoint control object registered with the processor. Returns null on a failure.</returns>
 		/// <exception cref="ArgumentNullException"> if any argument is null.</exception>
 		public static IEndpointDevice? CreateEndpointDevice(Endpoint ep, CrestronControlSystem processor)
 		{

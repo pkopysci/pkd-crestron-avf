@@ -6,7 +6,7 @@
 	using pkd_common_utils.Logging;
 	using pkd_common_utils.Validation;
 	using pkd_domain_service.Data.EndpointData;
-	using pkd_hardware_service.BaseDevice;
+	using BaseDevice;
 	using System;
 	using System.Linq;
 
@@ -43,31 +43,13 @@
 		public bool IsRegistered { get; private set; }
 
 		/// <inheritdoc/>
-		public bool SupportsRelays
-		{
-			get
-			{
-				return processor.SupportsRelay;
-			}
-		}
+		public bool SupportsRelays => processor.SupportsRelay;
 
 		/// <inheritdoc/>
-		public bool SupportsIr
-		{
-			get
-			{
-				return processor.SupportsIROut;
-			}
-		}
+		public bool SupportsIr => processor.SupportsIROut;
 
 		/// <inheritdoc/>
-		public bool SupportsRs232
-		{
-			get
-			{
-				return processor.SupportsComPort;
-			}
-		}
+		public bool SupportsRs232 => processor.SupportsComPort;
 
 		/// <inheritdoc/>
 		public void Register()
@@ -86,12 +68,7 @@
 		/// <inheritdoc/>
 		public bool? GetCurrentRelayState(int index)
 		{
-			if (ValidateRelayIndex(index))
-			{
-				return processor.RelayPorts[(uint)index]?.State;
-			}
-
-			return false;
+			return ValidateRelayIndex(index) ? processor.RelayPorts[(uint)index]?.State : false;
 		}
 
 		/// <inheritdoc/>
@@ -116,15 +93,13 @@
 		/// <inheritdoc/>
 		public void PulseRelay(int index, int timeMs)
 		{
-			if (ValidateRelayIndex(index) && CheckRegistered("PulseRelay"))
-			{
-				processor.RelayPorts[(uint)index]?.Close();
-				CTimer t = new CTimer(
-					(object? sender) =>
-					{
-						processor.RelayPorts[(uint)index]?.Open();
-					}, timeMs);
-			}
+			if (!ValidateRelayIndex(index) || !CheckRegistered("PulseRelay")) return;
+			processor.RelayPorts[(uint)index]?.Close();
+			var t = new CTimer(
+				sender =>
+				{
+					processor.RelayPorts[(uint)index]?.Open();
+				}, timeMs);
 		}
 
 		private void RelayStateHandler(Relay relay, RelayEventArgs args)
@@ -136,47 +111,37 @@
 
 		private void RegisterRelays()
 		{
-			if (processor is null|| processor.RelayPorts is null) return;
-
-			if (SupportsRelays)
+			if (!SupportsRelays) return;
+			foreach (var relay in data.Relays)
 			{
-				foreach (var relay in data.Relays)
-				{
-					if (relay > 0 && relay <= processor.RelayPorts.Count)
-					{
+				if (relay <= 0 || relay > processor.RelayPorts.Count) continue;
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                        processor.RelayPorts[(uint)relay].StateChange += RelayStateHandler;
-                        processor.RelayPorts[(uint)relay].Register();
+				processor.RelayPorts[(uint)relay].StateChange += RelayStateHandler;
+				processor.RelayPorts[(uint)relay].Register();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-                    }
-				}
 			}
 		}
 
 		private void RegisterComPorts()
 		{
-			if (SupportsRs232)
+			if (!SupportsRs232) return;
+			foreach (var comPort in data.Comports)
 			{
-				foreach (var comPort in data.Comports)
+				if (comPort > 0 && comPort <= processor.ComPorts.Count)
 				{
-					if (comPort > 0 && comPort <= processor.ComPorts.Count)
-					{
-						// TODO: Subscribe events and register comport
-					}
+					// TODO: Subscribe events and register comport
 				}
 			}
 		}
 
 		private void RegisterIrPorts()
 		{
-			if (SupportsIr)
+			if (!SupportsIr) return;
+			foreach (var irp in data.IrPorts)
 			{
-				foreach (var irp in data.IrPorts)
+				if (irp > 0 && irp <= processor.IROutputPorts.Count)
 				{
-					if (irp > 0 && irp <= processor.IROutputPorts.Count)
-					{
-						// TODO: Subscribe events and register IR ports
-					}
+					// TODO: Subscribe events and register IR ports
 				}
 			}
 		}
@@ -199,7 +164,7 @@
 			if (!data.Relays.Contains(index))
 			{
 				Logger.Error(
-					"Endpoing {Id}.GetCurrentRelayState() - relay {0} is not registered to this device.",
+					"Endpoint {Id}.GetCurrentRelayState() - relay {0} is not registered to this device.",
 					index);
 				return false;
 			}

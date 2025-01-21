@@ -2,7 +2,7 @@
 {
 	using System;
 	using pkd_common_utils.GenericEventArgs;
-	using pkd_hardware_service.BaseDevice;
+	using BaseDevice;
 
 	/// <summary>
 	/// Common attributes and methods of all video display devices.
@@ -37,7 +37,7 @@
 		uint HoursUsed { get; }
 
 		/// <summary>
-		/// Gets or sets a value that indicates whether or not the object should
+		/// Gets or sets a value that indicates whether the object should
 		/// try to reconnect if disconnected from the hardware for any reason.
 		/// </summary>
 		bool EnableReconnect { get; set; }
@@ -67,6 +67,8 @@
 		/// </summary>
 		/// <param name="ipAddress">The IP address or hostname to connect to.</param>
 		/// <param name="port">The port number used to connect to the device.</param>
+		/// <param name="label">The user-friendly name of the display.</param>
+		/// <param name="id">The unique ID of the display used when referencing it for control.</param>
 		void Initialize(string ipAddress, int port, string label, string id);
 	}
 }

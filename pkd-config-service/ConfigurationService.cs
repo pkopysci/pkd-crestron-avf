@@ -23,7 +23,6 @@
     public sealed class ConfigurationService(uint programSlot, CrestronControlSystem parent) : IDisposable
 	{
 		private const string Root = "/user/4s-plugins/";
-		private readonly uint programSlot = programSlot;
 		private readonly Queue<DependencyData> missingDependencies = new Queue<DependencyData>();
 		private readonly CrestronControlSystem parent = parent;
 		private bool disposed;

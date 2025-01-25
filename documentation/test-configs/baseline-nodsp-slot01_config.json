@@ -59,33 +59,6 @@
             "Control": "lighting",
             "SourceSelect": "",
             "Tags": []
-          },
-          {
-            "Id": "MENU04",
-            "Visible": true,
-            "Label": "Video",
-            "Icon": "tv",
-            "Control": "video-matrix",
-            "SourceSelect": "",
-            "Tags": []
-          },
-          {
-            "Id": "MENU04",
-            "Visible": true,
-            "Label": "Audio",
-            "Icon": "note",
-            "Control": "audio-matrix",
-            "SourceSelect": "",
-            "Tags": []
-          },
-          {
-            "Id": "MENU05",
-            "Visible": true,
-            "Label": "Video Wall",
-            "Icon": "grid",
-            "Control": "video-wall",
-            "SourceSelect": "",
-            "Tags": []
           }
         ],
         "Tags": []
@@ -259,15 +232,6 @@
         "Matrix": "rtr01",
         "Input": 2,
         "Tags": ["hdmi"]
-      },
-      {
-        "Id": "SRC04",
-        "Label": "CableTv",
-        "Icon": "satellite",
-        "Control": "tv01",
-        "Matrix": "rtr01",
-        "Input": 3,
-        "Tags": []
       }
     ],
     "Destinations": [
@@ -279,46 +243,19 @@
         "Output": 1,
         "RoutingGroup": 0,
         "Tags": []
-      },
-      {
-        "Id": "DEST02",
-        "Label": "Display 1",
-        "Icon": "Projector",
-        "Matrix": "rtr01",
-        "Output": 2,
-        "RoutingGroup": 0,
-        "Tags": []
-      },
-      {
-        "Id": "DEST03",
-        "Label": "Display 2",
-        "Icon": "tv",
-        "Matrix": "rtr01",
-        "Output": 3,
-        "RoutingGroup": 0,
-        "Tags": []
-      },
-      {
-        "Id": "DEST04",
-        "Label": "Patio",
-        "Icon": "tv",
-        "Matrix": "rtr01",
-        "Output": 4,
-        "RoutingGroup": 0,
-        "Tags": []
       }
     ],
     "MatrixData": [
       {
         "Id": "rtr01",
         "Label": "Kramer VP-400X",
-        "ClassName": "KramerAvSwitchTcp",
+        "ClassName": "AvSwitchEmulator",
         "Inputs": 5,
         "Outputs": 1,
         "Connection": {
           "Id": "con01",
           "Transport": "tcp",
-          "Driver": "KramerAvSwitch.dll",
+          "Driver": "AvSwitchEmulator.dll",
           "Host": "192.168.1.39",
           "Port": 5000,
           "Authentication": {
@@ -363,63 +300,7 @@
     ]
   },
   "Cameras": [],
-  "CableBoxes": [
-    {
-      "Id": "tv01",
-      "Label": "Cable TV 1",
-      "Connection": {
-        "Id": "con06",
-        "Transport": "DirecTvCableBoxIr",
-        "Driver": "DirecTVCableBox.dll",
-        "Host": "control",
-        "Port": 1,
-        "Authentication": {
-          "Id": "auth01",
-          "UserName": "",
-          "Password": ""
-        }
-      },
-      "UserAttributes": [
-        {
-          "Id": "ID",
-          "DataType": "string",
-          "Value": ""
-        }
-      ],
-      "Favorites": [
-        {
-          "Id": "FAV01",
-          "Label": "Favorite 1",
-          "Number": "1234"
-        },
-        {
-          "Id": "FAV02",
-          "Label": "Favorite 2",
-          "Number": "2678"
-        },
-        {
-          "Id": "FAV03",
-          "Label": "Favorite 3",
-          "Number": "33-333"
-        },
-        {
-          "Id": "FAV04",
-          "Label": "Favorite 4",
-          "Number": "4444"
-        },
-        {
-          "Id": "FAV05",
-          "Label": "Favorite 5",
-          "Number": "5555"
-        },
-        {
-          "Id": "FAV06",
-          "Label": "Favorite 6",
-          "Number": "6666"
-        }
-      ]
-    }
-  ],
+  "CableBoxes": [],
   "Blurays": [],
   "LightingControllers": [
     {

@@ -230,7 +230,7 @@
             builder.Append("| ").Append(programId).Append(" DEBUG LOG | ")
                 .Append(string.Format(message, args));
 
-            CrestronConsole.PrintLine(builder.ToString();
+            CrestronConsole.PrintLine(builder.ToString());
 #endif
 		}
 

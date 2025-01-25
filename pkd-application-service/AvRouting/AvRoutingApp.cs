@@ -120,33 +120,39 @@
 		/// <inheritdoc/>
 		public void MakeRoute(string inputId, string outputId)
 		{
-			var start = Nodes.Find(x => x.Key.Equals(inputId, StringComparison.InvariantCulture));
-			var end = Nodes.Find(x => x.Key.Equals(outputId, StringComparison.InvariantCulture));
-			if (start == null || end == null)
+			try
 			{
-				Logger.Error("Cannot find start or end nodes for route {0}->{1}", inputId, outputId);
-				return;
-			}
+				var start = Nodes.Find(x => x.Key.Equals(inputId));
+				var end = Nodes.Find(x => x.Key.Equals(outputId));
+				if (start == null || end == null)
+				{
+					Logger.Error("Cannot find start or end nodes for route {0}->{1}", inputId, outputId);
+					return;
+				}
 
-			// Get ordered list of nodes in the path
-			var path = Pathfinder.GetRoutePath(Graph, start, end);
-			if (path.Count <= 0)
+				// Get ordered list of nodes in the path
+				var path = Pathfinder.GetRoutePath(Graph, start, end);
+				if (path.Count <= 0)
+				{
+					Logger.Error("AvRoutingApp.MakeRoute() - No valid path for {0} to {1}", inputId, outputId);
+					return;
+				}
+
+				// Connect each node to the next node in the path and trigger device changes
+				for (var nodeIdx = 0; nodeIdx < path.Count; nodeIdx++)
+				{
+					if (nodeIdx + 1 >= path.Count) continue;
+					var thisNode = path[nodeIdx];
+					var nextNode = path[nodeIdx + 1];
+					thisNode.ParentId = nextNode.Key;
+					nextNode.TargetId = thisNode.Key;
+				}
+				SendRouteToDevices(path);
+			}
+			catch (Exception e)
 			{
-				Logger.Error("AvRoutingApp.MakeRoute() - No valid path for {0} to {1}", inputId, outputId);
-				return;
+				Logger.Error(e, $"pkd-application-service.AvRoutingApp.MakeRoute() - cannot make route for {inputId} -> {outputId}");
 			}
-
-			// Connect each node to the next node in the path and trigger device changes
-			for (var nodeIdx = 0; nodeIdx < path.Count; nodeIdx++)
-			{
-				if (nodeIdx + 1 >= path.Count) continue;
-				var thisNode = path[nodeIdx];
-				var nextNode = path[nodeIdx + 1];
-				thisNode.ParentId = nextNode.Key;
-				nextNode.TargetId = thisNode.Key;
-			}
-
-			SendRouteToDevices(path);
 		}
 
 		/// <inheritdoc/>
@@ -246,6 +252,8 @@
 
 		private void MakeNodes(IDomainService domain)
 		{
+			Logger.Debug($"AvRoutingApp.MakeNodes() - creating nodes for {domain.RoutingInfo.MatrixData.Count} entries.");
+			
 			// add all matrix input and output points to the collection of reachable nodes
 			foreach (var matrix in domain.RoutingInfo.MatrixData)
 			{

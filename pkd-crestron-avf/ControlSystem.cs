@@ -109,7 +109,7 @@
 
 		private void ConfigLoadFailedHandler(object? sender, EventArgs args)
 		{
-			Logger.Error("GCU Main - startup Failed.");
+			Logger.Error("Main - startup Failed.");
 		}
 
 		private void ControllerProgramEventHandler(eProgramStatusEventType programStatusEventType)

@@ -18,18 +18,14 @@
 		/// <returns>The same file path given as an argument but formatted correctly based on the platform.</returns>
 		public static string NormalizePath(string currentPath)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(currentPath, "NormalizePath", "currentPath");
-
-			var crestronSeries = Type.GetType("Mono.Runtime") != null ? eCrestronSeries.Series4 : eCrestronSeries.Series3;
-			var platform = CrestronEnvironment.DevicePlatform;
-			if (crestronSeries == eCrestronSeries.Series4 || platform == eDevicePlatform.Server)
-			{
-				return currentPath.Replace("\\", "/");
-			}
-			else
-			{
-				return currentPath.Replace("/", "\\");
-			}
+			ParameterValidator.ThrowIfNullOrEmpty(currentPath, "NormalizePath", nameof(currentPath));
+			return currentPath.Replace("\\", "/");
+			// var crestronSeries = Type.GetType("Mono.Runtime") != null ? eCrestronSeries.Series4 : eCrestronSeries.Series3;
+			// var platform = CrestronEnvironment.DevicePlatform;
+			// if (crestronSeries == eCrestronSeries.Series4 || platform == eDevicePlatform.Server)
+			// {
+			// 	
+			// }
 		}
 
 		/// <summary>
@@ -38,14 +34,11 @@
 		/// <returns>the application directory with '/User' or 'user' appended.</returns>
 		public static string GetUserFolder()
 		{
-			switch (CrestronEnvironment.DevicePlatform)
+			return CrestronEnvironment.DevicePlatform switch
 			{
-				case eDevicePlatform.Server:
-					return NormalizePath($"{Directory.GetApplicationRootDirectory()}/User");
-
-				default:
-					return NormalizePath($"{Directory.GetApplicationRootDirectory()}/user");
-			}
+				eDevicePlatform.Server => NormalizePath($"{Directory.GetApplicationRootDirectory()}/User"),
+				_ => NormalizePath($"{Directory.GetApplicationRootDirectory()}/user")
+			};
 		}
 
 		/// <summary>

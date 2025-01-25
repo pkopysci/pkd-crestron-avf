@@ -17,7 +17,7 @@
 		/// </summary>
 		/// <param name="deviceId">The unique ID of the endpoint to request.</param>
 		/// <returns>The target AvIp endpoint, or null if the endpoint cannot be found.</returns>
-		IAvIpEndpoint GetAvIpEndpoint(string deviceId);
+		IAvIpEndpoint? GetAvIpEndpoint(string deviceId);
 
 		/// <summary>
 		/// Add an AV over IP endpoint to the routing object.

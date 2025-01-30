@@ -232,6 +232,15 @@
         "Matrix": "rtr01",
         "Input": 2,
         "Tags": ["hdmi"]
+      },
+      {
+        "Id": "SRC04",
+        "Label": "CableTv",
+        "Icon": "cable-tv",
+        "Control": "tv01",
+        "Matrix": "rtr01",
+        "Input": 3,
+        "Tags": []
       }
     ],
     "Destinations": [
@@ -300,7 +309,63 @@
     ]
   },
   "Cameras": [],
-  "CableBoxes": [],
+  "CableBoxes": [
+    {
+      "Id": "tv01",
+      "Label": "Cable TV 1",
+      "Connection": {
+        "Id": "con06",
+        "Transport": "DirecTvCableBoxIr",
+        "Driver": "DirecTVCableBox.dll",
+        "Host": "control",
+        "Port": 1,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        }
+      },
+      "UserAttributes": [
+        {
+          "Id": "ID",
+          "DataType": "string",
+          "Value": ""
+        }
+      ],
+      "Favorites": [
+        {
+          "Id": "FAV01",
+          "Label": "Favorite 1",
+          "Number": "1234"
+        },
+        {
+          "Id": "FAV02",
+          "Label": "Favorite 2",
+          "Number": "2678"
+        },
+        {
+          "Id": "FAV03",
+          "Label": "Favorite 3",
+          "Number": "33-333"
+        },
+        {
+          "Id": "FAV04",
+          "Label": "Favorite 4",
+          "Number": "4444"
+        },
+        {
+          "Id": "FAV05",
+          "Label": "Favorite 5",
+          "Number": "5555"
+        },
+        {
+          "Id": "FAV06",
+          "Label": "Favorite 6",
+          "Number": "6666"
+        }
+      ]
+    }
+  ],
   "Blurays": [],
   "LightingControllers": [
     {

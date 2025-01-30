@@ -20,24 +20,24 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 	private static readonly Graph Graph = new();
 	private static readonly PathRouter Pathfinder = new();
 	private static readonly List<Vertex> Nodes = [];
-	private readonly List<Source> sources;
-	private readonly List<Destination> destinations;
-	private readonly Dictionary<string, Source> currentRoutes;
-	private readonly ReadOnlyCollection<IAvSwitcher> switchers;
-	private bool disposed;
+	private readonly List<Source> _sources;
+	private readonly List<Destination> _destinations;
+	private readonly Dictionary<string, Source> _currentRoutes;
+	private readonly ReadOnlyCollection<IAvSwitcher> _switchers;
+	private bool _disposed;
 
 	public AvRoutingApp(DeviceContainer<IAvSwitcher> avSwitchers, IDomainService domain)
 	{
 		ParameterValidator.ThrowIfNull(avSwitchers, "Ctor", nameof(avSwitchers));
 		ParameterValidator.ThrowIfNull(domain, "Ctor", nameof(domain));
 
-		sources = domain.RoutingInfo.Sources;
-		destinations = domain.RoutingInfo.Destinations;
-		switchers = avSwitchers.GetAllDevices();
-		currentRoutes = new Dictionary<string, Source>();
-		foreach (var dest in destinations)
+		_sources = domain.RoutingInfo.Sources;
+		_destinations = domain.RoutingInfo.Destinations;
+		_switchers = avSwitchers.GetAllDevices();
+		_currentRoutes = new Dictionary<string, Source>();
+		foreach (var dest in _destinations)
 		{
-			currentRoutes.Add(dest.Id, Source.Empty);
+			_currentRoutes.Add(dest.Id, Source.Empty);
 		}
 
 		MakeGraph(domain);
@@ -60,7 +60,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 	{
 		ParameterValidator.ThrowIfNullOrEmpty(id, "QueryRouteConnectionStatus()", nameof(id));
 
-		var router = switchers.FirstOrDefault(x => x.Id == id);
+		var router = _switchers.FirstOrDefault(x => x.Id == id);
 		if (router != null) return router.IsOnline;
 			
 		Logger.Error("QueryRouterConnectionStatus() - cannot find router with ID {0}", id);
@@ -71,7 +71,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 	public ReadOnlyCollection<AvSourceInfoContainer> GetAllAvSources()
 	{
 		var container = new List<AvSourceInfoContainer>();
-		foreach (var source in sources)
+		foreach (var source in _sources)
 		{
 			container.Add(new AvSourceInfoContainer(
 				source.Id,
@@ -88,7 +88,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 	public ReadOnlyCollection<InfoContainer> GetAllAvDestinations()
 	{
 		List<InfoContainer> container = [];
-		foreach (var destination in destinations)
+		foreach (var destination in _destinations)
 		{
 			container.Add(new InfoContainer(
 				destination.Id,
@@ -103,10 +103,10 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 	/// <inheritdoc/>
 	public ReadOnlyCollection<InfoContainer> GetAllAvRouters()
 	{
-		List<InfoContainer> avrs = [];
-		foreach (var avr in switchers)
+		List<InfoContainer> avRouters = [];
+		foreach (var avr in _switchers)
 		{
-			avrs.Add(new InfoContainer(
+			avRouters.Add(new InfoContainer(
 				avr.Id,
 				avr.Label,
 				string.Empty,
@@ -114,7 +114,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 				avr.IsOnline));
 		}
 
-		return new ReadOnlyCollection<InfoContainer>(avrs);
+		return new ReadOnlyCollection<InfoContainer>(avRouters);
 	}
 
 	/// <inheritdoc/>
@@ -158,7 +158,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 	/// <inheritdoc/>
 	public void RouteToAll(string inputId)
 	{
-		foreach (var output in destinations)
+		foreach (var output in _destinations)
 		{
 			MakeRoute(inputId, output.Id);
 		}
@@ -167,7 +167,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 	/// <inheritdoc/>
 	public AvSourceInfoContainer QueryCurrentRoute(string outputId)
 	{
-		if (currentRoutes.TryGetValue(outputId, out var found))
+		if (_currentRoutes.TryGetValue(outputId, out var found))
 		{
 			return new AvSourceInfoContainer(found.Id, found.Label, found.Icon, found.Tags, found.Control);
 		}
@@ -190,7 +190,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 
 	private void SubscribeDevices()
 	{
-		foreach (var switcher in switchers)
+		foreach (var switcher in _switchers)
 		{
 			switcher.ConnectionChanged += SwitcherConnectionHandler;
 			if (switcher is IVideoRoutable videoRoutable)
@@ -202,7 +202,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 
 	private void UnsubscribeDevices()
 	{
-		foreach (var switcher in switchers)
+		foreach (var switcher in _switchers)
 		{
 			switcher.ConnectionChanged -= SwitcherConnectionHandler;
 			if (switcher is IVideoRoutable videoRoutable)
@@ -214,15 +214,15 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 
 	private void SwitcherRouteChanged(object? sender, GenericDualEventArgs<string, uint> e)
 	{
-		var switcher = switchers.FirstOrDefault(x => x.Id.Equals(e.Arg1, StringComparison.InvariantCulture));
-		var dest = destinations.Find(x => x.Output == e.Arg2 && x.Matrix.Equals(e.Arg1, StringComparison.InvariantCulture));
+		var switcher = _switchers.FirstOrDefault(x => x.Id.Equals(e.Arg1, StringComparison.InvariantCulture));
+		var dest = _destinations.Find(x => x.Output == e.Arg2 && x.Matrix.Equals(e.Arg1, StringComparison.InvariantCulture));
 		if (switcher == null || dest == null)
 		{
 			Logger.Error("Route change received for unknown switcher or destination: {0}-{1}", e.Arg1, e.Arg2);
 			return;
 		}
 
-		var newSrc = sources.FirstOrDefault(
+		var newSrc = _sources.FirstOrDefault(
 			x => x.Input == switcher.GetCurrentVideoSource(e.Arg2) &&
 			     x.Matrix.Equals(switcher.Id, StringComparison.InvariantCulture));
 
@@ -233,11 +233,11 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 				switcher.Id,
 				switcher.GetCurrentVideoSource(e.Arg2));
 				
-			currentRoutes[dest.Id] = Source.Empty;
+			_currentRoutes[dest.Id] = Source.Empty;
 		}
 		else
 		{
-			currentRoutes[dest.Id] = newSrc;
+			_currentRoutes[dest.Id] = newSrc;
 		}
 
 		var temp = RouteChanged;
@@ -381,7 +381,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 	{
 		Logger.Debug($"AvROutingApp.RouteHardware() - sending input {input} to output {output} on device {devId}");
 		
-		var device = switchers.FirstOrDefault(x => x.Id.Equals(devId, StringComparison.InvariantCulture));
+		var device = _switchers.FirstOrDefault(x => x.Id.Equals(devId, StringComparison.InvariantCulture));
 		device?.RouteVideo(input, output);
 	}
 
@@ -436,12 +436,12 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 
 	private void Dispose(bool disposing)
 	{
-		if (disposed) return;
+		if (_disposed) return;
 		if (disposing)
 		{
 			UnsubscribeDevices();
 		}
 
-		disposed = true;
+		_disposed = true;
 	}
 }

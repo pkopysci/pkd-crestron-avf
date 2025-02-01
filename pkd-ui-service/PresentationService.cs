@@ -21,7 +21,7 @@ namespace pkd_ui_service
 		private readonly CrestronControlSystem control;
 		private readonly IApplicationService appService;
 		private readonly List<IUserInterface> uiConnections;
-		private IFusionInterface fusion;
+		private IFusionInterface? fusion;
 		private CTimer? stateChangeTimer;
 		private bool disposed;
 #if DEBUG
@@ -62,10 +62,10 @@ namespace pkd_ui_service
 				uiDevice.Connect();
 			}
 
-			fusion.Initialize();
+			fusion?.Initialize();
 		}
 
-		protected virtual void Dispose(bool disposing)
+		protected void Dispose(bool disposing)
 		{
 			if (disposed) return;
 			if (disposing)
@@ -92,7 +92,7 @@ namespace pkd_ui_service
 				fusion.AudioMuteChangeRequested -= FusionAudioMuteHandler;
 				fusion.ProgramAudioChangeRequested -= FusionAudioLevelHandler;
 				fusion.SourceSelectRequested -= FusionRouteSourceHandler;
-				fusion.Dispose();
+				fusion?.Dispose();
 			}
 
 			disposed = true;
@@ -385,13 +385,13 @@ namespace pkd_ui_service
 			if (isOnline)
 			{
 				RemoveErrorFromUi(args.Arg);
-				fusion.ClearOfflineDevice(args.Arg);
+				fusion?.ClearOfflineDevice(args.Arg);
 			}
 			else
 			{
 				var found = appService.GetAllAudioDspDevices().First(x => x.Id.Equals(args.Arg, StringComparison.InvariantCulture));
 				AddErrorToUi(args.Arg, found.Label );
-				fusion.AddOfflineDevice(args.Arg, found.Label );
+				fusion?.AddOfflineDevice(args.Arg, found.Label );
 			}
 		}
 
@@ -418,7 +418,7 @@ namespace pkd_ui_service
 				}
 			}
 
-			fusion.UpdateMicMute(args.Arg, newState);
+			fusion?.UpdateMicMute(args.Arg, newState);
 		}
 
 		private void AppServiceAudioOutputLevelHandler(object? sender, GenericSingleEventArgs<string> args)
@@ -476,13 +476,13 @@ namespace pkd_ui_service
 			Logger.Debug("PresentationService.AppServiceDisplayConnectionHandler() - {0}, {1}", args.Arg1, args.Arg2);
 			if (args.Arg2)
 			{
-				fusion.ClearOfflineDevice(args.Arg1);
+				fusion?.ClearOfflineDevice(args.Arg1);
 				RemoveErrorFromUi(args.Arg1);
 			}
 			else
 			{
 				var display = appService.GetAllDisplayInfo().First(x => x.Id.Equals(args.Arg1, StringComparison.InvariantCulture));
-				fusion.AddOfflineDevice(args.Arg1, display.Label);
+				fusion?.AddOfflineDevice(args.Arg1, display.Label);
 				AddErrorToUi(args.Arg1, display.Label);
 			}
 		}
@@ -525,11 +525,11 @@ namespace pkd_ui_service
 			UpdateFusionDisplayPowerFeedback();
 			if (e.Arg2)
 			{
-				fusion.StartDisplayUse(e.Arg1);
+				fusion?.StartDisplayUse(e.Arg1);
 			}
 			else
 			{
-				fusion.StopDisplayUse(e.Arg1);
+				fusion?.StopDisplayUse(e.Arg1);
 			}
 		}
 
@@ -537,8 +537,8 @@ namespace pkd_ui_service
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayInputChangedHandler({0})", e.Arg);
 
-			bool isLectern = appService.DisplayInputLecternQuery(e.Arg);
-			bool isStation = appService.DisplayInputStationQuery(e.Arg);
+			var isLectern = appService.DisplayInputLecternQuery(e.Arg);
+			var isStation = appService.DisplayInputStationQuery(e.Arg);
 			foreach (var ui in uiConnections)
 			{
 				if (ui is not IDisplayUserInterface displayUi) continue;
@@ -560,13 +560,13 @@ namespace pkd_ui_service
 			
 			if (args.Arg2)
 			{
-				fusion.ClearOfflineDevice(args.Arg1);
+				fusion?.ClearOfflineDevice(args.Arg1);
 				RemoveErrorFromUi(args.Arg1);
 			}
 			else
 			{
-				string label = $"Endpoint {args.Arg1}";
-				fusion.AddOfflineDevice(args.Arg1, label);
+				var label = $"Endpoint {args.Arg1}";
+				fusion?.AddOfflineDevice(args.Arg1, label);
 				AddErrorToUi(args.Arg1, label);
 			}
 		}
@@ -594,17 +594,17 @@ namespace pkd_ui_service
 		{
 			Logger.Debug("PresentationService.AppServiceRouterConnectionHandler() - {0}", args.Arg);
 			
-			bool isOnline = appService.QueryRouterConnectionStatus(args.Arg);
+			var isOnline = appService.QueryRouterConnectionStatus(args.Arg);
 			if (isOnline)
 			{
 				RemoveErrorFromUi(args.Arg);
-				fusion.ClearOfflineDevice(args.Arg);
+				fusion?.ClearOfflineDevice(args.Arg);
 			}
 			else
 			{
-				string label = $"Router {args.Arg} is offline";
+				var label = $"Router {args.Arg} is offline";
 				AddErrorToUi(args.Arg, label);
-				fusion.AddOfflineDevice(args.Arg, label);
+				fusion?.AddOfflineDevice(args.Arg, label);
 			}
 		}
 
@@ -614,13 +614,13 @@ namespace pkd_ui_service
 			if (e.Arg2)
 			{
 				RemoveErrorFromUi(e.Arg1);
-				fusion.ClearOfflineDevice(e.Arg1);
+				fusion?.ClearOfflineDevice(e.Arg1);
 			}
 			else
 			{
 				string label = $"Lighting controller {e.Arg1}";
 				AddErrorToUi(e.Arg1, label);
-				fusion.AddOfflineDevice(e.Arg1, label);
+				fusion?.AddOfflineDevice(e.Arg1, label);
 			}
 		}
 
@@ -632,7 +632,7 @@ namespace pkd_ui_service
 				ui.SetGlobalFreezeState(freezeState);
 			}
 
-			fusion.UpdateDisplayFreeze(freezeState);
+			fusion?.UpdateDisplayFreeze(freezeState);
 		}
 
 		private void AppServiceGlobalBlankHandler(object? sender, EventArgs e)
@@ -643,7 +643,7 @@ namespace pkd_ui_service
 				ui.SetGlobalBlankState(blankState);
 			}
 
-			fusion.UpdateDisplayBlank(blankState);
+			fusion?.UpdateDisplayBlank(blankState);
 		}
 
 		private void AppServiceStateChangeHandler(object? sender, EventArgs args)
@@ -656,7 +656,7 @@ namespace pkd_ui_service
 			}
 
 			TriggerStateChangeTimer();
-			fusion.UpdateSystemState(state);
+			fusion?.UpdateSystemState(state);
 
 			// If system is powering off then stop recording usage, or start recording usage for the currently
 			// selected input when powered on.
@@ -668,7 +668,7 @@ namespace pkd_ui_service
 			{
 				foreach (var source in appService.GetAllAvSources())
 				{
-					fusion.StopDeviceUse(source.Id);
+					fusion?.StopDeviceUse(source.Id);
 				}
 			}
 		}
@@ -683,11 +683,11 @@ namespace pkd_ui_service
 			
 			if (found is { IsOnline: false, IsXpanel: false })
 			{
-				fusion.AddOfflineDevice(found.Id, $"UI {found.Id}");
+				fusion?.AddOfflineDevice(found.Id, $"UI {found.Id}");
 			}
 			else
 			{
-				fusion.ClearOfflineDevice(found.Id);
+				fusion?.ClearOfflineDevice(found.Id);
 				found.SetSystemState(appService.CurrentSystemState);
 				found.SetGlobalBlankState(appService.QueryGlobalVideoBlank());
 				found.SetGlobalFreezeState(appService.QueryGlobalVideoFreeze());
@@ -925,12 +925,7 @@ namespace pkd_ui_service
 		{
 			appService.SetInputStation(e.Arg);
 		}
-
-		private void UiTransportDialHandler(object? sender, GenericDualEventArgs<string, string> args)
-		{
-			appService.TransportDial(args.Arg1, args.Arg2);
-		}
-
+		
 		private void TransportUi_TransportDialRequest(object? sender, GenericDualEventArgs<string, string> e)
 		{
 			appService.TransportDial(e.Arg1, e.Arg2);
@@ -1043,15 +1038,15 @@ namespace pkd_ui_service
 				}
 			}
 
-			fusion.UpdateDisplayPower(aDisplayOn);
+			fusion?.UpdateDisplayPower(aDisplayOn);
 		}
 
 		private void UpdateFusionAudioFeedback()
 		{
 			var pgmAudio = appService.GetAudioOutputChannels().FirstOrDefault(x => x.Tags.Contains("pgm"));
 			if (pgmAudio == null) return;
-			fusion.UpdateProgramAudioLevel((uint)appService.QueryAudioOutputLevel(pgmAudio.Id));
-			fusion.UpdateProgramAudioMute(appService.QueryAudioOutputMute(pgmAudio.Id));
+			fusion?.UpdateProgramAudioLevel((uint)appService.QueryAudioOutputLevel(pgmAudio.Id));
+			fusion?.UpdateProgramAudioMute(appService.QueryAudioOutputMute(pgmAudio.Id));
 		}
 
 		private void UpdateFusionRoutingFeedback()
@@ -1060,16 +1055,16 @@ namespace pkd_ui_service
 			if (avDestinations.Count > 0)
 			{
 				var currentRoute = appService.QueryCurrentRoute(avDestinations[0].Id);
-				fusion.UpdateSelectedSource(currentRoute.Id);
+				fusion?.UpdateSelectedSource(currentRoute.Id);
 				foreach (var source in appService.GetAllAvSources())
 				{
 					if (source.Id.Equals(currentRoute.Id, StringComparison.InvariantCulture))
 					{
-						fusion.StartDeviceUse(source.Id);
+						fusion?.StartDeviceUse(source.Id);
 					}
 					else
 					{
-						fusion.StopDeviceUse(source.Id);
+						fusion?.StopDeviceUse(source.Id);
 					}
 				}
 			}
@@ -1077,12 +1072,12 @@ namespace pkd_ui_service
 
 		private void UpdateFusionFeedback()
 		{
-			fusion.UpdateSystemState(appService.CurrentSystemState);
+			fusion?.UpdateSystemState(appService.CurrentSystemState);
 			UpdateFusionDisplayPowerFeedback();
 			UpdateFusionAudioFeedback();
 			UpdateFusionRoutingFeedback();
-			fusion.UpdateDisplayFreeze(appService.QueryGlobalVideoFreeze());
-			fusion.UpdateDisplayBlank(appService.QueryGlobalVideoBlank());
+			fusion?.UpdateDisplayFreeze(appService.QueryGlobalVideoFreeze());
+			fusion?.UpdateDisplayBlank(appService.QueryGlobalVideoBlank());
 		}
 		#endregion
 	}

@@ -319,7 +319,7 @@
           "Id": "con01",
           "Transport": "tcp",
           "Driver": "KramerAvSwitch.dll",
-          "Host": "192.168.1.39",
+          "Host": "10.16.6.14",
           "Port": 5000,
           "Authentication": {
             "Id": "auth01",
@@ -357,7 +357,7 @@
           "Id": "con02",
           "Transport": "QscDspTcp",
           "Driver": "QscDsp.dll",
-          "Host": "192.168.1.125",
+          "Host": "10.16.6.12",
           "Port": 1710,
           "Authentication": {
             "Id": "auth02",

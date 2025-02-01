@@ -23,8 +23,8 @@
 		private readonly List<FusionDeviceData> sources;
 		private readonly List<FusionDeviceData> mics;
 		private readonly FusionRoom fusion;
-		private readonly IFusionDeviceUse useTracker;
-		private readonly IFusionErrorManager errorManager;
+		private readonly FusionDeviceUse useTracker;
+		private readonly FusionErrorManager errorManager;
 		private bool disposed;
 
 		public FusionInterface(uint ipId, CrestronControlSystem control, string name, string guid)
@@ -242,7 +242,7 @@
 		}
 
 		/// <inheritdoc/>
-		public virtual void Dispose()
+		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
@@ -250,16 +250,17 @@
 
 		private void Dispose(bool disposing)
 		{
-			if (!disposed)
+			if (disposed) return;
+			if (disposing)
 			{
-				if (disposing)
-				{
-					fusion.UnRegister();
-					fusion.Dispose();
-				}
-
-				disposed = true;
+				fusion.OnlineStatusChange -= FusionConnectionHandler;
+				fusion.FusionStateChange -= FusionStateChangeHandler;
+				fusion.RemoveAllSigs();
+				userBoolSigHandlers.Clear();
+				fusion.UnRegister();
 			}
+
+			disposed = true;
 		}
 
 		private void FusionConnectionHandler(GenericBase device, OnlineOfflineEventArgs args)

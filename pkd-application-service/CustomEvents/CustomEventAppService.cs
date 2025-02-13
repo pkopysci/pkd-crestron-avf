@@ -35,7 +35,7 @@
 		/// <inheritdoc/>
 		public virtual void ChangeCustomEventState(string tag, bool state)
 		{
-			if (!customEvents.TryGetValue(tag, out Action<bool> action))
+			if (!customEvents.TryGetValue(tag, out var action))
 			{
 				Logger.Error("CustomEventAppService.ChangeCustomEventState({0}, {1}) - No matching tag found.", tag, state);
 				return;

@@ -9,7 +9,10 @@
 
 	internal static class TransportDeviceFactory
 	{
-		public static ITransportDevice? CreateCableBox(CableBox cableBoxData, CrestronControlSystem processor, IInfrastructureService hwService)
+		public static ITransportDevice? CreateCableBox(
+			CableBox cableBoxData,
+			CrestronControlSystem processor,
+			IInfrastructureService hwService)
 		{
 			ParameterValidator.ThrowIfNull(cableBoxData, "TransportDeviceFactory.CreateCableBox", nameof(cableBoxData));
 			ParameterValidator.ThrowIfNull(processor, "TransportDeviceFactory.CreateCableBox", nameof(processor));

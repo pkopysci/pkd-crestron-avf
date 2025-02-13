@@ -433,6 +433,7 @@
       "IrPorts": []
     }
   ],
+  "VideoWalls": [],
   "FusionInfo": {
     "Id": "Fusion01",
     "RoomName": "Test Classroom 101",

@@ -82,17 +82,19 @@ namespace pkd_ui_service
 
 				stateChangeTimer?.Dispose();
 
-				fusion = PresentationServiceFactory.CreateFusionService(appService, control);
-				fusion.OnlineStatusChanged -= FusionConnectionHandler;
-				fusion.MicMuteChangeRequested -= FusionMicMuteHandler;
-				fusion.SystemStateChangeRequested -= FusionPowerHandler;
-				fusion.DisplayPowerChangeRequested -= FusionDisplayPowerHandler;
-				fusion.DisplayBlankChangeRequested -= FusionDisplayBlankHandler;
-				fusion.DisplayFreezeChangeRequested -= FusionDisplayFreezeHandler;
-				fusion.AudioMuteChangeRequested -= FusionAudioMuteHandler;
-				fusion.ProgramAudioChangeRequested -= FusionAudioLevelHandler;
-				fusion.SourceSelectRequested -= FusionRouteSourceHandler;
-				fusion?.Dispose();
+				if (fusion != null)
+				{
+					fusion.OnlineStatusChanged -= FusionConnectionHandler;
+					fusion.MicMuteChangeRequested -= FusionMicMuteHandler;
+					fusion.SystemStateChangeRequested -= FusionPowerHandler;
+					fusion.DisplayPowerChangeRequested -= FusionDisplayPowerHandler;
+					fusion.DisplayBlankChangeRequested -= FusionDisplayBlankHandler;
+					fusion.DisplayFreezeChangeRequested -= FusionDisplayFreezeHandler;
+					fusion.AudioMuteChangeRequested -= FusionAudioMuteHandler;
+					fusion.ProgramAudioChangeRequested -= FusionAudioLevelHandler;
+					fusion.SourceSelectRequested -= FusionRouteSourceHandler;
+					fusion.Dispose();
+				}
 			}
 
 			disposed = true;

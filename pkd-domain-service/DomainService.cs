@@ -1,4 +1,6 @@
-﻿namespace pkd_domain_service
+﻿using pkd_domain_service.Data.VideoWallData;
+
+namespace pkd_domain_service
 {
 	using pkd_common_utils.Logging;
 	using pkd_common_utils.Validation;
@@ -68,6 +70,9 @@
 
 		/// <inheritdoc/>
 		public ReadOnlyCollection<CableBox> CableBoxes => config?.CableBoxes == null ? new List<CableBox>().AsReadOnly() : config.CableBoxes.AsReadOnly();
+		
+		/// <inheritdoc/>
+		public ReadOnlyCollection<VideoWall> VideoWalls => config?.VideoWalls == null ? new List<VideoWall>().AsReadOnly() : config.VideoWalls.AsReadOnly();
 
 		/// <inheritdoc/>
 		public FusionInfo Fusion => config?.FusionInfo == null ? new FusionInfo() : config.FusionInfo;
@@ -183,6 +188,19 @@
 			}
 			
 			return found ?? new CableBox();
+		}
+		
+		/// <inheritdoc/>
+		public VideoWall GetVideoWall(string id)
+		{
+			ParameterValidator.ThrowIfNullOrEmpty(id, "GetVideoWall()", nameof(id));
+			var found = config.VideoWalls.FirstOrDefault(x => x.Id == id);
+			if (found == null)
+			{
+				Logger.Warn($"DomainService.{nameof(GetVideoWall)}() - VideoWall with id {id} not found.");
+			}
+			
+			return found ?? new VideoWall();
 		}
 	}
 }

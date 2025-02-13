@@ -1,4 +1,8 @@
 ﻿// ReSharper disable SuspiciousTypeConversion.Global
+
+using pkd_domain_service.Data.VideoWallData;
+using pkd_hardware_service.VideoWallDevices;
+
 namespace pkd_hardware_service
 {
 	using Crestron.SimplSharpPro;
@@ -42,6 +46,7 @@ namespace pkd_hardware_service
 			Endpoints = new DeviceContainer<IEndpointDevice>();
 			CableBoxes = new DeviceContainer<ITransportDevice>();
 			LightingDevices = new DeviceContainer<ILightingDevice>();
+			VideoWallDevices = new DeviceContainer<IVideoWallDevice>();
 		}
 
 		/// <summary>
@@ -53,21 +58,25 @@ namespace pkd_hardware_service
 		}
 
 		/// <inheritdoc/>
-		public DeviceContainer<IAudioControl> Dsps { get; private set; }
+		public DeviceContainer<IAudioControl> Dsps { get; }
 
 		/// <inheritdoc/>
-		public DeviceContainer<IAvSwitcher> AvSwitchers { get; private set; }
+		public DeviceContainer<IAvSwitcher> AvSwitchers { get; }
 
 		/// <inheritdoc/>
-		public DeviceContainer<IDisplayDevice> Displays { get; private set; }
+		public DeviceContainer<IDisplayDevice> Displays { get; }
 
 		/// <inheritdoc/>
-		public DeviceContainer<IEndpointDevice> Endpoints { get; private set; }
+		public DeviceContainer<IEndpointDevice> Endpoints { get; }
 
 		/// <inheritdoc/>
-		public DeviceContainer<ITransportDevice> CableBoxes { get; private set; }
+		public DeviceContainer<ITransportDevice> CableBoxes { get; }
 
-		public DeviceContainer<ILightingDevice> LightingDevices { get; private set; }
+		/// <inheritdoc/>
+		public DeviceContainer<ILightingDevice> LightingDevices { get; }
+		
+		/// <inheritdoc/>
+		public DeviceContainer<IVideoWallDevice> VideoWallDevices { get; }
 
 		/// <inheritdoc/>
 		public void AddAvSwitch(MatrixData avSwitch, Routing routingData)
@@ -233,6 +242,7 @@ namespace pkd_hardware_service
 			}
 		}
 
+		/// <inheritdoc/>
 		public void AddLightingDevice(LightingInfo lighting)
 		{
 			try
@@ -245,6 +255,14 @@ namespace pkd_hardware_service
 			{
 				Logger.Error(e, "InfrastructureService.AddLightingDevice()");
 			}
+		}
+
+		/// <inheritdoc/>
+		public void AddVideoWall(VideoWall videoWall)
+		{
+			var videoWallObj = VideoWallFactory.CreateVideoWallDevice(videoWall, controlSystem, this);
+			if (videoWallObj == null) return;
+			VideoWallDevices.AddDevice(videoWallObj.Id, videoWallObj);
 		}
 
 		/// <inheritdoc/>
@@ -283,6 +301,11 @@ namespace pkd_hardware_service
 				foreach (var lightingControl in LightingDevices.GetAllDevices())
 				{
 					lightingControl.Connect();
+				}
+
+				foreach (var videoWallControl in VideoWallDevices.GetAllDevices())
+				{
+					videoWallControl.Connect();
 				}
 			}
 			catch (Exception ex)

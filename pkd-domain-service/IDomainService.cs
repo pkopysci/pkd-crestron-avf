@@ -1,4 +1,6 @@
-﻿namespace pkd_domain_service
+﻿using pkd_domain_service.Data.VideoWallData;
+
+namespace pkd_domain_service
 {
 	using Data;
 	using Data.CameraData;
@@ -62,7 +64,12 @@
 		/// Gets a collection of all audio channels defined in the configuration.
 		/// </summary>
 		ReadOnlyCollection<Channel> AudioChannels { get; }
-
+		
+		/// <summary>
+		/// Gets a collection of all video wall controllers defined in the configuration.
+		/// </summary>
+		ReadOnlyCollection<VideoWall> VideoWalls { get; }
+		
 		/// <summary>
 		/// Gets the Fusion configuration data defined in the config file.
 		/// </summary>
@@ -153,6 +160,13 @@
 		/// <param name="id">The ID of the cable box to search for.</param>
 		/// <returns>The first instance that matches 'id', or an empty cable box object.</returns>
 		CableBox GetCableBox(string id);
+		
+		/// <summary>
+		/// Search through all video walls in the configuration for one with a matching id.
+		/// </summary>
+		/// <param name="id">the id of the video wall to search for.</param>
+		/// <returns>The first instance that matches 'id' or an empty video wall object.</returns>
+		VideoWall GetVideoWall(string id);
 	}
 
 }

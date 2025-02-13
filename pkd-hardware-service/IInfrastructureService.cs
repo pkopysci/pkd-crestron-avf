@@ -1,4 +1,7 @@
-﻿namespace pkd_hardware_service
+﻿using pkd_domain_service.Data.VideoWallData;
+using pkd_hardware_service.VideoWallDevices;
+
+namespace pkd_hardware_service
 {
 	using pkd_domain_service.Data.DisplayData;
 	using pkd_domain_service.Data.DspData;
@@ -51,6 +54,11 @@
 		DeviceContainer<ILightingDevice> LightingDevices { get; }
 
 		/// <summary>
+		/// Gets a collection of video wall controllers that are in the system configuration.
+		/// </summary>
+		DeviceContainer<IVideoWallDevice> VideoWallDevices { get; }
+		
+		/// <summary>
 		/// Add a DSP control object to the current collection. Any DSP in the collection with
 		/// a matching ID will be replaced.
 		/// </summary>
@@ -99,6 +107,12 @@
 		/// </summary>
 		/// <param name="lightingDevice">The lighting controller to add.</param>
 		void AddLightingDevice(LightingInfo lightingDevice);
+		
+		/// <summary>
+		/// Add a video wall controller to the current collection.
+		/// </summary>
+		/// <param name="videoWall">The config data for the video wall device to add.</param>
+		void AddVideoWall(VideoWall videoWall);
 
 		/// <summary>
 		/// Initialize all hardware connections and connect to the devices for control.

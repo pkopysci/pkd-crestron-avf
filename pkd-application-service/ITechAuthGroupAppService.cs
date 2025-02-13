@@ -9,7 +9,9 @@
 	/// </summary>
 	public interface ITechAuthGroupAppService
 	{
-		// will be triggered when the application service requires non-tech interfaces to be locked/unlocked.
+		///<summary>
+		/// will be triggered when the application service requires non-tech interfaces to be locked/unlocked.
+		/// </summary>
 		event EventHandler<GenericSingleEventArgs<bool>>? NonTechLockoutStateChangeRequest;
 	}
 }

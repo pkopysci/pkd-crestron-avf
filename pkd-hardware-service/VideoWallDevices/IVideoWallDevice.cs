@@ -12,16 +12,15 @@ using pkd_domain_service.Data.RoutingData;
 public interface IVideoWallDevice : IBaseDevice
 {
     /// <summary>
-    /// Event arg is the unique id of this video wall device.
+    /// Triggered whenever the device reports that the active layout has changed.
     /// </summary>
     event EventHandler VideoWallLayoutChanged;
     
     /// <summary>
     /// Event args:<br/>
-    /// Arg1 - the id of the video wall controller<br/>
-    /// Arg2 - the id of the cell that changed in the currently active layout.
+    /// Arg1 - the id of the cell in the active layout that changed.<br/>
     /// </summary>
-    event EventHandler<GenericDualEventArgs<string, string>> VideoWallCellSourceChanged;
+    event EventHandler<GenericSingleEventArgs<string>> VideoWallCellSourceChanged;
     
     /// <summary>
     /// A collection of all <see cref="VideoWallLayout"/>s that are selectable by this controller.

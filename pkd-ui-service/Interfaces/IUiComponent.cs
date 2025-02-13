@@ -1,5 +1,8 @@
 ﻿namespace pkd_ui_service.Interfaces
 {
+	/// <summary>
+	/// Required methods when implementing a basic user interface component.
+	/// </summary>
 	public interface IUiComponent
 	{
 		/// <summary>

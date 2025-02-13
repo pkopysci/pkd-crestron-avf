@@ -5,6 +5,9 @@
 	using System;
 	using System.Collections.ObjectModel;
 
+	/// <summary>
+	/// Required events, methods, and parameters for creating a user interface that supports audio controls.
+	/// </summary>
 	public interface IAudioUserInterface
 	{
 		/// <summary>

@@ -1,4 +1,5 @@
-﻿namespace pkd_ui_service.Utility
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+namespace pkd_ui_service.Utility
 {
 	public enum TransportTypes
 	{

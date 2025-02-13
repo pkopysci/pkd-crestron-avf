@@ -5,10 +5,13 @@
 	using System;
 	using System.Text;
 
+	/// <summary>
+	/// Logging system for writing messages to the control system error long and console output.
+	/// </summary>
 	public static class Logger
 	{
-		private static bool DebugEnabled = false;
-		private static string programId = "NO ID";
+		private static bool _debugEnabled = false;
+		private static string _programId = "NO ID";
 
 		/// <summary>
 		/// Set the ID tag that is included in all log statements.
@@ -17,7 +20,7 @@
 		public static void SetProgramId(string id)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(id, "Logger.SetProgramId", nameof(id));
-			programId = id;
+			_programId = id;
 		}
 
 		/// <summary>
@@ -26,7 +29,7 @@
 		public static void SetDebugOn()
 		{
 			Info("Debug mode enabled.");
-			DebugEnabled = true;
+			_debugEnabled = true;
 		}
 
 		/// <summary>
@@ -35,7 +38,7 @@
 		public static void SetDebugOff()
 		{
 			Info("Debug mode disabled.");
-			DebugEnabled = false;
+			_debugEnabled = false;
 		}
 
 		/// <summary>
@@ -52,7 +55,7 @@
 
 			string line = string.Format(
 				"|{0}| {1}",
-				programId,
+				_programId,
 				message);
 
 			CrestronConsole.PrintLine(line);
@@ -73,7 +76,7 @@
 
 			StringBuilder builder = new StringBuilder();
 			builder.Append("|")
-				.Append(programId)
+				.Append(_programId)
 				.Append("| ")
 				.Append(string.Format(message, args));
 
@@ -94,7 +97,7 @@
 
 			string line = string.Format(
 				"|{0}| {1}",
-				programId,
+				_programId,
 				message);
 
 			ErrorLog.Error(line);
@@ -115,7 +118,7 @@
 
 			StringBuilder builder = new StringBuilder();
 			builder.Append("|")
-				.Append(programId)
+				.Append(_programId)
 				.Append("| ")
 				.Append(string.Format(message, args));
 
@@ -131,10 +134,10 @@
 		/// <param name="message">The custom message to include with the exception log.</param>
 		public static void Error(Exception e, string message)
 		{
-			var line = $"|{programId}| {message} - {e}";
+			var line = $"|{_programId}| {message} - {e}";
 
 			ErrorLog.Error(line);
-			CrestronConsole.PrintLine($"|{programId}| {message} - {e.Message} - See error log for stack trace.");
+			CrestronConsole.PrintLine($"|{_programId}| {message} - {e.Message} - See error log for stack trace.");
 		}
 
 		/// <summary>
@@ -152,7 +155,7 @@
 
 			var builder = new StringBuilder();
 			builder.Append("|")
-				.Append(programId)
+				.Append(_programId)
 				.Append("| ")
 				.Append(string.Format(message, args))
 				.Append(" - ")
@@ -162,7 +165,7 @@
 
 			var line = builder.ToString();
 			ErrorLog.Error(line);
-			CrestronConsole.PrintLine($"|{programId}| {message} - {e.Message} - See error log for stack trace.");
+			CrestronConsole.PrintLine($"|{_programId}| {message} - {e.Message} - See error log for stack trace.");
 		}
 
 		/// <summary>
@@ -176,7 +179,7 @@
 				return;
 			}
 
-			var line = $"|{programId}| {message}";
+			var line = $"|{_programId}| {message}";
 
 			ErrorLog.Warn(line);
 			CrestronConsole.PrintLine(line);
@@ -196,7 +199,7 @@
 
 			var builder = new StringBuilder();
 			builder.Append('|')
-				.Append(programId)
+				.Append(_programId)
 				.Append("| ")
 				.Append(string.Format(message, args));
 
@@ -214,20 +217,20 @@
 		{
 #if DEBUG
 			var builder = new StringBuilder();
-			builder.Append("| ").Append(programId).Append(" DEBUG LOG | ")
+			builder.Append("| ").Append(_programId).Append(" DEBUG LOG | ")
 				.Append(string.Format(message, args));
 			
 			CrestronConsole.PrintLine(builder.ToString());
 #else
 
 
-            if (!DebugEnabled || string.IsNullOrEmpty(message))
+            if (!_debugEnabled || string.IsNullOrEmpty(message))
             {
                 return;
             }
 
             var builder = new StringBuilder();
-            builder.Append("| ").Append(programId).Append(" DEBUG LOG | ")
+            builder.Append("| ").Append(_programId).Append(" DEBUG LOG | ")
                 .Append(string.Format(message, args));
 
             CrestronConsole.PrintLine(builder.ToString());
@@ -241,14 +244,14 @@
 		public static void Debug(string message)
 		{
 #if DEBUG
-			CrestronConsole.PrintLine($"| {programId} DEBUG LOG | {message}");
+			CrestronConsole.PrintLine($"| {_programId} DEBUG LOG | {message}");
 #else
-            if (!DebugEnabled || string.IsNullOrEmpty(message))
+            if (!_debugEnabled || string.IsNullOrEmpty(message))
             {
                 return;
             }
 
-            CrestronConsole.PrintLine($"| {programId} DEBUG LOG | {message}");
+            CrestronConsole.PrintLine($"| {_programId} DEBUG LOG | {message}");
 #endif
 		}
 

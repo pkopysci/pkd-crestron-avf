@@ -5,6 +5,9 @@
 	using System.Collections.Generic;
 	using pkd_common_utils.GenericEventArgs;
 
+	/// <summary>
+	/// Required events, methods, and properties for implementing an AV over IP device control.
+	/// </summary>
 	public interface IAvIpMatrix
 	{
 		/// <summary>

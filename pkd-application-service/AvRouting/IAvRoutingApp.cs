@@ -60,6 +60,9 @@ public interface IAvRoutingApp
 	/// <param name="inputId">The unique ID of the input to route.</param>
 	void RouteToAll(string inputId);
 
+	/// <summary>
+	/// Print out the current state of the routing graph.
+	/// </summary>
 	void ReportGraph();
 
 	/// <summary>

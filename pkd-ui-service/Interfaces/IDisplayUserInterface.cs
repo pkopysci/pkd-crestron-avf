@@ -5,6 +5,9 @@
 	using System;
 	using System.Collections.ObjectModel;
 
+	/// <summary>
+	/// Required methods, events, and properties for implementing a user interface that supports display control.
+	/// </summary>
 	public interface IDisplayUserInterface
 	{
 		/// <summary>

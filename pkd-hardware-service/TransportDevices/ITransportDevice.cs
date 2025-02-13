@@ -1,4 +1,5 @@
-﻿namespace pkd_hardware_service.TransportDevices
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+namespace pkd_hardware_service.TransportDevices
 {
 	using Crestron.SimplSharpPro;
 	using BaseDevice;

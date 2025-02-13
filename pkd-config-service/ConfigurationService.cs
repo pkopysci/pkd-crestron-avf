@@ -20,6 +20,7 @@
     /// Initializes a new instance of the <see cref="ConfigurationService"/> class.
     /// </remarks>
     /// <param name="programSlot">The program slot number to search for when loading configuration.</param>
+    /// <param name="parent">The root control system entry point object.</param>
     public sealed class ConfigurationService(uint programSlot, CrestronControlSystem parent) : IDisposable
 	{
 		private const string Root = "/user/4s-plugins/";
@@ -28,7 +29,8 @@
 		private bool disposed;
 		private BasicFtpClient? client;
 
-        ~ConfigurationService()
+		/// <inheritdoc />
+		~ConfigurationService()
 		{
 			Dispose(false);
 		}

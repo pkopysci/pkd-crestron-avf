@@ -335,6 +335,7 @@
 			NotifyOnlineStatus();
 		}
 
+		/// <inheritdoc />
 		public void Initialize(string hostName, int port, string id, string label, int numInputs, int numOutputs) { }
 	}
 }

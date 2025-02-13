@@ -4,6 +4,9 @@
 	using pkd_common_utils.GenericEventArgs;
 	using System;
 
+	/// <summary>
+	/// required events, methods, and properties for implementing any user interface.
+	/// </summary>
 	public interface IUserInterface
 	{
 		/// <summary>

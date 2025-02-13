@@ -12,10 +12,17 @@
 	using System.Collections.Generic;
 	using System.Globalization;
 
+	/// <summary>
+	/// Factory class for creating display control objects from configuration data.
+	/// </summary>
 	public static class DisplayDeviceFactory
 	{
 		private const int WarmupCooldownTime = 30;
-
+		
+		/// <param name="displayData">configuration data for the display to create.</param>
+		/// <param name="processor">the root Crestron control system object.</param>
+		/// <param name="hwService">the hardware service that will manage the device after creation.</param>
+		/// <returns>a control object for the display, or false if an error occurs.</returns>
 		public static IDisplayDevice? CreateDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
 		{
 			ParameterValidator.ThrowIfNull(displayData, "CreateDisplay", nameof(displayData));

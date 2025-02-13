@@ -22,11 +22,11 @@
 		/// <param name="isOnline">true = the device is currently connected for communication, false = device offline (defaults to false)</param>
 		public InfoContainer(string id, string label, string icon, List<string> tags, bool isOnline = false)
 		{
-			this.Icon = icon;
-			this.Id = id;
-			this.Label = label;
-			this.Tags = tags;
-			this.IsOnline = isOnline;
+			Icon = icon;
+			Id = id;
+			Label = label;
+			Tags = tags;
+			IsOnline = isOnline;
 		}
 
 		/// <summary>

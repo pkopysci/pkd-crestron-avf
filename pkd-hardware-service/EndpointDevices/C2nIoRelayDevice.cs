@@ -40,6 +40,7 @@
 			}
 		}
 
+		/// <inheritdoc />
 		~C2nIoRelayDevice()
 		{
 			Dispose(false);
@@ -153,6 +154,7 @@
 			device.RelayPorts[(uint)index]?.Open();
 		}
 
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);

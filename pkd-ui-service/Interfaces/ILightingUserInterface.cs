@@ -5,6 +5,9 @@
 	using System;
 	using System.Collections.ObjectModel;
 
+	/// <summary>
+	/// Required events, methods and properties for implementing a user interface that supports lighting control.
+	/// </summary>
 	public interface ILightingUserInterface
 	{
 		/// <summary>

@@ -4,6 +4,9 @@
 	using System;
 	using System.Collections.ObjectModel;
 
+	/// <summary>
+	/// Required events, methods, and properties for implementing an application service that supports lighting controls.
+	/// </summary>
 	public interface ILightingControlApp
 	{
 		/// <summary>

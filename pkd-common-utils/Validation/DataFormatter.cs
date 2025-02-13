@@ -8,7 +8,7 @@
 	public static class DataFormatter
 	{
 		/// <summary>
-		/// Removes all leading & trailing white spaces and removes any hyphens.
+		/// Removes all leading and trailing white spaces and removes any hyphens.
 		/// </summary>
 		/// <param name="arg">The config argument to convert</param>
 		/// <returns>A new string with all whitespaces and hyphens removed.</returns>

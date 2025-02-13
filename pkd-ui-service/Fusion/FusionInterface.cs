@@ -1,4 +1,5 @@
-﻿namespace pkd_ui_service.Fusion
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+namespace pkd_ui_service.Fusion
 {
 	using Crestron.SimplSharpPro;
 	using Crestron.SimplSharpPro.Fusion;
@@ -9,8 +10,7 @@
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-
-
+	
 	public class FusionInterface : IFusionInterface
 	{
 		private const string PcTag = "pc";

@@ -16,7 +16,14 @@
 		where TDevice : IBaseDevice
 		where TDeviceData : BaseData
 	{
+		/// <summary>
+		/// Container for managing the hardware interaction objects.
+		/// </summary>
 		protected readonly DeviceContainer<TDevice> Devices;
+		
+		/// <summary>
+		/// Collection of configuration data representing the devices.
+		/// </summary>
 		protected readonly ReadOnlyCollection<TDeviceData> Data;
 		private bool disposed;
 
@@ -87,6 +94,10 @@
 			return Devices.GetAllDevices();
 		}
 
+		/// <summary>
+		/// Dispose of all managed objects.
+		/// </summary>
+		/// <param name="disposing">true = this device is disposing, false = not disposing.</param>
 		protected void Dispose(bool disposing)
 		{
 			if (disposed) return;

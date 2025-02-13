@@ -19,7 +19,9 @@
 	{
 		private readonly CenIoRy104 device;
 		private bool disposed;
-
+		
+		/// <param name="data">configuration data for the relay device.</param>
+		/// <param name="controlSystem">root crestron control system.</param>
 		public CenIoRy401RelayDevice(Endpoint data, CrestronControlSystem controlSystem)
 		{
 			ParameterValidator.ThrowIfNull(controlSystem, "Ctor", nameof(controlSystem));
@@ -37,6 +39,7 @@
 			}
 		}
 
+		/// <inheritdoc />
 		~CenIoRy401RelayDevice()
 		{
 			Dispose(false);
@@ -150,6 +153,7 @@
 			device.RelayPorts[(uint)index]?.Open();
 		}
 
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);

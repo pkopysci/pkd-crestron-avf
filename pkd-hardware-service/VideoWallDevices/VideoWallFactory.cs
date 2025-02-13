@@ -10,6 +10,11 @@ namespace pkd_hardware_service.VideoWallDevices;
 /// </summary>
 public static class VideoWallFactory
 {
+
+    /// <param name="data">The configuration data for the video wall device.</param>
+    /// <param name="processor">The root Crestron control system object.</param>
+    /// <param name="hwService">the hardware service that will manage the device after instantiation.</param>
+    /// <returns></returns>
     public static IVideoWallDevice? CreateVideoWallDevice(
         VideoWall data,
         CrestronControlSystem processor,

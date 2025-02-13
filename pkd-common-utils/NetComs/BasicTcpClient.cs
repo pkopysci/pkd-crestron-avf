@@ -18,6 +18,7 @@
 		private bool userDisconnect;
 		private bool disposed;
 
+		/// <summary>Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.</summary>
 		~BasicTcpClient()
 		{
 			Dispose(false);
@@ -164,6 +165,10 @@
 			client.SendDataAsync(byteData, byteData.Length, SendDataCallback);
 		}
 
+		/// <summary>
+		/// Send a command to the server as a byte array.
+		/// </summary>
+		/// <param name="data">The byte data to send to the server.</param>
 		public void Send(byte[] data)
 		{
 			if (data.Length > 0)

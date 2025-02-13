@@ -13,6 +13,9 @@
 	using System;
 	using System.Collections.Generic;
 
+	/// <summary>
+	/// Display control object that uses a Crestron certified driver for control.
+	/// </summary>
 	public class CcdDisplayDevice : BaseDevice, IDisplayDevice, IVideoRoutable, IDisposable
 	{
 		private static readonly Dictionary<uint, VideoConnections> Inputs = new Dictionary<uint, VideoConnections>()
@@ -35,6 +38,8 @@
 		private CTimer? offlineTimer;
 		private bool disposed;
 
+		/// <param name="driver">the Crestron Certified Driver object for controlling the device.</param>
+		/// <param name="config">The device config data that was created during boot.</param>
 		public CcdDisplayDevice(IBasicVideoDisplay driver, Display config)
 		{
 			ParameterValidator.ThrowIfNull(driver, "DisplayDevice.Ctor", nameof(driver));
@@ -47,6 +52,7 @@
 			FreezeState = false;
 		}
 
+		/// <inheritdoc />
 		~CcdDisplayDevice()
 		{
 			Dispose(false);
@@ -231,6 +237,9 @@
 			GC.SuppressFinalize(this);
 		}
 
+		/// <summary>
+		/// This is not supported by CCD devices.
+		/// </summary>
 		public void ClearVideoRoute(uint output) { }
 
 		private void SubscribeToEvents()

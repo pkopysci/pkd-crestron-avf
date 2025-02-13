@@ -11,11 +11,20 @@
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 
+	/// <summary>
+	/// Application control class for handling lighting requests and events.
+	/// </summary>
 	public class LightingControlApp : BaseApp<ILightingDevice, LightingInfo>, ILightingControlApp
 	{
 		private IApplicationService? parent;
 		private readonly ReadOnlyCollection<LightingControlInfoContainer> controllers;
 
+		/// <summary>
+		/// Instantiates a new instance of <see cref="LightingControlApp"/>.
+		/// </summary>
+		/// <param name="devices">Hardware control objects for all lighting controllers in the system.</param>
+		/// <param name="domainData">Configuration data for all lighting devices in the system.</param>
+		/// <param name="parent">The root application service associated with this lighting manager.</param>
 		public LightingControlApp(
 			DeviceContainer<ILightingDevice> devices,
 			ReadOnlyCollection<LightingInfo> domainData,

@@ -1,4 +1,10 @@
-﻿namespace pkd_ui_service
+﻿// ReSharper disable SuspiciousTypeConversion.Global
+
+using System.Collections.ObjectModel;
+using pkd_application_service.VideoWallControl;
+using pkd_domain_service.Data.VideoWallData;
+
+namespace pkd_ui_service
 {
 	using Crestron.SimplSharpPro;
 	using pkd_application_service;
@@ -130,6 +136,13 @@
 				{
 					eventUi.AddCustomEvent(item.Id, item.Label, item.IsActive);
 				}
+			}
+
+			if (device is IVideoWallUserInterface videoWallUi)
+			{
+				var wallDevices = (appService as IVideoWallApp)?.GetAllVideoWalls() ??
+				                  ReadOnlyCollection<VideoWallInfoContainer>.Empty;
+				videoWallUi.SetVideoWallData(wallDevices, appService.GetAllAvSources() );
 			}
 
 			return device;

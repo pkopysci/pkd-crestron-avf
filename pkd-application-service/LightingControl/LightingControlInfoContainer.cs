@@ -3,6 +3,9 @@
 	using Base;
 	using System.Collections.Generic;
 
+	/// <summary>
+	/// Data object representing a single lighting control object managed by the application service.
+	/// </summary>
 	public class LightingControlInfoContainer : InfoContainer
 	{
 		/// <summary>
@@ -33,12 +36,24 @@
 			ShutdownSceneId = shutdownSceneId;
 		}
 
+		/// <summary>
+		/// A collection of all zones associated with this lighting controller.
+		/// </summary>
 		public List<LightingItemInfoContainer> Zones { get; private set; }
 
+		/// <summary>
+		/// A collection of all scenes associated with this lighting controller.
+		/// </summary>
 		public List<LightingItemInfoContainer> Scenes { get; private set; }
 
+		/// <summary>
+		/// The id of the lighting scene to recall when the system enters the active state.
+		/// </summary>
 		public string StartupSceneId { get; private set; }
 
+		/// <summary>
+		/// The id of the lighting scene to recall when the system enters the standby state.
+		/// </summary>
 		public string ShutdownSceneId { get; private set; }
 
 	}

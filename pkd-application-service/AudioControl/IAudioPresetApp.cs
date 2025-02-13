@@ -3,6 +3,9 @@
 	using Base;
 	using System.Collections.ObjectModel;
 
+	/// <summary>
+	/// required methods when implementing an application service that supports managing audio presets.
+	/// </summary>
 	public interface IAudioPresetApp
 	{
 		/// <summary>

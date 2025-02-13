@@ -1,4 +1,5 @@
 ﻿// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable SuspiciousTypeConversion.Global
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 namespace pkd_application_service
 {
@@ -28,20 +29,71 @@ namespace pkd_application_service
 	/// </summary>
 	public class ApplicationService : IApplicationService, IDisposable
 	{
+		/// <summary>
+		/// Collection of objects that need to be disposed when this object is disposed.
+		/// </summary>
 		protected readonly List<IDisposable> Disposables = [];
+		
+		/// <summary>
+		/// Collection of all user interfaces defined in the configuration.
+		/// </summary>
 		protected List<UserInterfaceDataContainer> InterfaceData;
+		
+		/// <summary>
+		/// internal control object for managing display control state.
+		/// </summary>
 		protected IDisplayControlApp DisplayControl;
+		
+		/// <summary>
+		/// Internal control object for managing system power state and requests
+		/// </summary>
 		protected ISystemPowerApp SystemPowerControl;
+		
+		/// <summary>
+		/// Internal control object for managing relay endpoint control requests.
+		/// </summary>
 		protected IEndpointControlApp EndpointControl;
+		
+		/// <summary>
+		/// The hardware device interface manager part of the AV framework.
+		/// </summary>
 		protected IInfrastructureService HwService;
+		
+		/// <summary>
+		/// The system configuration representation of the AV Framework.
+		/// </summary>
 		protected IDomainService Domain;
+		
+		/// <summary>
+		/// Internal control object for managing audio state and requests.
+		/// </summary>
 		protected IAudioControlApp AudioControl;
+		
+		/// <summary>
+		/// Internal control object for managing video routing state and requests.
+		/// </summary>
 		protected IAvRoutingApp RoutingControl;
+		
+		/// <summary>
+		/// Internal control object for managing dvd, cable tv, and other transport-based requests.
+		/// </summary>
 		protected ITransportControlApp TransportControl;
+		
+		/// <summary>
+		/// Internal control object for managing all lighting states and requests.
+		/// </summary>
 		protected ILightingControlApp LightingControl;
+		
+		/// <summary>
+		/// Flag to indicate whether to use an AV Router in the configuration for video mute and freeze or if these controls
+		/// should be sent to the individual displays.
+		/// </summary>
 		protected bool UseAvrMuteFreeze;
 		private bool disposed;
 
+		/// <summary>
+		/// Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.
+		/// </summary>
 		~ApplicationService()
 		{
 			Dispose(false);
@@ -436,6 +488,7 @@ namespace pkd_application_service
 			}
 		}
 
+		/// <inheritdoc/>
 		public virtual ReadOnlyCollection<TransportInfoContainer> GetAllCableBoxes()
 		{
 			return TransportControl.GetAllCableBoxes();
@@ -552,6 +605,10 @@ namespace pkd_application_service
 		/// <inheritdoc/>
 		public virtual int GetZoneLoad(string deviceId, string zoneId) { return LightingControl.GetZoneLoad(deviceId, zoneId); }
 
+		/// <summary>
+		/// Dispose all objects in <see cref="Disposables"/>.
+		/// </summary>
+		/// <param name="disposing"></param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposed) return;
@@ -568,6 +625,9 @@ namespace pkd_application_service
 			disposed = true;
 		}
 
+		/// <summary>
+		/// recalls any startup or shutdown DSP presets that exist in the system configuration.
+		/// </summary>
 		protected virtual void HandleStartupShutdownPresets()
 		{
 			if (!(AudioControl is IAudioPresetApp presetApp))
@@ -590,7 +650,10 @@ namespace pkd_application_service
 				}
 			}
 		}
-
+		
+		/// <summary>
+		/// Trigger any startup or shutdown lighting presets if they exist in the system configuration.
+		/// </summary>
 		protected virtual void HandleLightingStartupShutdown()
 		{
 			foreach (var control in LightingControl.GetAllLightingDeviceInfo())
@@ -606,6 +669,10 @@ namespace pkd_application_service
 			}
 		}
 
+		/// <summary>
+		/// Triggers any AV routes flagged for the startup or shutdown events. Also recalls <see cref="HandleStartupShutdownPresets"/>
+		/// and <see cref="HandleLightingStartupShutdown"/>.
+		/// </summary>
 		protected virtual void OnSystemChange()
 		{
 			foreach (var destination in RoutingControl.GetAllAvDestinations())
@@ -617,6 +684,9 @@ namespace pkd_application_service
 			HandleLightingStartupShutdown();
 		}
 
+		/// <summary>
+		/// subscribes to all events triggered by the internal subject-specific control objects.
+		/// </summary>
 		protected virtual void SubscribeEvents()
 		{
 			SystemPowerControl.SystemStateChanged += (_, evt) =>
@@ -742,13 +812,13 @@ namespace pkd_application_service
 			{
 				if (avr is IVideoControllable avrVideo)
 				{
-					avrVideo.VideoBlankChanged += (_, evt) =>
+					avrVideo.VideoBlankChanged += (_, _) =>
 					{
 						var temp = GlobalVideoBlankChanged;
 						temp?.Invoke(this, EventArgs.Empty);
 					};
 
-					avrVideo.VideoFreezeChanged += (_, evt) =>
+					avrVideo.VideoFreezeChanged += (_, _) =>
 					{
 						var temp = GlobalVideoFreezeChanged;
 						temp?.Invoke(this, EventArgs.Empty);
@@ -777,6 +847,11 @@ namespace pkd_application_service
 			};
 		}
 
+		/// <summary>
+		/// Iterate through all AVRs in the system configuration and set their video freeze state to the given value, if
+		/// they support this feature.
+		/// </summary>
+		/// <param name="state">true = freeze active, false = freeze inactive.</param>
 		protected virtual void SetAvrVideoFreeze(bool state)
 		{
 			foreach (var avr in HwService.AvSwitchers.GetAllDevices())
@@ -796,6 +871,11 @@ namespace pkd_application_service
 			}
 		}
 
+		/// <summary>
+		/// Iterate through all AVRs in the system configuration and set their video blank state to the given value, if
+		/// they support this feature.
+		/// </summary>
+		/// <param name="state">true = blank active, false = blank inactive.</param>
 		protected virtual void SetAvrVideoBlank(bool state)
 		{
 			foreach (var avr in HwService.AvSwitchers.GetAllDevices())

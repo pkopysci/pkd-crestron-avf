@@ -3,6 +3,9 @@
 	using pkd_common_utils.GenericEventArgs;
 	using System;
 
+	/// <summary>
+	/// required events, methods, and properties for implementing a user interface that supports custom events.
+	/// </summary>
 	public interface ICustomEventUserInterface
 	{
 		/// <summary>

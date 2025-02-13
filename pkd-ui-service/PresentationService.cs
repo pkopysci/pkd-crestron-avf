@@ -1,4 +1,7 @@
 ﻿// ReSharper disable SuspiciousTypeConversion.Global
+
+using pkd_application_service.VideoWallControl;
+
 namespace pkd_ui_service
 {
 	using Crestron.SimplSharp;
@@ -16,6 +19,9 @@ namespace pkd_ui_service
 	using System.Collections.Generic;
 	using System.Linq;
 
+	/// <summary>
+	/// Root presentation implementation.
+	/// </summary>
 	public class PresentationService : IPresentationService, IDisposable
 	{
 		private readonly CrestronControlSystem control;
@@ -29,7 +35,9 @@ namespace pkd_ui_service
 #else
         private const int TransitionTime = 20000;
 #endif
-
+		
+		/// <param name="appService">The framework application implementation that handles state management.</param>
+		/// <param name="control">the root Crestron control system object.</param>
 		public PresentationService(IApplicationService appService, CrestronControlSystem control)
 		{
 			ParameterValidator.ThrowIfNull(appService, "Ctor", nameof(appService));
@@ -42,6 +50,7 @@ namespace pkd_ui_service
 			SubscribeToAppService();
 		}
 
+		/// <inheritdoc />
 		~PresentationService()
 		{
 			Dispose(false);
@@ -65,6 +74,9 @@ namespace pkd_ui_service
 			fusion?.Initialize();
 		}
 
+		/// <summary>
+		/// disposes of all internal component objects if they are disposable.
+		/// </summary>
 		protected void Dispose(bool disposing)
 		{
 			if (disposed) return;
@@ -163,6 +175,13 @@ namespace pkd_ui_service
 			{
 				techService.NonTechLockoutStateChangeRequest += AppServiceTechLockoutHandler;
 			}
+
+			if (appService is IVideoWallApp videoWallApp)
+			{
+				videoWallApp.VideoWallLayoutChanged += VideoWallAppLayoutChangedHandler;
+				videoWallApp.VideoWallConnectionStatusChanged += VideoWallAppConnectionChangeHandler;
+				videoWallApp.VideoWallCellRouteChanged += VideoWallAppRouteHandler;
+			}
 		}
 
 		private void UnsubscribeFromAppService()
@@ -194,6 +213,13 @@ namespace pkd_ui_service
 			if (appService is ITechAuthGroupAppService securityService)
 			{
 				securityService.NonTechLockoutStateChangeRequest -= AppServiceTechLockoutHandler;
+			}
+
+			if (appService is IVideoWallApp videoWallApp)
+			{
+				videoWallApp.VideoWallLayoutChanged -= VideoWallAppLayoutChangedHandler;
+				videoWallApp.VideoWallConnectionStatusChanged -= VideoWallAppConnectionChangeHandler;
+				videoWallApp.VideoWallCellRouteChanged -= VideoWallAppRouteHandler;
 			}
 		}
 
@@ -326,6 +352,40 @@ namespace pkd_ui_service
 		}
 
 		#region AppService Handlers
+
+		private void VideoWallAppLayoutChangedHandler(object? sender, GenericSingleEventArgs<string> args)
+		{
+			if (sender is not IVideoWallApp videoWallApp) return;
+			var activeLayoutId = videoWallApp.QueryActiveVideoWallLayout(args.Arg);
+			foreach (var ui in uiConnections)
+			{
+				if (ui is not IVideoWallUserInterface videoWallUi) continue;
+				videoWallUi.UpdateActiveVideoWallLayout(args.Arg, activeLayoutId);
+			}
+		}
+
+		private void VideoWallAppConnectionChangeHandler(object? sender, GenericSingleEventArgs<string> args)
+		{
+			if (sender is not IVideoWallApp videoWallApp) return;
+			var onlineStatus = videoWallApp.QueryVideoWallConnectionStatus(args.Arg);
+			foreach (var ui in uiConnections)
+			{
+				if (ui is not IVideoWallUserInterface videoWallUi) continue;
+				videoWallUi.UpdateVideoWallConnectionStatus(args.Arg, onlineStatus);
+			}
+		}
+
+		private void VideoWallAppRouteHandler(object? sender, GenericDualEventArgs<string, string> args)
+		{
+			if (sender is not IVideoWallApp videoWallApp) return;
+			var newRoute = videoWallApp.QueryVideoWallCellSource(args.Arg1, args.Arg2);
+			foreach (var ui in uiConnections)
+			{
+				if (ui is not IVideoWallUserInterface videoWallUi) continue;
+				videoWallUi.UpdateCellRoutedSource(args.Arg1, args.Arg2, newRoute);
+			}
+		}
+		
 		private void AppServiceTechLockoutHandler(object? sender, GenericSingleEventArgs<bool> e)
 		{
 			foreach (var ui in uiConnections)

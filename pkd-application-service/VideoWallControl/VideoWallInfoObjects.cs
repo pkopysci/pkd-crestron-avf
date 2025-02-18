@@ -7,16 +7,16 @@ namespace pkd_application_service.VideoWallControl;
 public class VideoWallCellInfo
 {
     public string Id { get; init; } = string.Empty;
-    public int XStart { get; init; }
-    public int YStart { get; init; }
-    public int XEnd { get; init; }
-    public int YEnd { get; init; }
+    public int XPosition { get; init; }
+    public int YPosition { get; init; }
     public string SourceId { get; set; } = string.Empty;
 }
 
 public class VideoWallLayoutInfo
 {
     public string VideoWallControlId { get; init; } = string.Empty;
+    public int Width { get; init; }
+    public int Height { get; init; }
     public string Id { get; init; } = string.Empty;
     public string Label { get; init; } = string.Empty;
     public List<VideoWallCellInfo> Cells { get; init; } = [];

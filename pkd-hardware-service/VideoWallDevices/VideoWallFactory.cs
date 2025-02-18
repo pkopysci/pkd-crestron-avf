@@ -20,6 +20,9 @@ public static class VideoWallFactory
         CrestronControlSystem processor,
         IInfrastructureService hwService)
     {
+        
+        Logger.Info($"Creating Video Wall device with id {data.Id}...");
+        
         var path = DirectoryHelper.NormalizePath(data.Connection.Driver);
         var device = DriverLoader.LoadClassByInterface<IVideoWallDevice>(
             path,

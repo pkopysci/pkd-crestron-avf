@@ -368,6 +368,11 @@ namespace pkd_ui_service
 		{
 			if (sender is not IVideoWallApp videoWallApp) return;
 			var onlineStatus = videoWallApp.QueryVideoWallConnectionStatus(args.Arg);
+			if (onlineStatus)
+				fusion?.ClearOfflineDevice(args.Arg);
+			else
+				fusion?.AddOfflineDevice(args.Arg, $"Video Wall Controller {args.Arg}");
+			
 			foreach (var ui in uiConnections)
 			{
 				if (ui is not IVideoWallUserInterface videoWallUi) continue;

@@ -13,25 +13,15 @@ public class VideoWallCell
     /// <summary>
     /// The unique id of the currently routed video source.
     /// </summary>
-    public string SourceId { get; init; } = string.Empty;
+    public string SourceId { get; set; } = string.Empty;
     
     /// <summary>
-    /// The x-coordinate that this cell starts in the width of the parent layout.
+    /// The horizontal location of this cell/window
     /// </summary>
-    public int XStart { get; init; }
+    public int XPosition { get; init; }
     
     /// <summary>
-    /// The x-coordinate that this cell ends in the width of the parent layout.
+    /// The vertical location of this cell/window.
     /// </summary>
-    public int XEnd { get; init; }
-    
-    /// <summary>
-    /// The y-coordinate that this cell starts in the height of the parent layout.
-    /// </summary>
-    public int YStart { get; init; }
-    
-    /// <summary>
-    /// THe y-coordinate that this cell ends in the height of the parent layout.
-    /// </summary>
-    public int YEnd { get; init; }
+    public int YPosition { get; init;  }
 }

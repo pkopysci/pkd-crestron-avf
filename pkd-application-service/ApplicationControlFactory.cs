@@ -205,6 +205,8 @@ public static class ApplicationControlFactory
 	{
 		try
 		{
+			Logger.Info($"Creating application service {domain.RoomInfo.Logic.AppServiceClass} from  {domain.RoomInfo.Logic.AppServiceLibrary}...");
+			
 			var service = DriverLoader.LoadClassByInterface<IApplicationService>(
 				domain.RoomInfo.Logic.AppServiceLibrary,
 				domain.RoomInfo.Logic.AppServiceClass,

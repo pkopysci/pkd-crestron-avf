@@ -38,9 +38,6 @@
 
 		private static CcdDisplayDevice? LoadCcdDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
 		{
-			Logger.Info(
-				$"DisplayDeviceFactory.CreateDisplay() - Creating Crestron certified driver for {displayData.Id}.");
-			
 			var transport = DriverLoader.GetTransportType(displayData.Connection.Transport);
 			var driverPath = DirectoryHelper.NormalizePath(displayData.Connection.Driver);
 
@@ -127,9 +124,6 @@
 
 		private static IDisplayDevice? LoadPluginDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
 		{
-			Logger.Info(
-				$"DisplayDeviceFactory.CreateDisplay() - Creating display from plugin library for {displayData.Id}...");
-
 			var driverPath = DirectoryHelper.NormalizePath(displayData.Connection.Driver);
 			var device = DriverLoader.LoadClassByInterface<IDisplayDevice>(
 				driverPath,

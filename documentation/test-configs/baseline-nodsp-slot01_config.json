@@ -10,8 +10,8 @@
     "HelpContact": "555-555-5555",
     "SystemType": "baseline",
     "Logic": {
-      "AppServiceLibrary": "",
-      "AppServiceClass": ""
+      "AppServiceLibrary": "VideoWallAppService.dll",
+      "AppServiceClass": "VideoWallApplication"
     }
   },
   "UserInterfaces": [
@@ -433,7 +433,25 @@
       "IrPorts": []
     }
   ],
-  "VideoWalls": [],
+  "VideoWalls": [
+    {
+      "Id": "vwall01",
+      "Label": "Video Wall 1",
+      "ClassName": "VideoWallEmulator",
+      "Connection": {
+        "Id": "vcon01",
+        "Transport": "tcp",
+        "Driver": "VideoWallEmulation.dll",
+        "Host": "192.168.1.253",
+        "Port": 23,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        }
+      }
+    }
+  ],
   "FusionInfo": {
     "Id": "Fusion01",
     "RoomName": "Test Classroom 101",

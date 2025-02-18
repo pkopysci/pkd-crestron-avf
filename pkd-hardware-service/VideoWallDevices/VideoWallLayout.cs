@@ -16,6 +16,16 @@ public class VideoWallLayout
     public string Label { get; init; } = string.Empty;
     
     /// <summary>
+    /// The number of cells in the layout on the x-axis.
+    /// </summary>
+    public int Width { get; init; } = 0;
+    
+    /// <summary>
+    /// The number of cells in the layout on the y-axis.
+    /// </summary>
+    public int Height { get; init; } = 0;
+    
+    /// <summary>
     /// A collection of all video cells and their positions within this layout.
     /// </summary>
     public List<VideoWallCell> Cells { get; init; } = [];

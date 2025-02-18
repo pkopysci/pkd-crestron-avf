@@ -37,7 +37,7 @@
 					DirectoryHelper.GetUserFolder(),
 					assemblyName));
 
-				Logger.Info($"DriverLoader.LoadDriverInstance() - Attempting to load driver from location {dllPath}...");
+				Logger.Debug($"DriverLoader.LoadDriverInstance() - Attempting to load driver from location {dllPath}...");
 
 				var dll = Assembly.LoadFrom(dllPath);
 				foreach (var type in dll.GetTypes())
@@ -80,7 +80,7 @@
 					DirectoryHelper.GetUserFolder(),
 					assemblyName));
 
-				Logger.Info("Attempting to load driver from file {0}...", dllPath);
+				Logger.Debug("Attempting to load driver from file {0}...", dllPath);
 				var dll = Assembly.LoadFrom(dllPath);
 				foreach (var type in dll.GetTypes())
 				{
@@ -92,7 +92,7 @@
 					break;
 				}
 
-				Logger.Info("Done!");
+				Logger.Debug("Done!");
 			}
 			catch (Exception e)
 			{

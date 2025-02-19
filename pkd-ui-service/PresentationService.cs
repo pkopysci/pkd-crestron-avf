@@ -281,6 +281,12 @@ namespace pkd_ui_service
 				lightingUi.LightingSceneRecallRequest += LightingUiSceneHandler;
 				lightingUi.LightingLoadChangeRequest += LightingUiLoadHandler;
 			}
+
+			if (ui is IVideoWallUserInterface videoWallUi)
+			{
+				videoWallUi.VideoWallLayoutChangeRequest += VideoWallUiLayoutHandler;
+				videoWallUi.VideoWallRouteRequest += VideoWallRouteHandler;
+			}
 		}
 
 		private void UnsubscribeFromInterfaces()
@@ -743,6 +749,19 @@ namespace pkd_ui_service
 		#endregion
 
 		#region Touchscreen Handlers
+
+		private void VideoWallUiLayoutHandler(object? sender, GenericDualEventArgs<string, string> args)
+		{
+			if (appService is not IVideoWallApp videoWallApp) return;
+			videoWallApp.SetActiveVideoWallLayout(args.Arg1, args.Arg2);
+		}
+
+		private void VideoWallRouteHandler(object? sender, GenericTrippleEventArgs<string, string, string> args)
+		{
+			if (appService is not IVideoWallApp videoWallApp) return;
+			videoWallApp.SetVideoWallCellRoute(args.Arg1, args.Arg2, args.Arg3);
+		}
+		
 		private void UiConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			var found = uiConnections.FirstOrDefault(x => x.Id.Equals(args.Arg, StringComparison.InvariantCulture));

@@ -93,42 +93,14 @@ namespace pkd_ui_service
 				return null;
 			}
 
+			(device as IHtmlUserInterface)?.SetSystemType(appService.GetRoomInfo().SystemType);
 			device.SetUiData(uiData);
-			
-			if (device is IHtmlUserInterface htmlInterface)
-			{
-				htmlInterface.SetSystemType(appService.GetRoomInfo().SystemType);
-			}
-
-			if (device is ICrestronUserInterface crestronInterface)
-			{
-				crestronInterface.SetCrestronControl(parent, uiData.IpId);
-			}
-
-			if (device is IDisplayUserInterface displayUi)
-			{
-				displayUi.SetDisplayData(appService.GetAllDisplayInfo());
-			}
-
-			if (device is IRoutingUserInterface routingUi)
-			{
-				routingUi.SetRoutingData(appService.GetAllAvSources(), appService.GetAllAvDestinations(), appService.GetAllAvRouters());
-			}
-
-			if (device is IAudioUserInterface audioUi)
-			{
-				audioUi.SetAudioData(appService.GetAudioInputChannels(), appService.GetAudioOutputChannels());
-			}
-
-			if (device is ITransportControlUserInterface transportControlUi)
-			{
-				transportControlUi.SetCableBoxData(appService.GetAllCableBoxes());
-			}
-
-			if (device is ILightingUserInterface lightingUi)
-			{
-				lightingUi.SetLightingData(appService.GetAllLightingDeviceInfo());
-			}
+			(device as ICrestronUserInterface)?.SetCrestronControl(parent, uiData.IpId);
+			(device as IDisplayUserInterface)?.SetDisplayData(appService.GetAllDisplayInfo());
+			(device as IRoutingUserInterface)?.SetRoutingData(appService.GetAllAvSources(), appService.GetAllAvDestinations(), appService.GetAllAvRouters());
+			(device as IAudioUserInterface)?.SetAudioData(appService.GetAudioInputChannels(), appService.GetAudioOutputChannels());
+			(device as ITransportControlUserInterface)?.SetCableBoxData(appService.GetAllCableBoxes());
+			(device as ILightingUserInterface)?.SetLightingData(appService.GetAllLightingDeviceInfo());
 
 			if (device is ICustomEventUserInterface eventUi && appService is ICustomEventAppService eventApp)
 			{

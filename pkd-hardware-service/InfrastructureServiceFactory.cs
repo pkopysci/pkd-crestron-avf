@@ -58,8 +58,12 @@
 				hwService.AddLightingDevice(lighting);
 			}
 
+			foreach (var videoWall in domain.VideoWalls)
+			{
+				hwService.AddVideoWall(videoWall);
+			}
+			
 			// TODO: Cameras
-			// TODO: Video Wall Controllers
 
 			return hwService;
 		}

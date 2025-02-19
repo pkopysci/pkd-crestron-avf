@@ -59,6 +59,15 @@
             "Control": "lighting",
             "SourceSelect": "",
             "Tags": []
+          },
+          {
+            "Id": "MENU05",
+            "Visible": true,
+            "Label": "Video Wall",
+            "Icon": "grid",
+            "Control": "video-wall",
+            "SourceSelect": "",
+            "Tags": []
           }
         ],
         "Tags": []

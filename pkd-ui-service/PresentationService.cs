@@ -758,6 +758,8 @@ namespace pkd_ui_service
 
 		private void VideoWallRouteHandler(object? sender, GenericTrippleEventArgs<string, string, string> args)
 		{
+			Logger.Debug($"PresentationService.VideoWallRouteHandler(${args.Arg1}, {args.Arg2}, {args.Arg3})");
+			
 			if (appService is not IVideoWallApp videoWallApp) return;
 			videoWallApp.SetVideoWallCellRoute(args.Arg1, args.Arg2, args.Arg3);
 		}

@@ -1,5 +1,6 @@
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 using System.Collections.ObjectModel;
+using pkd_application_service.AvRouting;
 using pkd_application_service.Base;
 
 namespace pkd_application_service.VideoWallControl;
@@ -26,4 +27,5 @@ public class VideoWallInfoContainer(string id, string label, string icon, List<s
     : InfoContainer(id, label, icon, tags, isOnline)
 {
     public ReadOnlyCollection<VideoWallLayoutInfo> Layouts { get; init; } = new([]);
+    public ReadOnlyCollection<AvSourceInfoContainer> Sources { get; init; } = new([]);
 }

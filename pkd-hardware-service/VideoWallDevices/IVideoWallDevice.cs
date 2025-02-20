@@ -33,6 +33,11 @@ public interface IVideoWallDevice : IBaseDevice
     List<Source> Sources { get; }
     
     /// <summary>
+    /// The id of the layout that should be selected on system startup or boot.
+    /// </summary>
+    string StartupLayoutId { get; }
+    
+    /// <summary>
     /// The total height of physical video wall displays.
     /// </summary>
     int MaxHeight { get; }

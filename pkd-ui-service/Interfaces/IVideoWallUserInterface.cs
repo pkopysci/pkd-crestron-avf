@@ -29,8 +29,7 @@ public interface IVideoWallUserInterface
     /// Provide the user interface with the video wall system configuration.
     /// </summary>
     /// <param name="videoWalls">Collection of device data for all video wall controllers in the system.</param>
-    /// <param name="sources">Collection of all sources that are routable to the video wall.</param>
-    void SetVideoWallData(ReadOnlyCollection<VideoWallInfoContainer> videoWalls, ReadOnlyCollection<AvSourceInfoContainer> sources);
+    void SetVideoWallData(ReadOnlyCollection<VideoWallInfoContainer> videoWalls);
 
     /// <summary>
     /// Update the active layout on a target controller

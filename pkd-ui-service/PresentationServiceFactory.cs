@@ -114,7 +114,7 @@ namespace pkd_ui_service
 			{
 				var wallDevices = (appService as IVideoWallApp)?.GetAllVideoWalls() ??
 				                  ReadOnlyCollection<VideoWallInfoContainer>.Empty;
-				videoWallUi.SetVideoWallData(wallDevices, appService.GetAllAvSources() );
+				videoWallUi.SetVideoWallData(wallDevices);
 			}
 
 			return device;

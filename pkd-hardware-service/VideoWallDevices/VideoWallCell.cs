@@ -16,6 +16,12 @@ public class VideoWallCell
     public string SourceId { get; set; } = string.Empty;
     
     /// <summary>
+    /// The id of the routable video wall source that should be sent to this cell/window when the parent layout
+    /// is selected.
+    /// </summary>
+    public string DefaultSourceId { get; set; } = string.Empty;
+    
+    /// <summary>
     /// The horizontal location of this cell/window
     /// </summary>
     public int XPosition { get; init; }

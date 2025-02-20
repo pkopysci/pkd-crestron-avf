@@ -2,7 +2,6 @@
 
 using System.Collections.ObjectModel;
 using pkd_application_service.VideoWallControl;
-using pkd_domain_service.Data.VideoWallData;
 
 namespace pkd_ui_service
 {

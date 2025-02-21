@@ -42,5 +42,9 @@
 		/// <param name="zoneId">The unique ID of the zone being updated.</param>
 		/// <param name="level">The new load level of the target zone.</param>
 		void UpdateLightingZoneLoad(string controlId, string zoneId, int level);
+		
+		/// <param name="controlId">The id of the lighting controller that changed.</param>
+		/// <param name="isOnline">true = device is connected, false = device is disconnected.</param>
+		void UpdateLightingControlConnectionStatus(string controlId, bool isOnline);
 	}
 }

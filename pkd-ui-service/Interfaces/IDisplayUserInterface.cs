@@ -68,6 +68,13 @@
 		/// <param name="id">The unique ID of the display to update.</param>
 		/// <param name="newState">True = freeze on (no motion), false = freeze off (show motion).</param>
 		void UpdateDisplayFreeze(string id, bool newState);
+		
+		/// <summary>
+		/// Update the UI with the current connection status of the target display/projector.
+		/// </summary>
+		/// <param name="id">The id of the displays being updated.</param>
+		/// <param name="isOnline">True = device is connected, false = device is disconnected.</param>
+		void UpdateDisplayConnectionStatus(string id, bool isOnline);
 
 		/// <summary>
 		/// Updates the user interface to display the new collection of controllable video outputs.

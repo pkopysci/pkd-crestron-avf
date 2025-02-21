@@ -547,16 +547,24 @@ namespace pkd_ui_service
 		private void AppServiceDisplayConnectionHandler(object? sender, GenericDualEventArgs<string, bool> args)
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayConnectionHandler() - {0}, {1}", args.Arg1, args.Arg2);
+			var display = appService.GetAllDisplayInfo().FirstOrDefault(x => x.Id.Equals(args.Arg1, StringComparison.InvariantCulture));
+			if (display == null) return;
+
+			foreach (var ui in uiConnections)
+			{
+				if (ui is IDisplayUserInterface displayUi)
+				{
+					displayUi.UpdateDisplayConnectionStatus(args.Arg1, args.Arg2);
+				}
+			}
+			
 			if (args.Arg2)
 			{
 				fusion?.ClearOfflineDevice(args.Arg1);
-				RemoveErrorFromUi(args.Arg1);
 			}
 			else
 			{
-				var display = appService.GetAllDisplayInfo().First(x => x.Id.Equals(args.Arg1, StringComparison.InvariantCulture));
 				fusion?.AddOfflineDevice(args.Arg1, display.Label);
-				AddErrorToUi(args.Arg1, display.Label);
 			}
 		}
 
@@ -684,15 +692,21 @@ namespace pkd_ui_service
 		private void AppServiceLightingConnectionHandler(object? sender, GenericDualEventArgs<string, bool> e)
 		{
 			Logger.Debug("PresentationService.AppServiceLightingConnectionHandler({0}, 1)", e.Arg1, e.Arg2);
+			foreach (var ui in uiConnections)
+			{
+				if (ui is ILightingUserInterface lightingUi)
+				{
+					lightingUi.UpdateLightingControlConnectionStatus(e.Arg1, e.Arg2);
+				}
+			}
+			
 			if (e.Arg2)
 			{
-				RemoveErrorFromUi(e.Arg1);
 				fusion?.ClearOfflineDevice(e.Arg1);
 			}
 			else
 			{
-				string label = $"Lighting controller {e.Arg1}";
-				AddErrorToUi(e.Arg1, label);
+				var label = $"Lighting controller {e.Arg1}";
 				fusion?.AddOfflineDevice(e.Arg1, label);
 			}
 		}

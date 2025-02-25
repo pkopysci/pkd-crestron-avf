@@ -454,16 +454,22 @@ namespace pkd_ui_service
 
 		private void AppServiceDspConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
-			bool isOnline = appService.QueryAudioDspConnectionStatus(args.Arg);
+			var isOnline = appService.QueryAudioDspConnectionStatus(args.Arg);
+			foreach (var ui in uiConnections)
+			{
+				if (ui is IAudioUserInterface audioUi)
+				{
+					audioUi.UpdateAudioDeviceConnectionStatus(args.Arg, isOnline);
+				}
+			}
+			
 			if (isOnline)
 			{
-				RemoveErrorFromUi(args.Arg);
 				fusion?.ClearOfflineDevice(args.Arg);
 			}
 			else
 			{
 				var found = appService.GetAllAudioDspDevices().First(x => x.Id.Equals(args.Arg, StringComparison.InvariantCulture));
-				AddErrorToUi(args.Arg, found.Label );
 				fusion?.AddOfflineDevice(args.Arg, found.Label );
 			}
 		}
@@ -676,15 +682,21 @@ namespace pkd_ui_service
 			Logger.Debug("PresentationService.AppServiceRouterConnectionHandler() - {0}", args.Arg);
 			
 			var isOnline = appService.QueryRouterConnectionStatus(args.Arg);
+			foreach (var ui in uiConnections)
+			{
+				if (ui is IRoutingUserInterface routingUi)
+				{
+					routingUi.UpdateAvRouterConnectionStatus(args.Arg, isOnline);
+				}
+			}
+			
 			if (isOnline)
 			{
-				RemoveErrorFromUi(args.Arg);
 				fusion?.ClearOfflineDevice(args.Arg);
 			}
 			else
 			{
 				var label = $"Router {args.Arg} is offline";
-				AddErrorToUi(args.Arg, label);
 				fusion?.AddOfflineDevice(args.Arg, label);
 			}
 		}

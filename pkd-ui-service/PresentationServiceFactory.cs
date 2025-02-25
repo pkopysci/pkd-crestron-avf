@@ -97,7 +97,10 @@ namespace pkd_ui_service
 			(device as ICrestronUserInterface)?.SetCrestronControl(parent, uiData.IpId);
 			(device as IDisplayUserInterface)?.SetDisplayData(appService.GetAllDisplayInfo());
 			(device as IRoutingUserInterface)?.SetRoutingData(appService.GetAllAvSources(), appService.GetAllAvDestinations(), appService.GetAllAvRouters());
-			(device as IAudioUserInterface)?.SetAudioData(appService.GetAudioInputChannels(), appService.GetAudioOutputChannels());
+			(device as IAudioUserInterface)?.SetAudioData(
+				appService.GetAudioInputChannels(),
+				appService.GetAudioOutputChannels(),
+				appService.GetAllAudioDspDevices());
 			(device as ITransportControlUserInterface)?.SetCableBoxData(appService.GetAllCableBoxes());
 			(device as ILightingUserInterface)?.SetLightingData(appService.GetAllLightingDeviceInfo());
 

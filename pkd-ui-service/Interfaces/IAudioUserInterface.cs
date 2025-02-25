@@ -1,6 +1,7 @@
 ﻿namespace pkd_ui_service.Interfaces
 {
 	using pkd_application_service.AudioControl;
+	using pkd_application_service.Base;
 	using pkd_common_utils.GenericEventArgs;
 	using System;
 	using System.Collections.ObjectModel;
@@ -51,13 +52,14 @@
 		/// Args package: arg1 = channel ID, arg2 = zone ID.
 		/// </summary>
 		event EventHandler<GenericDualEventArgs<string, string>>? AudioZoneEnableToggleRequest;
-
-		/// <summary>
-		/// Update the UI with all supported input and output audio channels.
-		/// </summary>
+		
 		/// <param name="inputs">Collection of input/microphone data that the user can control.</param>
 		/// <param name="outputs">Collection of output data that the user can control.</param>
-		void SetAudioData(ReadOnlyCollection<AudioChannelInfoContainer> inputs, ReadOnlyCollection<AudioChannelInfoContainer> outputs);
+		/// <param name="audioDevices">Collection of audio controllers in the system configuration.</param>
+		void SetAudioData(
+			ReadOnlyCollection<AudioChannelInfoContainer> inputs,
+			ReadOnlyCollection<AudioChannelInfoContainer> outputs,
+			ReadOnlyCollection<InfoContainer> audioDevices);
 
 		/// <summary>
 		/// Update the UI with the audio channels current audio level.
@@ -101,5 +103,9 @@
 		/// <param name="zoneId">The unique ID of the zone that was changed.</param>
 		/// <param name="newState">True = audio for that channel is active in the zone, false = audio disabled for that channel/zone.</param>
 		void UpdateAudioZoneState(string channelId, string zoneId, bool newState);
+		
+		/// <param name="deviceId">The id of the audio controller being updated.</param>
+		/// <param name="isOnline">true = device is online, false = device is offline.</param>
+		void UpdateAudioDeviceConnectionStatus(string deviceId, bool isOnline);
 	}
 }

@@ -47,7 +47,7 @@
 		/// <summary>
 		/// Gets a value indicating whether the device is currently online or offline.
 		/// </summary>
-		public bool IsOnline { get; protected set; }
+		public bool IsOnline { get; set; }
 
 		/// <summary>
 		/// Gets the various tags that are associated with this data item.

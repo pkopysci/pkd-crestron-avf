@@ -30,5 +30,9 @@
 		/// <param name="destinations">Collection of all destinations in the system configuration.</param>
 		/// <param name="avRouters">Collection of all AVR devices in the system configuration.</param>
 		void SetRoutingData(ReadOnlyCollection<AvSourceInfoContainer> sources, ReadOnlyCollection<InfoContainer> destinations, ReadOnlyCollection<InfoContainer> avRouters);
+		
+		/// <param name="avrId">the id of the AV router that is being updated.</param>
+		/// <param name="isOnline">true = device is online, false = device is offline.</param>
+		void UpdateAvRouterConnectionStatus(string avrId, bool isOnline);
 	}
 }

@@ -37,10 +37,10 @@ namespace pkd_application_service.AudioControl
 			List<AudioChannelInfoContainer> outputChannels,
 			Dictionary<string, List<InfoContainer>> allPresets)
 		{
-			ParameterValidator.ThrowIfNull(dspDevices, "Ctor", "dspDevices");
-			ParameterValidator.ThrowIfNull(inputChannels, "Ctor", "inputChannels");
-			ParameterValidator.ThrowIfNull(outputChannels, "Ctor", "outputChannels");
-			ParameterValidator.ThrowIfNull(allPresets, "Ctor", "allPresets");
+			ParameterValidator.ThrowIfNull(dspDevices, "Ctor", nameof(dspDevices));
+			ParameterValidator.ThrowIfNull(inputChannels, "Ctor", nameof(inputChannels));
+			ParameterValidator.ThrowIfNull(outputChannels, "Ctor", nameof(outputChannels));
+			ParameterValidator.ThrowIfNull(allPresets, "Ctor", nameof(allPresets));
 
 			this.dspDevices = dspDevices;
 			this.inputChannels = inputChannels;

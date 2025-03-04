@@ -77,15 +77,6 @@
             "Control": "audio-matrix",
             "SourceSelect": "",
             "Tags": []
-          },
-          {
-            "Id": "MENU05",
-            "Visible": true,
-            "Label": "Video Wall",
-            "Icon": "grid",
-            "Control": "video-wall",
-            "SourceSelect": "",
-            "Tags": []
           }
         ],
         "Tags": ["secure-1234"]
@@ -311,7 +302,7 @@
     "MatrixData": [
       {
         "Id": "rtr01",
-        "Label": "Kramer VP-400X",
+        "Label": "Kramer VP-440x",
         "ClassName": "KramerAvSwitchTcp",
         "Inputs": 5,
         "Outputs": 1,

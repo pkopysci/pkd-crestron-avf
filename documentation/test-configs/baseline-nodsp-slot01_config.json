@@ -266,7 +266,7 @@
     "MatrixData": [
       {
         "Id": "rtr01",
-        "Label": "Kramer VP-400X",
+        "Label": "AVR Emulator",
         "ClassName": "AvSwitchEmulator",
         "Inputs": 5,
         "Outputs": 1,

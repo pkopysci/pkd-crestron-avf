@@ -30,6 +30,16 @@
 				{
 					device.AddPreset(preset.Bank, preset.Index);
 				}
+
+				if (!string.IsNullOrEmpty(dspData.Manufacturer))
+				{
+					device.Manufacturer = dspData.Manufacturer;
+				}
+
+				if (!string.IsNullOrEmpty(dspData.Model))
+				{
+					device.Model = dspData.Model;
+				}
 			}
 			else
 			{

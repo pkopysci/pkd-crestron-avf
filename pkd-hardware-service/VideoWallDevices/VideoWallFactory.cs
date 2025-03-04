@@ -48,6 +48,16 @@ public static class VideoWallFactory
             data.Label,
             data.Connection.Authentication.UserName,
             data.Connection.Authentication.Password);
+
+        if (!string.IsNullOrEmpty(data.Manufacturer))
+        {
+            device.Manufacturer = data.Manufacturer;
+        }
+
+        if (!string.IsNullOrEmpty(data.Model))
+        {
+            device.Model = data.Model;
+        }
         
         return device;
     }

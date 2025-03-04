@@ -15,41 +15,43 @@
     /// <summary>
     /// Wrapper class for controlling a Crestron DM-MD-8x1 AV Switch.
     /// </summary>
-    public class DmMd8x1AvSwitch : BaseDevice, IAvSwitcher, IDisposable, IAudioControl
+    public class DmMd8X1AvSwitch : BaseDevice, IAvSwitcher, IDisposable, IAudioControl
     {
         private const short VolMin = -800;
         private const short VolMax = 100;
         private const uint MicIndex = 1;
-        private readonly DmMd4kAudioOutputStream? analogAudio;
-        private readonly List<string> inputIds;
-        private readonly List<string> outputIds;
-        private readonly DmMd8x14kC dmSwitch;
-        private bool isDisposed;
+        private readonly DmMd4kAudioOutputStream? _analogAudio;
+        private readonly List<string> _inputIds;
+        private readonly List<string> _outputIds;
+        private readonly DmMd8x14kC _dmSwitch;
+        private bool _isDisposed;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DmMd8x1AvSwitch"/> class.
+        /// Initializes a new instance of the <see cref="DmMd8X1AvSwitch"/> class.
         /// </summary>
         /// <param name="config">The configuration data used to control the device.</param>
         /// <param name="parent">The root control system that is running the program.</param>
-        public DmMd8x1AvSwitch(MatrixData config, CrestronControlSystem parent)
+        public DmMd8X1AvSwitch(MatrixData config, CrestronControlSystem parent)
         {
             ParameterValidator.ThrowIfNull(config, "Ctor", nameof(config));
             ParameterValidator.ThrowIfNull(parent, "Ctor", nameof(parent));
 
-            inputIds = [];
-            outputIds = [];
+            _inputIds = [];
+            _outputIds = [];
             Id = config.Id;
             Label = config.Label;
-            dmSwitch = new DmMd8x14kC((uint)config.Connection.Port, parent)
+            _dmSwitch = new DmMd8x14kC((uint)config.Connection.Port, parent)
             {
                 Description = Id,
             };
 
-            dmSwitch.DMSystemChange += DmSwitch_DMSystemChange;
-            dmSwitch.OnlineStatusChange += DmSwitch_OnlineStatusChange;
-            dmSwitch.DMOutputChange += DmSwitch_DMOutputChange;
+            _dmSwitch.DMSystemChange += DmSwitch_DMSystemChange;
+            _dmSwitch.OnlineStatusChange += DmSwitch_OnlineStatusChange;
+            _dmSwitch.DMOutputChange += DmSwitch_DMOutputChange;
+            _analogAudio = _dmSwitch.Outputs[1]?.AudioOutputStream;
 
-            analogAudio = dmSwitch.Outputs[1]?.AudioOutputStream;
+            Manufacturer = "Crestron";
+            Model = "HD-MD-8x1";
         }
 
         /// <inheritdoc/>
@@ -76,13 +78,13 @@
         /// <inheritdoc/>
         public IEnumerable<string> GetAudioInputIds()
         {
-            return inputIds;
+            return _inputIds;
         }
 
         /// <inheritdoc/>
         public IEnumerable<string> GetAudioOutputIds()
         {
-            return outputIds;
+            return _outputIds;
         }
 
         /// <inheritdoc/>
@@ -90,7 +92,7 @@
             int levelMin, int routerIndex)
         {
             ParameterValidator.ThrowIfNullOrEmpty(id, "AddInputChannel", "id");
-            inputIds.Add(id);
+            _inputIds.Add(id);
         }
 
         /// <inheritdoc/>
@@ -98,7 +100,7 @@
             int bankIndex, int levelMax, int levelMin)
         {
             ParameterValidator.ThrowIfNullOrEmpty(id, "AddOutputChannel", "id");
-            outputIds.Add(id);
+            _outputIds.Add(id);
         }
 
         /// <summary>
@@ -116,18 +118,18 @@
         /// <inheritdoc/>
         public int GetAudioInputLevel(string id)
         {
-            if (!CheckOnline("AudioInputLevel") || analogAudio == null)
+            if (!CheckOnline("AudioInputLevel") || _analogAudio == null)
             {
                 return 0;
             }
 
-            return ConvertToPercent(analogAudio.OutputMixer.MicLevelFeedback[MicIndex]!.ShortValue);
+            return ConvertToPercent(_analogAudio.OutputMixer.MicLevelFeedback[MicIndex]!.ShortValue);
         }
 
         /// <inheritdoc/>
         public void SetAudioInputLevel(string id, int level)
         {
-            if (!CheckOnline("SetAudioInputLevel") || analogAudio == null)
+            if (!CheckOnline("SetAudioInputLevel") || _analogAudio == null)
             {
                 return;
             }
@@ -139,24 +141,24 @@
                 return;
             }
 
-            analogAudio.OutputMixer.MicLevel[MicIndex]!.ShortValue = scaled;
+            _analogAudio.OutputMixer.MicLevel[MicIndex]!.ShortValue = scaled;
         }
 
         /// <inheritdoc/>
         public int GetAudioOutputLevel(string id)
         {
-            if (!CheckOnline("AudioOutputLevel") || analogAudio == null)
+            if (!CheckOnline("AudioOutputLevel") || _analogAudio == null)
             {
                 return 0;
             }
 
-            return ConvertToPercent(analogAudio.SourceLevelFeedBack.ShortValue);
+            return ConvertToPercent(_analogAudio.SourceLevelFeedBack.ShortValue);
         }
 
         /// <inheritdoc/>
         public void SetAudioOutputLevel(string id, int level)
         {
-            if (!CheckOnline("SetAudioOutputLevel") || analogAudio == null)
+            if (!CheckOnline("SetAudioOutputLevel") || _analogAudio == null)
             {
                 return;
             }
@@ -168,65 +170,65 @@
                 return;
             }
 
-            analogAudio.SourceLevel.ShortValue = scaled;
+            _analogAudio.SourceLevel.ShortValue = scaled;
         }
 
         /// <inheritdoc/>
         public void SetAudioInputMute(string id, bool mute)
         {
-            if (!CheckOnline("SetAudioInputMute") || analogAudio == null)
+            if (!CheckOnline("SetAudioInputMute") || _analogAudio == null)
             {
                 return;
             }
 
             if (mute)
             {
-                analogAudio.OutputMixer.MicMuteOn(MicIndex);
+                _analogAudio.OutputMixer.MicMuteOn(MicIndex);
             }
             else
             {
-                analogAudio.OutputMixer.MicMuteOff(MicIndex);
+                _analogAudio.OutputMixer.MicMuteOff(MicIndex);
             }
         }
 
         /// <inheritdoc/>
         public bool GetAudioInputMute(string id)
         {
-            if (!CheckOnline("AudioInputMute") || analogAudio == null)
+            if (!CheckOnline("AudioInputMute") || _analogAudio == null)
             {
                 return false;
             }
 
-            return analogAudio.OutputMixer.MicMuteOnFeedback[MicIndex]!.BoolValue;
+            return _analogAudio.OutputMixer.MicMuteOnFeedback[MicIndex]!.BoolValue;
         }
 
         /// <inheritdoc/>
         public void SetAudioOutputMute(string id, bool state)
         {
-            if (!CheckOnline("SetAudioOutputMute") || analogAudio == null)
+            if (!CheckOnline("SetAudioOutputMute") || _analogAudio == null)
             {
                 return;
             }
 
             if (state)
             {
-                analogAudio.SourceMuteOn();
+                _analogAudio.SourceMuteOn();
             }
             else
             {
-                analogAudio.SourceMuteOff();
+                _analogAudio.SourceMuteOff();
             }
         }
 
         /// <inheritdoc/>
         public bool GetAudioOutputMute(string id)
         {
-            if (!CheckOnline("AudioOutputMute") || analogAudio == null)
+            if (!CheckOnline("AudioOutputMute") || _analogAudio == null)
             {
                 return false;
             }
 
-            return analogAudio.SourceMuteOnFeedBack.BoolValue;
+            return _analogAudio.SourceMuteOnFeedBack.BoolValue;
         }
 
         /// <inheritdoc/>
@@ -237,15 +239,15 @@
                 return;
             }
 
-            if (output > dmSwitch.NumberOfOutputs)
+            if (output > _dmSwitch.NumberOfOutputs)
             {
                 Logger.Error(
-                    $"AvSwitch {Id} ClearVideoRoute({output}) - input or output argument out of bounds. Max out = {dmSwitch.NumberOfOutputs}");
+                    $"AvSwitch {Id} ClearVideoRoute({output}) - input or output argument out of bounds. Max out = {_dmSwitch.NumberOfOutputs}");
 
                 return;
             }
 
-            dmSwitch.Outputs[output]!.VideoOut = null;
+            _dmSwitch.Outputs[output]!.VideoOut = null;
         }
 
         /// <summary>
@@ -259,21 +261,21 @@
         /// <inheritdoc/>
         public override void Connect()
         {
-            if (dmSwitch.Register() != eDeviceRegistrationUnRegistrationResponse.Success)
+            if (_dmSwitch.Register() != eDeviceRegistrationUnRegistrationResponse.Success)
             {
-                Logger.Error($"DM-8x1 switch {Id} - Failed to register device: {dmSwitch.RegistrationFailureReason}");
+                Logger.Error($"DM-8x1 switch {Id} - Failed to register device: {_dmSwitch.RegistrationFailureReason}");
             }
         }
 
         /// <inheritdoc/>
         public override void Disconnect()
         {
-            if (dmSwitch.UnRegister() != eDeviceRegistrationUnRegistrationResponse.Success)
+            if (_dmSwitch.UnRegister() != eDeviceRegistrationUnRegistrationResponse.Success)
             {
                 Logger.Error(string.Format(
                     "DM-8x1 switch {0} - Failed to unregister device: {1}",
                     Id,
-                    dmSwitch.UnRegistrationFailureReason));
+                    _dmSwitch.UnRegistrationFailureReason));
             }
         }
 
@@ -291,18 +293,18 @@
                 return;
             }
 
-            if (source > dmSwitch.NumberOfInputs ||
-                output > dmSwitch.NumberOfOutputs ||
+            if (source > _dmSwitch.NumberOfInputs ||
+                output > _dmSwitch.NumberOfOutputs ||
                 source == 0 ||
                 output == 0)
             {
                 Logger.Error(
-                    $"AvSwitch {Id} RouteVideo({source},{output}) - input or output argument out of bounds. Input range = 1-{dmSwitch.NumberOfInputs}, output range = 1-{dmSwitch.NumberOfOutputs}");
+                    $"AvSwitch {Id} RouteVideo({source},{output}) - input or output argument out of bounds. Input range = 1-{_dmSwitch.NumberOfInputs}, output range = 1-{_dmSwitch.NumberOfOutputs}");
 
                 return;
             }
 
-            dmSwitch.Outputs[output]!.VideoOut = dmSwitch.Inputs[source];
+            _dmSwitch.Outputs[output]!.VideoOut = _dmSwitch.Inputs[source];
         }
 
         /// <inheritdoc/>
@@ -315,19 +317,19 @@
         /// <inheritdoc/>
         public void Initialize(string hostName, int port, string id, string label, int numInputs, int numOutputs)
         {
-            dmSwitch.Register();
+            _dmSwitch.Register();
         }
 
         private void Dispose(bool disposing)
         {
-            if (isDisposed) return;
+            if (_isDisposed) return;
             if (disposing)
             {
                 Disconnect();
-                dmSwitch.Dispose();
+                _dmSwitch.Dispose();
             }
 
-            isDisposed = true;
+            _isDisposed = true;
         }
 
         private void DmSwitch_DMOutputChange(Switch? device, DMOutputEventArgs args)
@@ -382,15 +384,15 @@
 
         private uint GetCurrentSource(uint output, string callerName)
         {
-            if (output > dmSwitch.NumberOfOutputs)
+            if (output > _dmSwitch.NumberOfOutputs)
             {
                 Logger.Error(
-                    $"AvSwitch {Id} {callerName}() ({output}) - input or output argument out of bounds. Max out = {dmSwitch.NumberOfOutputs}");
+                    $"AvSwitch {Id} {callerName}() ({output}) - input or output argument out of bounds. Max out = {_dmSwitch.NumberOfOutputs}");
 
                 return 0;
             }
 
-            var routed = dmSwitch.Outputs[output]!.VideoOutFeedback;
+            var routed = _dmSwitch.Outputs[output]!.VideoOutFeedback;
             return routed?.Number ?? 0;
         }
 
@@ -398,7 +400,7 @@
         {
             var temp = AudioOutputMuteChanged;
             if (temp == null) return;
-            var channelId = (outputIds.Count > 0) ? outputIds[0] : Id;
+            var channelId = (_outputIds.Count > 0) ? _outputIds[0] : Id;
             temp.Invoke(this, new GenericDualEventArgs<string, string>(Id, channelId));
         }
 
@@ -406,7 +408,7 @@
         {
             var temp = AudioOutputLevelChanged;
             if (temp == null) return;
-            var channelId = (outputIds.Count > 0) ? outputIds[0] : Id;
+            var channelId = (_outputIds.Count > 0) ? _outputIds[0] : Id;
             temp.Invoke(this, new GenericDualEventArgs<string, string>(Id, channelId));
         }
 
@@ -419,7 +421,7 @@
         {
             var temp = AudioInputLevelChanged;
             if (temp == null) return;
-            var channelId = (inputIds.Count > 0) ? outputIds[0] : Id;
+            var channelId = (_inputIds.Count > 0) ? _outputIds[0] : Id;
             temp.Invoke(this, new GenericDualEventArgs<string, string>(Id, channelId));
         }
 
@@ -427,7 +429,7 @@
         {
             var temp = AudioInputMuteChanged;
             if (temp == null) return;
-            var channelId = (inputIds.Count > 0) ? outputIds[0] : Id;
+            var channelId = (_inputIds.Count > 0) ? _outputIds[0] : Id;
             temp.Invoke(this, new GenericDualEventArgs<string, string>(Id, channelId));
         }
 

@@ -16,8 +16,8 @@
 	/// </summary>
 	public class ProcessorEndpoint : BaseDevice, IEndpointDevice, IRelayDevice
 	{
-		private readonly CrestronControlSystem processor;
-		private readonly Endpoint data;
+		private readonly CrestronControlSystem _processor;
+		private readonly Endpoint _data;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ProcessorEndpoint"/> class.
@@ -30,10 +30,13 @@
 			ParameterValidator.ThrowIfNull(controlSystem, "Ctor", "controlSystem");
 			ParameterValidator.ThrowIfNull(data, "Ctor", "data");
 
-			this.data = data;
-			processor = controlSystem;
+			this._data = data;
+			_processor = controlSystem;
 			Id = data.Id;
 			Label = Id;
+
+			Manufacturer = "Crestron";
+			Model = "Control System";
 		}
 
 		/// <inheritdoc/>
@@ -43,13 +46,13 @@
 		public bool IsRegistered { get; private set; }
 
 		/// <inheritdoc/>
-		public bool SupportsRelays => processor.SupportsRelay;
+		public bool SupportsRelays => _processor.SupportsRelay;
 
 		/// <inheritdoc/>
-		public bool SupportsIr => processor.SupportsIROut;
+		public bool SupportsIr => _processor.SupportsIROut;
 
 		/// <inheritdoc/>
-		public bool SupportsRs232 => processor.SupportsComPort;
+		public bool SupportsRs232 => _processor.SupportsComPort;
 
 		/// <inheritdoc/>
 		public void Register()
@@ -68,7 +71,7 @@
 		/// <inheritdoc/>
 		public bool? GetCurrentRelayState(int index)
 		{
-			return ValidateRelayIndex(index) ? processor.RelayPorts[(uint)index]?.State : false;
+			return ValidateRelayIndex(index) ? _processor.RelayPorts[(uint)index]?.State : false;
 		}
 
 		/// <inheritdoc/>
@@ -77,7 +80,7 @@
 
 			if (ValidateRelayIndex(index) && CheckRegistered("LatchRelayClosed"))
 			{
-				processor.RelayPorts[(uint)index]?.Close();
+				_processor.RelayPorts[(uint)index]?.Close();
 			}
 		}
 
@@ -86,7 +89,7 @@
 		{
 			if (ValidateRelayIndex(index) && CheckRegistered("LatchRelayOpen"))
 			{
-				processor.RelayPorts[(uint)index]?.Open();
+				_processor.RelayPorts[(uint)index]?.Open();
 			}
 		}
 
@@ -94,11 +97,11 @@
 		public void PulseRelay(int index, int timeMs)
 		{
 			if (!ValidateRelayIndex(index) || !CheckRegistered("PulseRelay")) return;
-			processor.RelayPorts[(uint)index]?.Close();
+			_processor.RelayPorts[(uint)index]?.Close();
 			var t = new CTimer(
 				sender =>
 				{
-					processor.RelayPorts[(uint)index]?.Open();
+					_processor.RelayPorts[(uint)index]?.Open();
 				}, timeMs);
 		}
 
@@ -112,12 +115,12 @@
 		private void RegisterRelays()
 		{
 			if (!SupportsRelays) return;
-			foreach (var relay in data.Relays)
+			foreach (var relay in _data.Relays)
 			{
-				if (relay <= 0 || relay > processor.RelayPorts.Count) continue;
+				if (relay <= 0 || relay > _processor.RelayPorts.Count) continue;
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-				processor.RelayPorts[(uint)relay].StateChange += RelayStateHandler;
-				processor.RelayPorts[(uint)relay].Register();
+				_processor.RelayPorts[(uint)relay].StateChange += RelayStateHandler;
+				_processor.RelayPorts[(uint)relay].Register();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 			}
 		}
@@ -125,9 +128,9 @@
 		private void RegisterComPorts()
 		{
 			if (!SupportsRs232) return;
-			foreach (var comPort in data.Comports)
+			foreach (var comPort in _data.Comports)
 			{
-				if (comPort > 0 && comPort <= processor.ComPorts.Count)
+				if (comPort > 0 && comPort <= _processor.ComPorts.Count)
 				{
 					// TODO: Subscribe events and register comport
 				}
@@ -137,9 +140,9 @@
 		private void RegisterIrPorts()
 		{
 			if (!SupportsIr) return;
-			foreach (var irp in data.IrPorts)
+			foreach (var irp in _data.IrPorts)
 			{
-				if (irp > 0 && irp <= processor.IROutputPorts.Count)
+				if (irp > 0 && irp <= _processor.IROutputPorts.Count)
 				{
 					// TODO: Subscribe events and register IR ports
 				}
@@ -161,7 +164,7 @@
 
 		private bool ValidateRelayIndex(int index)
 		{
-			if (!data.Relays.Contains(index))
+			if (!_data.Relays.Contains(index))
 			{
 				Logger.Error(
 					"Endpoint {Id}.GetCurrentRelayState() - relay {0} is not registered to this device.",

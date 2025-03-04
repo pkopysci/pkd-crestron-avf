@@ -13,35 +13,38 @@
 	/// <summary>
 	/// Crestron C2N-IO relay controller via Cresnet.
 	/// </summary>
-	public class C2nIoRelayDevice : BaseDevice, IEndpointDevice, IRelayDevice, IDisposable
+	public class C2NIoRelayDevice : BaseDevice, IEndpointDevice, IRelayDevice, IDisposable
 	{
-		private readonly C2nIo device;
-		private readonly CrestronControlSystem processor;
-		private bool disposed;
+		private readonly C2nIo _device;
+		private readonly CrestronControlSystem _processor;
+		private bool _disposed;
 
 		/// <summary>
-		/// Creates an instance of <see cref="C2nIoRelayDevice"/>.
+		/// Creates an instance of <see cref="C2NIoRelayDevice"/>.
 		/// </summary>
 		/// <param name="data">The configuration data for this endpoint device.</param>
 		/// <param name="controlSystem">The control system that's running the framework program.</param>
-		public C2nIoRelayDevice(Endpoint data, CrestronControlSystem controlSystem)
+		public C2NIoRelayDevice(Endpoint data, CrestronControlSystem controlSystem)
 		{
 			ParameterValidator.ThrowIfNull(controlSystem, "Ctor", "controlSystem");
 			ParameterValidator.ThrowIfNull(data, "Ctor", "data");
 			
-			processor = controlSystem;
+			_processor = controlSystem;
 			Id = data.Id;
 			Label = data.Id;
-			device = new C2nIo((uint)data.Port, processor);
-			device.OnlineStatusChange += OnlineStatusChangeHandler;
-			foreach (var relay in device.RelayPorts)
+			_device = new C2nIo((uint)data.Port, _processor);
+			_device.OnlineStatusChange += OnlineStatusChangeHandler;
+			foreach (var relay in _device.RelayPorts)
 			{
 				if (relay != null) relay.StateChange += RelayStateChangeHandler;
 			}
+
+			Manufacturer = "Crestron";
+			Model = "C2N-IO";
 		}
 
 		/// <inheritdoc />
-		~C2nIoRelayDevice()
+		~C2NIoRelayDevice()
 		{
 			Dispose(false);
 		}
@@ -72,9 +75,9 @@
 				return;
 			}
 
-			if (device.Register() != eDeviceRegistrationUnRegistrationResponse.Success)
+			if (_device.Register() != eDeviceRegistrationUnRegistrationResponse.Success)
 			{
-				Logger.Error("C2nIoRelayDevice {0} - failed to register with control system: {0}", device.RegistrationFailureReason);
+				Logger.Error("C2nIoRelayDevice {0} - failed to register with control system: {0}", _device.RegistrationFailureReason);
 			}
 		}
 
@@ -86,7 +89,7 @@
 				return false;
 			}
 
-			return index <= device.RelayPorts.Count && device.RelayPorts[(uint)index] is { State: true };
+			return index <= _device.RelayPorts.Count && _device.RelayPorts[(uint)index] is { State: true };
 		}
 
 		/// <inheritdoc/>
@@ -100,13 +103,13 @@
 				return;
 			}
 
-			if (index > device.RelayPorts.Count)
+			if (index > _device.RelayPorts.Count)
 			{
 				Logger.Error("C3nIoRelayDevice {0} - PulseRelay() - index {1} more than the number of supported relays.", Id, index);
 				return;
 			}
 
-			device.RelayPorts[(uint)index]?.Close();
+			_device.RelayPorts[(uint)index]?.Close();
 			CTimer t = new((obj) =>
 			{
 				if (!CheckRegistered())
@@ -114,7 +117,7 @@
 					return;
 				}
 
-				device.RelayPorts[(uint)index]?.Open();
+				_device.RelayPorts[(uint)index]?.Open();
 			}, timeMs);
 		}
 
@@ -127,13 +130,13 @@
 				return;
 			}
 
-			if (index > device.RelayPorts.Count)
+			if (index > _device.RelayPorts.Count)
 			{
 				Logger.Error("C3nIoRelayDevice {0} - LatchRelayClosed() - index {1} more than the number of supported relays.", Id, index);
 				return;
 			}
 
-			device.RelayPorts[(uint)index]?.Close();
+			_device.RelayPorts[(uint)index]?.Close();
 		}
 
 		/// <inheritdoc/>
@@ -145,13 +148,13 @@
 				return;
 			}
 
-			if (index > device.RelayPorts.Count)
+			if (index > _device.RelayPorts.Count)
 			{
 				Logger.Error("C3nIoRelayDevice {0} - LatchRelayOpen() - index {1} more than the number of supported relays.", Id, index);
 				return;
 			}
 
-			device.RelayPorts[(uint)index]?.Open();
+			_device.RelayPorts[(uint)index]?.Open();
 		}
 
 		/// <inheritdoc />
@@ -163,22 +166,22 @@
 
 		private void Dispose(bool disposing)
 		{
-			if (disposed) return;
+			if (_disposed) return;
 			if (disposing)
 			{
 				if (CheckRegistered())
 				{
-					foreach (var relay in device.RelayPorts)
+					foreach (var relay in _device.RelayPorts)
 					{
 						relay?.Open();
 					}
 
-					device.UnRegister();
-					device.Dispose();
+					_device.UnRegister();
+					_device.Dispose();
 				}
 			}
 
-			disposed = true;
+			_disposed = true;
 		}
 
 		private void OnlineStatusChangeHandler(GenericBase currentDevice, OnlineOfflineEventArgs args)
@@ -197,7 +200,7 @@
 
 		private bool CheckRegistered()
 		{
-			return device.Registered;
+			return _device.Registered;
 		}
 	}
 

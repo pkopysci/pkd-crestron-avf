@@ -49,7 +49,7 @@
 			}
 		}
 
-		private static DmMd8x1AvSwitch Get8X1Switch(
+		private static DmMd8X1AvSwitch Get8X1Switch(
 			MatrixData switchData,
 			CrestronControlSystem processor,
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -57,7 +57,7 @@
 #pragma warning restore IDE0060 // Remove unused parameter
 		{
 			Logger.Info("Create Dm-MD-8x1 switch with device ID {0}", switchData.Id);
-			return new DmMd8x1AvSwitch(switchData, processor);
+			return new DmMd8X1AvSwitch(switchData, processor);
 		}
 
 		private static DmMd400AvSwitch GetMd400Switch(
@@ -119,6 +119,16 @@
 				}
 			}
 
+			if (!string.IsNullOrEmpty(switchData.Manufacturer))
+			{
+				device.Manufacturer = switchData.Manufacturer;
+			}
+
+			if (!string.IsNullOrEmpty(switchData.Model))
+			{
+				device.Model = switchData.Model;
+			}
+			
 			device.Initialize(
 				switchData.Connection.Host,
 				switchData.Connection.Port,

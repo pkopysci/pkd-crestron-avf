@@ -33,7 +33,7 @@
 						return new ProcessorEndpoint(ep, processor);
 					case "C2NIO":
 						Logger.Info("Creating a C2N-IO endpoint with ID {0}", ep.Id);
-						return new C2nIoRelayDevice(ep, processor);
+						return new C2NIoRelayDevice(ep, processor);
 					case "CENIORY104":
 						Logger.Info("Creating a CEN-IO-RY104 endpoint with ID {0}", ep.Id);
 						return new CenIoRy401RelayDevice(ep, processor);

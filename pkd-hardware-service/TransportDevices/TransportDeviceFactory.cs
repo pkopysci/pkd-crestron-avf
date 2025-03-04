@@ -52,6 +52,16 @@
 					cableBoxData.Id,
 					cableBoxData.Label);
 
+				if (!string.IsNullOrEmpty(cableBoxData.Manufacturer))
+				{
+					device.Manufacturer = cableBoxData.Manufacturer;
+				}
+
+				if (!string.IsNullOrEmpty(cableBoxData.Model))
+				{
+					device.Model = cableBoxData.Model;
+				}
+
 				return device;
 			}
 			catch (Exception e)

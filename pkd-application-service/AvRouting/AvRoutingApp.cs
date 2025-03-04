@@ -111,7 +111,11 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 				avr.Label,
 				string.Empty,
 				[],
-				avr.IsOnline));
+				avr.IsOnline)
+			{
+				Manufacturer = avr.Manufacturer,
+				Model = avr.Model,
+			});
 		}
 
 		return new ReadOnlyCollection<InfoContainer>(avRouters);

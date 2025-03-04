@@ -18,8 +18,8 @@
 	/// </summary>
 	internal sealed class DisplayControlApp : BaseApp<IDisplayDevice, Display>, IDisplayControlApp
 	{
-		private readonly IApplicationService parent;
-		private readonly ReadOnlyCollection<DisplayInfoContainer> displayInfo;
+		private readonly IApplicationService _parent;
+		private readonly ReadOnlyCollection<DisplayInfoContainer> _displayInfo;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DisplayControlApp"/> class.
@@ -35,7 +35,7 @@
 		{
 			ParameterValidator.ThrowIfNull(parent, "Ctor", "parent");
 
-			this.parent = parent;
+			this._parent = parent;
 			List<DisplayInfoContainer> info = [];
 			foreach (var display in data)
 			{
@@ -59,10 +59,12 @@
 				info.Add(new DisplayInfoContainer(display.Id, display.Label, display.Icon, display.Tags, display.HasScreen, device.IsOnline)
 				{
 					Inputs = inputs,
+					Manufacturer = display.Manufacturer,
+					Model = display.Model
 				});
 			}
 
-			displayInfo = new ReadOnlyCollection<DisplayInfoContainer>(info);
+			_displayInfo = new ReadOnlyCollection<DisplayInfoContainer>(info);
 			RegisterHandlers();
 		}
 
@@ -145,7 +147,7 @@
 		/// <inheritdoc/>
 		public ReadOnlyCollection<DisplayInfoContainer> GetAllDisplayInfo()
 		{
-			return displayInfo;
+			return _displayInfo;
 		}
 
 		/// <inheritdoc/>
@@ -154,7 +156,7 @@
 			var found = Data.FirstOrDefault(x => x.Id == displayId);
 			if (found != null)
 			{
-				parent.PulseEndpointRelay(found.RelayController, found.ScreenDownRelay, 1800);
+				_parent.PulseEndpointRelay(found.RelayController, found.ScreenDownRelay, 1800);
 			}
 		}
 
@@ -164,7 +166,7 @@
 			var found = Data.FirstOrDefault(x => x.Id == displayId);
 			if (found != null)
 			{
-				parent.PulseEndpointRelay(found.RelayController, found.ScreenUpRelay, 1800);
+				_parent.PulseEndpointRelay(found.RelayController, found.ScreenUpRelay, 1800);
 			}
 		}
 

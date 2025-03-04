@@ -32,6 +32,16 @@
 		/// Gets a value indicating whether or not the device has been initialized and ready to connect.
 		/// </summary>
 		bool IsInitialized { get; }
+		
+		/// <summary>
+		/// The name of the company that created the device.
+		/// </summary>
+		string Manufacturer { get; set; }
+		
+		/// <summary>
+		/// The specific device/hardware name used by the manufacturer.
+		/// </summary>
+		string Model { get; set; }
 
 		/// <summary>
 		/// Connect the communications protocol to the hardware.
@@ -42,7 +52,6 @@
 		/// Closes an active connection/communications protocol with the hardware.
 		/// </summary>
 		void Disconnect();
-
 	}
 
 }

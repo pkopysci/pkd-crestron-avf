@@ -17,8 +17,8 @@
 
 	public class CenIoRy401RelayDevice : BaseDevice, IEndpointDevice, IRelayDevice, IDisposable
 	{
-		private readonly CenIoRy104 device;
-		private bool disposed;
+		private readonly CenIoRy104 _device;
+		private bool _disposed;
 		
 		/// <param name="data">configuration data for the relay device.</param>
 		/// <param name="controlSystem">root crestron control system.</param>
@@ -29,14 +29,17 @@
 
 			Id = data.Id;
 			Label = data.Id;
-			device = new CenIoRy104((uint)data.Port, controlSystem);
-			device.OnlineStatusChange += OnlineStatusChangeHandler;
+			_device = new CenIoRy104((uint)data.Port, controlSystem);
+			_device.OnlineStatusChange += OnlineStatusChangeHandler;
 			
-			foreach (var relay in device.RelayPorts)
+			foreach (var relay in _device.RelayPorts)
 			{
 				if (relay == null) continue;
 				relay.StateChange += RelayStateChangeHandler;
 			}
+			
+			Manufacturer = "Crestron";
+			Model = "CEN-IO-RY104";
 		}
 
 		/// <inheritdoc />
@@ -71,9 +74,9 @@
 				return;
 			}
 
-			if (device.Register() != eDeviceRegistrationUnRegistrationResponse.Success)
+			if (_device.Register() != eDeviceRegistrationUnRegistrationResponse.Success)
 			{
-				Logger.Error("CenIoRy401RelayDevice {0} - failed to register with control system: {0}", device.RegistrationFailureReason);
+				Logger.Error("CenIoRy401RelayDevice {0} - failed to register with control system: {0}", _device.RegistrationFailureReason);
 			}
 		}
 
@@ -85,7 +88,7 @@
 				return false;
 			}
 
-			return index <= device.RelayPorts.Count ? device.RelayPorts[(uint)index]?.State : false;
+			return index <= _device.RelayPorts.Count ? _device.RelayPorts[(uint)index]?.State : false;
 		}
 
 		/// <inheritdoc/>
@@ -99,13 +102,13 @@
 				return;
 			}
 
-			if (index > device.RelayPorts.Count)
+			if (index > _device.RelayPorts.Count)
 			{
 				Logger.Error("CenIoRy401RelayDevice {0} - PulseRelay() - index {1} more than the number of supported relays.", Id, index);
 				return;
 			}
 
-			device.RelayPorts[(uint)index]?.Close();
+			_device.RelayPorts[(uint)index]?.Close();
 			CTimer t = new CTimer((obj) =>
 			{
 				if (!CheckRegistered())
@@ -113,7 +116,7 @@
 					return;
 				}
 
-				device.RelayPorts[(uint)index]?.Open();
+				_device.RelayPorts[(uint)index]?.Open();
 			}, timeMs);
 		}
 
@@ -126,13 +129,13 @@
 				return;
 			}
 
-			if (index > device.RelayPorts.Count)
+			if (index > _device.RelayPorts.Count)
 			{
 				Logger.Error("CenIoRy401RelayDevice {0} - LatchRelayClosed() - index {1} more than the number of supported relays.", Id, index);
 				return;
 			}
 
-			device.RelayPorts[(uint)index]?.Close();
+			_device.RelayPorts[(uint)index]?.Close();
 		}
 
 		/// <inheritdoc/>
@@ -144,13 +147,13 @@
 				return;
 			}
 
-			if (index > device.RelayPorts.Count)
+			if (index > _device.RelayPorts.Count)
 			{
 				Logger.Error("CenIoRy401RelayDevice {0} - LatchRelayOpen() - index {1} more than the number of supported relays.", Id, index);
 				return;
 			}
 
-			device.RelayPorts[(uint)index]?.Open();
+			_device.RelayPorts[(uint)index]?.Open();
 		}
 
 		/// <inheritdoc />
@@ -162,7 +165,7 @@
 
 		private void Dispose(bool disposing)
 		{
-			if (disposed)
+			if (_disposed)
 			{
 				return;
 			}
@@ -171,17 +174,17 @@
 			{
 				if (CheckRegistered())
 				{
-					foreach (var relay in device.RelayPorts)
+					foreach (var relay in _device.RelayPorts)
 					{
 						relay?.Open();
 					}
 
-					device.UnRegister();
-					device.Dispose();
+					_device.UnRegister();
+					_device.Dispose();
 				}
 			}
 
-			disposed = true;
+			_disposed = true;
 		}
 
 		private void OnlineStatusChangeHandler(GenericBase currentDevice, OnlineOfflineEventArgs args)
@@ -200,7 +203,7 @@
 
 		private bool CheckRegistered()
 		{
-			return device.Registered;
+			return _device.Registered;
 		}
 	}
 

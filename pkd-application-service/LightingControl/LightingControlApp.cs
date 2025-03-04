@@ -52,12 +52,16 @@
 				deviceList.Add(new LightingControlInfoContainer(
 					device.Id,
 					device.Label,
-					"",
+					string.Empty,
 					device.StartupSceneId,
 					device.ShutdownSceneId,
 					device.Tags,
 					zoneContainers,
-					sceneContainers));
+					sceneContainers)
+				{
+					Manufacturer = device.Manufacturer,
+					Model = device.Model,
+				});
 			}
 
 			controllers = new ReadOnlyCollection<LightingControlInfoContainer>(deviceList);

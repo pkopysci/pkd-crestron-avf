@@ -1,6 +1,6 @@
 ﻿namespace pkd_application_service.UserInterface
 {
-	using pkd_application_service.Base;
+	using Base;
 	using pkd_common_utils.Validation;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
@@ -20,9 +20,12 @@
 		/// <param name="helpContact">The IT support phone number or other contact information to display on the UI.</param>
 		/// <param name="icon">The image tag used for referencing the UI icon.</param>
 		/// <param name="model">The specific model of the UI, such as TSW-770, TSW-760, XPANEL, etc.</param>
+		/// <param name="className">The name of the plugin class to instantiate.</param>
+		/// <param name="library">The name of the plugin library used to instantiate a className object.</param>
 		/// <param name="sgdFile">The smart graphics data file used when creating the UI interface.</param>
 		/// <param name="defaultActivity">The default activity that should be displayed on the UI during startup.</param>
 		/// <param name="ipId">The unique Crestron IP-ID used when connecting to the hardware.</param>
+		/// <param name="tags"></param>
 		public UserInterfaceDataContainer(
 			string id,
 			string label,
@@ -37,14 +40,14 @@
 			List<string> tags)
 			: base(id, label, icon, tags)
 		{
-			this.HelpContact = helpContact;
-			this.Model = model;
-			this.DefaultActivity = defaultActivity;
-			this.IpId = ipId;
-			this.SgdFile = sgdFile;
-			this.ClassName = className;
-			this.Library = library;
-			this.menuItems = new List<MenuItemDataContainer>();
+			HelpContact = helpContact;
+			Model = model;
+			DefaultActivity = defaultActivity;
+			IpId = ipId;
+			SgdFile = sgdFile;
+			ClassName = className;
+			Library = library;
+			menuItems = [];
 		}
 
 		/// <summary>
@@ -89,13 +92,7 @@
 		/// <summary>
 		/// Gets a collection of menu data objects that will be displayed on the user interface.
 		/// </summary>
-		public ReadOnlyCollection<MenuItemDataContainer> MenuItems
-		{
-			get
-			{
-				return new ReadOnlyCollection<MenuItemDataContainer>(this.menuItems);
-			}
-		}
+		public ReadOnlyCollection<MenuItemDataContainer> MenuItems => new(menuItems);
 
 		/// <summary>
 		/// Add a menu data object to the MenuItems collection.
@@ -103,7 +100,7 @@
 		/// <param name="item">The unique item data object to add. Cannot be null.</param>
 		public void AddMenuItem(MenuItemDataContainer item)
 		{
-			ParameterValidator.ThrowIfNull(item, "AddMenuItem", "item");
+			ParameterValidator.ThrowIfNull(item, "AddMenuItem", nameof(item));
 			this.menuItems.Add(item);
 		}
 	}

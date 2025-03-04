@@ -2,7 +2,7 @@
 {
 	internal class OfflineDeviceData
 	{
-		public string Id { get; set; }
-		public string Label { get; set; }
+		public string Id { get; set; } = string.Empty;
+		public string Label { get; set; } = string.Empty;
 	}
 }

@@ -10,8 +10,8 @@
     "HelpContact": "555-555-5555",
     "SystemType": "baseline",
     "Logic": {
-      "AppServiceLibrary": "",
-      "AppServiceClass": ""
+      "AppServiceLibrary": "VideoWallAppService.dll",
+      "AppServiceClass": "VideoWallApplication"
     }
   },
   "UserInterfaces": [
@@ -57,24 +57,6 @@
             "Label": "Lighting",
             "Icon": "lights",
             "Control": "lighting",
-            "SourceSelect": "",
-            "Tags": []
-          },
-          {
-            "Id": "MENU04",
-            "Visible": true,
-            "Label": "Video",
-            "Icon": "tv",
-            "Control": "video-matrix",
-            "SourceSelect": "",
-            "Tags": []
-          },
-          {
-            "Id": "MENU04",
-            "Visible": true,
-            "Label": "Audio",
-            "Icon": "note",
-            "Control": "audio-matrix",
             "SourceSelect": "",
             "Tags": []
           },
@@ -263,7 +245,7 @@
       {
         "Id": "SRC04",
         "Label": "CableTv",
-        "Icon": "satellite",
+        "Icon": "cable-tv",
         "Control": "tv01",
         "Matrix": "rtr01",
         "Input": 3,
@@ -279,46 +261,19 @@
         "Output": 1,
         "RoutingGroup": 0,
         "Tags": []
-      },
-      {
-        "Id": "DEST02",
-        "Label": "Display 1",
-        "Icon": "Projector",
-        "Matrix": "rtr01",
-        "Output": 2,
-        "RoutingGroup": 0,
-        "Tags": []
-      },
-      {
-        "Id": "DEST03",
-        "Label": "Display 2",
-        "Icon": "tv",
-        "Matrix": "rtr01",
-        "Output": 3,
-        "RoutingGroup": 0,
-        "Tags": []
-      },
-      {
-        "Id": "DEST04",
-        "Label": "Patio",
-        "Icon": "tv",
-        "Matrix": "rtr01",
-        "Output": 4,
-        "RoutingGroup": 0,
-        "Tags": []
       }
     ],
     "MatrixData": [
       {
         "Id": "rtr01",
-        "Label": "Kramer VP-400X",
-        "ClassName": "KramerAvSwitchTcp",
+        "Label": "AVR Emulator",
+        "ClassName": "AvSwitchEmulator",
         "Inputs": 5,
         "Outputs": 1,
         "Connection": {
           "Id": "con01",
           "Transport": "tcp",
-          "Driver": "KramerAvSwitch.dll",
+          "Driver": "AvSwitchEmulator.dll",
           "Host": "192.168.1.39",
           "Port": 5000,
           "Authentication": {
@@ -485,6 +440,25 @@
       "Relays": [1, 2],
       "ComPorts": [],
       "IrPorts": []
+    }
+  ],
+  "VideoWalls": [
+    {
+      "Id": "vwall01",
+      "Label": "Video Wall 1",
+      "ClassName": "VideoWallEmulator",
+      "Connection": {
+        "Id": "vcon01",
+        "Transport": "tcp",
+        "Driver": "VideoWallEmulation.dll",
+        "Host": "192.168.1.253",
+        "Port": 23,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        }
+      }
     }
   ],
   "FusionInfo": {

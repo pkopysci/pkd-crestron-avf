@@ -5,7 +5,7 @@
 	using System.Collections.ObjectModel;
 
 	/// <summary>
-	/// Commone properties and methods associated with a custom event application service.
+	/// Common properties and methods associated with a custom event application service.
 	/// </summary>
 	public interface ICustomEventAppService
 	{
@@ -26,6 +26,7 @@
 		/// Logs a warning if no behavior with the supplied tag is found.
 		/// </summary>
 		/// <param name="tag">The unique tag for the behavior to trigger. Supported tags are provided by the QueryAllCustomBehaviors method.</param>
+		/// <param name="state"></param>
 		void ChangeCustomEventState(string tag, bool state);
 
 		/// <summary>

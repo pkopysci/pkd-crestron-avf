@@ -4,6 +4,9 @@
 	using System;
 	using System.Collections.ObjectModel;
 
+	/// <summary>
+	/// Required events, methods, and properties for implementing an application service that supports lighting controls.
+	/// </summary>
 	public interface ILightingControlApp
 	{
 		/// <summary>
@@ -13,7 +16,7 @@
 		event EventHandler<GenericDualEventArgs<string, string>> LightingLoadLevelChanged;
 
 		/// <summary>
-		/// Triggered whenever a lighting controll reports that a new scene has been recalled.
+		/// Triggered whenever a lighting control reports that a new scene has been recalled.
 		/// Args package is the ID of the controller that reported a change.
 		/// </summary>
 		event EventHandler<GenericSingleEventArgs<string>> LightingSceneChanged;
@@ -42,7 +45,7 @@
 		/// Get the currently active scene on the lighting controller if scenes are supported.
 		/// </summary>
 		/// <param name="deviceId">The unique ID of the lighting controller to query.</param>
-		/// <returns>the unique ID of the active scene ascociated with the lighting controller.</returns>
+		/// <returns>the unique ID of the active scene associated with the lighting controller.</returns>
 		string GetActiveScene(string deviceId);
 
 		/// <summary>
@@ -50,7 +53,7 @@
 		/// </summary>
 		/// <param name="deviceId">The unique ID of the lighting controller to query.</param>
 		/// <param name="zoneId">The unique ID of the zone to query.</param>
-		/// <returns>0-100 value representing the currenty lighting load level.</returns>
+		/// <returns>0-100 value representing the current lighting load level.</returns>
 		int GetZoneLoad(string deviceId, string zoneId);
 
 		/// <summary>

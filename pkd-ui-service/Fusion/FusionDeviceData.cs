@@ -4,10 +4,10 @@
 
 	internal class FusionDeviceData
 	{
-		public string Id { get; set; }
-		public string Label { get; set; }
-		public string TypeTag { get; set; }
-		public DateTime StartTime { get; set; }
-		public string[] Tags { get; set; }
+		public string Id { get; init; } = string.Empty;
+		public string Label { get; init; } = string.Empty;
+		public string TypeTag { get; set; } = string.Empty;
+		public DateTime StartTime { get; set; } = DateTime.MinValue;
+		public string[] Tags { get; init; } = [];
 	}
 }

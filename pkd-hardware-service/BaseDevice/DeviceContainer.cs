@@ -13,7 +13,7 @@
 	/// <typeparam name="T">The device type that will be managed by this container.</typeparam>
 	public class DeviceContainer<T> : IDisposable
 	{
-		private readonly Dictionary<string, T> devices = new Dictionary<string, T>();
+		private readonly Dictionary<string, T> devices = [];
 		private bool disposed;
 
 		/// <summary>
@@ -21,7 +21,7 @@
 		/// </summary>
 		~DeviceContainer()
 		{
-			this.Dispose(false);
+			Dispose(false);
 		}
 
 		/// <summary>
@@ -30,21 +30,22 @@
 		/// </summary>
 		/// <param name="id">The unique ID of the device to get.</param>
 		/// <returns>The device object if found, otherwise the default object of that type.</returns>
-		public T GetDevice(string id)
+		public T? GetDevice(string id)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "GetDevices()", "id");
-
-			if (!this.devices.ContainsKey(id))
+			ParameterValidator.ThrowIfNullOrEmpty(id, "GetDevices()", nameof(id));
+			if (devices.TryGetValue(id, out T? value))
 			{
-				Logger.Error(string.Format(
-					"DeviceContainer<{0}>.GetDevice() - No device with ID {1}",
-					typeof(T),
-					id));
-
-				return default;
+				return value;
 			}
+			else
+			{
+                Logger.Error(string.Format(
+                    "DeviceContainer<{0}>.GetDevice() - No device with ID {1}",
+                    typeof(T),
+                    id));
 
-			return this.devices[id];
+                return default;
+            }
 		}
 
 		/// <summary>
@@ -53,7 +54,7 @@
 		/// <returns>A collection of all currently stored devices.</returns>
 		public ReadOnlyCollection<T> GetAllDevices()
 		{
-			return this.devices.Values.ToList().AsReadOnly();
+			return devices.Values.ToList().AsReadOnly();
 		}
 
 		/// <summary>
@@ -63,8 +64,8 @@
 		/// <returns>true if the device is found, false otherwise.</returns>
 		public bool ContainsDevice(string id)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "ContainsDevice", "id");
-			return this.devices.ContainsKey(id);
+			ParameterValidator.ThrowIfNullOrEmpty(id, "ContainsDevice", nameof(id));
+			return devices.ContainsKey(id);
 		}
 
 		/// <summary>
@@ -75,23 +76,19 @@
 		/// <param name="device">The device that will be added to the container.</param>
 		public void AddDevice(string id, T device)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "ContainsDevice()", "id");
-			ParameterValidator.ThrowIfNull(device, "AddDevice()", "device");
+			ParameterValidator.ThrowIfNullOrEmpty(id, "ContainsDevice()", nameof(id));
+			ParameterValidator.ThrowIfNull(device, "AddDevice()", nameof(device));
 
-			if (this.devices.ContainsKey(id))
+			if (!devices.TryAdd(id, device))
 			{
-				this.devices[id] = device;
-			}
-			else
-			{
-				this.devices.Add(id, device);
-			}
-		}
+                devices[id] = device;
+            }
+        }
 
-		/// <inheritdoc/>
-		public void Dispose()
+        /// <inheritdoc/>
+        public void Dispose()
 		{
-			this.Dispose(true);
+			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
@@ -99,24 +96,21 @@
 		/// Dispose stored objects.
 		/// </summary>
 		/// <param name="disposing">Flag indicating disposing state.</param>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
-			if (!this.disposed)
+			if (disposed) return;
+			if (disposing)
 			{
-				if (disposing)
+				foreach (var dev in GetAllDevices())
 				{
-					foreach (var dev in this.GetAllDevices())
+					if (dev is IDisposable disposable)
 					{
-						if (dev is IDisposable)
-						{
-							(dev as IDisposable).Dispose();
-						}
-					}
+						disposable.Dispose();
+					}	
 				}
-
-				this.disposed = true;
 			}
+
+			disposed = true;
 		}
 	}
-
 }

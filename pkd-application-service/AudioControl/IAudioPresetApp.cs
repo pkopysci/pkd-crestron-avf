@@ -1,15 +1,18 @@
 ﻿namespace pkd_application_service.AudioControl
 {
-	using pkd_application_service.Base;
+	using Base;
 	using System.Collections.ObjectModel;
 
+	/// <summary>
+	/// required methods when implementing an application service that supports managing audio presets.
+	/// </summary>
 	public interface IAudioPresetApp
 	{
 		/// <summary>
 		/// Get a collection of all audio presets that can be recalled associated with the target DSP.
 		/// </summary>
 		/// <param name="dspId">The unique ID of the DSP to query.</param>
-		/// <returns>All of the DSP info objects for that DSP. Will return an empty collection if dspId is not found.</returns>
+		/// <returns>All the DSP info objects for that DSP. Will return an empty collection if dspId is not found.</returns>
 		ReadOnlyCollection<InfoContainer> QueryDspAudioPresets(string dspId);
 
 		/// <summary>

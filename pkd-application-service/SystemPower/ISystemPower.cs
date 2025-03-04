@@ -40,15 +40,15 @@
 		void AutoShutdownEnable();
 
 		/// <summary>
-		/// Disable tha utomatic shutdown feature.
+		/// Disable tha automatic shutdown feature.
 		/// </summary>
 		void AutoShutdownDisable();
 
 		/// <summary>
-		/// Configure the system power app to shutdown at the specific time if enabled.
+		/// Configure the system power app to shut down at the specific time if enabled.
 		/// </summary>
-		/// <param name="hour">The hour when the system should shutdown (24-hour format).</param>
-		/// <param name="minute">The specific minute when the system should shutdown (0-59).</param>
+		/// <param name="hour">The hour when the system should shut down (24-hour format).</param>
+		/// <param name="minute">The specific minute when the system should shut down (0-59).</param>
 		void SetAutoShutdownTime(int hour, int minute);
 	}
 }

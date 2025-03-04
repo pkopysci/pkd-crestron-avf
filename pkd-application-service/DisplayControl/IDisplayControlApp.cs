@@ -50,14 +50,14 @@
 		bool DisplayPowerQuery(string id);
 
 		/// <summary>
-		/// Gets a value indication whether or not the taget routable display is on the lectern input source.
+		/// Gets a value indication whether the target routable display is on the lectern input source.
 		/// </summary>
 		/// <param name="id">The unique ID of the display to query.</param>
 		/// <returns>True if the display is IVideoRoutable and has the lectern source selected, false otherwise.</returns>
 		bool DisplayInputLecternQuery(string id);
 
 		/// <summary>
-		/// Gets a value indication whether or not the taget routable display is on the Station input source.
+		/// Gets a value indication whether the target routable display is on the Station input source.
 		/// </summary>
 		/// <param name="id">The unique ID of the display to query.</param>
 		/// <returns>True if the display is IVideoRoutable and has the station source selected, false otherwise.</returns>
@@ -80,7 +80,7 @@
 		/// <summary>
 		/// Request to change the video freeze state of the target display
 		/// </summary>
-		/// <param name="id">The unqiue ID of the display to change</param>
+		/// <param name="id">The unique ID of the display to change</param>
 		/// <param name="state">true = set freeze on, false = set freeze off</param>
 		void SetDisplayFreeze(string id, bool state);
 
@@ -105,14 +105,14 @@
 
 		/// <summary>
 		/// Request to set the target station display to the Lectern source defined in the configuration. This will do nothing
-		/// if the target display does not implment Infrastructure.Routable.IVideoRoutable.
+		/// if the target display does not implement Infrastructure.Routable.IVideoRoutable.
 		/// </summary>
 		/// <param name="displayId">The target station display to attempt to change.</param>
 		void SetInputLectern(string displayId);
 
 		/// <summary>
 		/// Request to set the target station display to the local station source defined in the configuration. This will do nothing
-		/// if the target display does not implment Infrastructure.Routable.IVideoRoutable.
+		/// if the target display does not implement Infrastructure.Routable.IVideoRoutable.
 		/// </summary>
 		/// <param name="displayId">The target station display to attempt to change.</param>
 		void SetInputStation(string displayId);

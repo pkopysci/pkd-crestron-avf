@@ -5,14 +5,13 @@
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
-	using System.Linq;
 	using Crestron.SimplSharpPro.Fusion;
 
 	internal class FusionDeviceUse : IFusionDeviceUse
 	{
-		private static readonly string DEVICE_TAG = "Source";
-		private static readonly string DISPLAY_TAG = "DISPLAY";
-		private static readonly string TIME_TAG = "TIME";
+		private const string DeviceTag = "Source";
+		private const string DisplayTag = "DISPLAY";
+		private const string TimeTag = "TIME";
 
 		private readonly FusionRoom fusion;
 		private readonly Dictionary<string, FusionDeviceData> devices;
@@ -23,8 +22,8 @@
 			ParameterValidator.ThrowIfNull(fusion, "FusionDeviceUse.Ctor", "fusion");
 
 			this.fusion = fusion;
-			this.devices = new Dictionary<string, FusionDeviceData>();
-			this.displays = new Dictionary<string, FusionDeviceData>();
+			devices = new Dictionary<string, FusionDeviceData>();
+			displays = new Dictionary<string, FusionDeviceData>();
 		}
 
 		///<inheritdoc/>
@@ -32,11 +31,11 @@
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(id, "FusionDeviceUse.AddDeviceToUseTracking", "id");
 			ParameterValidator.ThrowIfNullOrEmpty(label, "FusionDeviceUse.AddDeviceToUseTracking", "label");
-			this.devices.Add(id, new FusionDeviceData()
+			devices.Add(id, new FusionDeviceData()
 			{
 				Id = id,
 				Label = label,
-				TypeTag = DEVICE_TAG,
+				TypeTag = DeviceTag,
 				StartTime = default,
 			});
 		}
@@ -44,7 +43,7 @@
 		///<inheritdoc/>
 		public void StartDeviceUse(string id)
 		{
-			if (this.devices.TryGetValue(id, out FusionDeviceData found))
+			if (devices.TryGetValue(id, out var found))
 			{
 				found.StartTime = DateTime.Now;
 			}
@@ -53,15 +52,13 @@
 		///<inheritdoc/>
 		public void StopDeviceUse(string id)
 		{
-			if (this.devices.TryGetValue(id, out FusionDeviceData found))
-			{
-				int useMins = this.CalculateUseTime(found);
-				if (useMins > 0)
-				{
-					this.SendCommand(found, useMins, DEVICE_TAG);
-					found.StartTime = default;
-				}
-			}
+			if (!devices.TryGetValue(id, out var found)) return;
+			
+			var useMinutes = CalculateUseTime(found);
+			if (useMinutes <= 0) return;
+				
+			SendCommand(found, useMinutes, DeviceTag);
+			found.StartTime = default;
 		}
 
 		///<inheritdoc/>
@@ -69,11 +66,11 @@
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(id, "FusionDeviceUse.AddDisplayToUseTracking", "id");
 			ParameterValidator.ThrowIfNullOrEmpty(label, "FusionDeviceUse.AddDisplayToUseTracking", "label");
-			this.displays.Add(id, new FusionDeviceData()
+			displays.Add(id, new FusionDeviceData()
 			{
 				Id = id,
 				Label = label,
-				TypeTag = DISPLAY_TAG,
+				TypeTag = DisplayTag,
 				StartTime = default
 			});
 		}
@@ -81,7 +78,7 @@
 		///<inheritdoc/>
 		public void StartDisplayUse(string id)
 		{
-			if (this.displays.TryGetValue(id, out FusionDeviceData found))
+			if (displays.TryGetValue(id, out var found))
 			{
 				found.StartTime = DateTime.Now;
 			}
@@ -90,38 +87,36 @@
 		///<inheritdoc/>
 		public void StopDisplayUse(string id)
 		{
-			if (this.displays.TryGetValue(id, out FusionDeviceData found))
-			{
-				int useMins = this.CalculateUseTime(found);
-				if (useMins > 0)
-				{
-					this.SendCommand(found, useMins, DISPLAY_TAG);
-					found.StartTime = default;
-				}
-			}
+			if (!displays.TryGetValue(id, out var found)) return;
+			
+			var useMinutes = CalculateUseTime(found);
+			if (useMinutes <= 0) return;
+			
+			SendCommand(found, useMinutes, DisplayTag);
+			found.StartTime = default;
 		}
 
 		private void SendCommand(FusionDeviceData device, int minutesUsed, string devType)
 		{
 			// USAGE||current-date||current-time||TIME||Source||Device-name||-||minutes-used||-||-||-||
-			DateTime now = DateTime.Now;
-			StringBuilder builder = new StringBuilder();
+			var now = DateTime.Now;
+			var builder = new StringBuilder();
 			builder.Append("USAGE||");
 			builder.Append(now.Date.Year)
-				.Append("-")
+				.Append('-')
 				.Append(now.Date.Month)
-				.Append("-")
+				.Append('-')
 				.Append(now.Date.Day)
 				.Append("||");
 
 			builder.Append(now.Hour)
-				.Append(":")
+				.Append(':')
 				.Append(now.Minute)
-				.Append(":")
+				.Append(':')
 				.Append(now.Second)
 				.Append("||");
 
-			builder.Append(TIME_TAG + "||");
+			builder.Append(TimeTag + "||");
 			builder.Append(devType + "||");
 			builder.Append(device.Label + "||");
 			builder.Append("-||");
@@ -129,10 +124,10 @@
 			builder.Append("||-||-||-||");
 
 			Logger.Debug("Sending command:\n{0}", builder.ToString());
-			this.fusion.DeviceUsage.InputSig.StringValue = builder.ToString();
+			fusion.DeviceUsage.InputSig.StringValue = builder.ToString();
 		}
 
-		private int CalculateUseTime(FusionDeviceData device)
+		private static int CalculateUseTime(FusionDeviceData device)
 		{
 			if (device.StartTime == default)
 			{
@@ -141,12 +136,12 @@
 
 			try
 			{
-				TimeSpan delta = DateTime.Now - device.StartTime;
+				var delta = DateTime.Now - device.StartTime;
 				return (delta.Hours * 60) + delta.Minutes + (delta.Seconds >= 30 ? 1 : 0);
 			}
 			catch (Exception e)
 			{
-				Logger.Error("Unable to calculate use time for device {0} : {1}", device.Id, e.StackTrace);
+				Logger.Error("Unable to calculate use time for device {0} : {1}", device.Id, e.StackTrace ?? string.Empty);
 				return 0;
 			}
 		}

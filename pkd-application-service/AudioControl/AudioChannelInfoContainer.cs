@@ -1,6 +1,6 @@
 ﻿namespace pkd_application_service.AudioControl
 {
-	using pkd_application_service.Base;
+	using Base;
 	using System.Collections.Generic;
 
 	/// <summary>

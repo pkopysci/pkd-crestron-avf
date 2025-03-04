@@ -7,11 +7,11 @@
 
 	internal static class AudioDeviceFactory
 	{
-		public static IDsp CreateDspDevice(Dsp dspData, CrestronControlSystem parent, IInfrastructureService hwService)
+		public static IDsp? CreateDspDevice(Dsp dspData, CrestronControlSystem parent, IInfrastructureService hwService)
 		{
 			Logger.Info("AudioDeviceFactory.CreateDspDevice() - Creating DSP from plugin for {0}", dspData.Id);
-			string path = DirectoryHelper.NormalizePath(dspData.Connection.Driver);
-			IDsp device = DriverLoader.LoadClassByInterface<IDsp>(
+			var path = DirectoryHelper.NormalizePath(dspData.Connection.Driver);
+			var device = DriverLoader.LoadClassByInterface<IDsp>(
 				path,
 				dspData.Connection.Transport,
 				"IDsp");

@@ -24,7 +24,7 @@
 		protected Dictionary<string, CustomEventInfoContainer> events = new Dictionary<string, CustomEventInfoContainer>();
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> CustomEventStateChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? CustomEventStateChanged;
 
 		/// <inheritdoc/>
 		public virtual ReadOnlyCollection<CustomEventInfoContainer> QueryAllCustomEvents()
@@ -35,7 +35,7 @@
 		/// <inheritdoc/>
 		public virtual void ChangeCustomEventState(string tag, bool state)
 		{
-			if (!this.customEvents.TryGetValue(tag, out Action<bool> action))
+			if (!customEvents.TryGetValue(tag, out var action))
 			{
 				Logger.Error("CustomEventAppService.ChangeCustomEventState({0}, {1}) - No matching tag found.", tag, state);
 				return;
@@ -47,24 +47,22 @@
 		/// <inheritdoc/>
 		public virtual bool QueryCustomEventState(string tag)
 		{
-			if (this.events.TryGetValue(tag, out var eventData))
+			if (events.TryGetValue(tag, out var eventData))
 			{
 				return eventData.IsActive;
 			}
-			else
-			{
-				Logger.Error("CustomEventAppService.QueryCustomEventState({0}) - No matching tag found.", tag);
-				return false;
-			}
+			
+			Logger.Error("CustomEventAppService.QueryCustomEventState({0}) - No matching tag found.", tag);
+			return false;
 		}
 
 		/// <summary>
 		/// Triggers the CustomEventStateChanged event with the given tag.
 		/// </summary>
-		/// <param name="tag">The tag that will be sent to subricbers with the state change notice.</param>
+		/// <param name="tag">The tag that will be sent to subscribers with the state change notice.</param>
 		protected virtual void NotifyStateChange(string tag)
 		{
-			var temp = this.CustomEventStateChanged;
+			var temp = CustomEventStateChanged;
 			temp?.Invoke(this, new GenericSingleEventArgs<string>(tag));
 		}
 	}

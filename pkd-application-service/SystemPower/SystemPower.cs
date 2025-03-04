@@ -3,7 +3,6 @@
 	using Crestron.SimplSharp;
 	using pkd_common_utils.Validation;
 	using pkd_domain_service;
-	using pkd_domain_service.Data.DisplayData;
 	using pkd_hardware_service;
 	using pkd_hardware_service.EndpointDevices;
 	using System;
@@ -14,12 +13,12 @@
 	/// </summary>
 	internal class SystemPowerApp : ISystemPowerApp, IDisposable
 	{
+		private const long TimerInterval = 59000;
 		private readonly IInfrastructureService infrastructure;
 		private readonly IDomainService domain;
 		private readonly CTimer autoOffTimer;
 		private DateTime autoOffTime = DateTime.Today;
 		private bool disposed;
-		private static readonly long TIMER_INTERVAL = 59000;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SystemPowerApp"/> class.
@@ -33,8 +32,8 @@
 			this.infrastructure = infrastructure;
 			this.domain = domain;
 
-			this.AutoShutdownEnabled = true;
-			this.autoOffTimer = new CTimer(this.AutoOffTimer_Elapsed, TIMER_INTERVAL);
+			AutoShutdownEnabled = true;
+			autoOffTimer = new CTimer(AutoOffTimer_Elapsed, TimerInterval);
 		}
 
 		/// <summary>
@@ -43,11 +42,11 @@
 		~SystemPowerApp()
 		{
 			// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-			this.Dispose(false);
+			Dispose(false);
 		}
 
 		/// <inheritdoc/>
-		public event EventHandler SystemStateChanged;
+		public event EventHandler? SystemStateChanged;
 
 		/// <inheritdoc/>
 		public bool CurrentSystemState { get; private set; }
@@ -58,34 +57,34 @@
 		/// <inheritdoc/>
 		public void AutoShutdownDisable()
 		{
-			this.AutoShutdownEnabled = false;
+			AutoShutdownEnabled = false;
 		}
 
 		/// <inheritdoc/>
 		public void AutoShutdownEnable()
 		{
-			this.AutoShutdownEnabled = true;
+			AutoShutdownEnabled = true;
 		}
 
 		/// <inheritdoc/>
 		public void SetActive()
 		{
-			if (!this.CurrentSystemState)
+			if (!CurrentSystemState)
 			{
-				this.CurrentSystemState = true;
-				this.SetDisplaysActive();
-				this.NotifyChange();
+				CurrentSystemState = true;
+				SetDisplaysActive();
+				NotifyChange();
 			}
 		}
 
 		/// <inheritdoc/>
 		public void SetStandby()
 		{
-			if (this.CurrentSystemState)
+			if (CurrentSystemState)
 			{
-				this.CurrentSystemState = false;
-				this.SetDisplaysStandby();
-				this.NotifyChange();
+				CurrentSystemState = false;
+				SetDisplaysStandby();
+				NotifyChange();
 			}
 		}
 
@@ -102,13 +101,13 @@
 				throw new ArgumentException("SetAutoShutdownTime() - minute must be in the range 0-59");
 			}
 
-			this.autoOffTime = DateTime.Today.AddHours(hour).AddMinutes(minute);
+			autoOffTime = DateTime.Today.AddHours(hour).AddMinutes(minute);
 		}
 
 		/// <inheritdoc/>
 		public void Dispose()
 		{
-			this.Dispose(true);
+			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
@@ -118,68 +117,62 @@
 		/// <param name="disposing">Disposing flag.</param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!this.disposed)
+			if (disposed) return;
+			if (disposing)
 			{
-				if (disposing)
-				{
-					this.autoOffTimer?.Dispose();
-				}
-
-				this.disposed = true;
+				autoOffTimer.Dispose();
 			}
+
+			disposed = true;
 		}
 
-		private void AutoOffTimer_Elapsed(object sender)
+		private void AutoOffTimer_Elapsed(object? sender)
 		{
-			if (this.AutoShutdownEnabled)
+			if (!AutoShutdownEnabled) return;
+			var now = DateTime.Now;
+			if (now.Hour == autoOffTime.Hour && now.Minute == autoOffTime.Minute)
 			{
-				var now = DateTime.Now;
-				if (now.Hour == this.autoOffTime.Hour && now.Minute == this.autoOffTime.Minute)
-				{
-					this.SetStandby();
-				}
-
-				this.autoOffTimer.Reset(TIMER_INTERVAL);
+				SetStandby();
 			}
+
+			autoOffTimer.Reset(TimerInterval);
 		}
 
 		private void SetDisplaysActive()
 		{
-			foreach (var display in this.infrastructure.Displays.GetAllDevices())
+			foreach (var display in infrastructure.Displays.GetAllDevices())
 			{
 				display.PowerOn();
-				var data = this.domain.Displays.FirstOrDefault(x => x.Id == display.Id);
-				if (data != default(Display) && data.HasScreen && !string.IsNullOrEmpty(data.RelayController))
+				var data = domain.Displays.FirstOrDefault(x => x.Id == display.Id);
+				if (data is not { HasScreen: true } || string.IsNullOrEmpty(data.RelayController)) continue;
+				
+				var endpoint = infrastructure.Endpoints.GetDevice(data.RelayController);
+				if (endpoint is IRelayDevice relayDev)
 				{
-					var endpoint = this.infrastructure.Endpoints.GetDevice(data.RelayController);
-					if (endpoint is IRelayDevice relayDev)
-					{
-						relayDev.PulseRelay(data.ScreenDownRelay, 1800);
-					}
+					relayDev.PulseRelay(data.ScreenDownRelay, 1800);
 				}
 			}
 		}
 
 		private void SetDisplaysStandby()
 		{
-			foreach (var display in this.infrastructure.Displays.GetAllDevices())
+			foreach (var display in infrastructure.Displays.GetAllDevices())
 			{
 				display.PowerOff();
-				var data = this.domain.Displays.FirstOrDefault(x => x.Id == display.Id);
-				if (data != default(Display) && data.HasScreen && !string.IsNullOrEmpty(data.RelayController))
+				var data = domain.Displays.FirstOrDefault(x => x.Id == display.Id);
+				if (data is not { HasScreen: true } || string.IsNullOrEmpty(data.RelayController)) continue;
+				
+				var endpoint = infrastructure.Endpoints.GetDevice(data.RelayController);
+				if (endpoint is IRelayDevice relayDev)
 				{
-					var endpoint = this.infrastructure.Endpoints.GetDevice(data.RelayController);
-					if (endpoint is IRelayDevice relayDev)
-					{
-						relayDev.PulseRelay(data.ScreenUpRelay, 1800);
-					}
+					relayDev.PulseRelay(data.ScreenUpRelay, 1800);
 				}
 			}
 		}
 
 		private void NotifyChange()
 		{
-			var temp = this.SystemStateChanged;
+			var temp = SystemStateChanged;
 			temp?.Invoke(this, EventArgs.Empty);
 		}
 	}

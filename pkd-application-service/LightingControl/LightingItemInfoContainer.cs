@@ -1,21 +1,17 @@
-﻿namespace pkd_application_service.LightingControl
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+namespace pkd_application_service.LightingControl
 {
-	using pkd_application_service.Base;
+	using Base;
 	using System.Collections.Generic;
-
-	public class LightingItemInfoContainer : InfoContainer
+	
+	public class LightingItemInfoContainer(
+		string id,
+		string label,
+		string icon,
+		List<string> tags,
+		int index)
+		: InfoContainer(id, label, icon, tags)
 	{
-		public LightingItemInfoContainer(
-			string id,
-			string label,
-			string icon,
-			List<string> tags,
-			int index)
-			: base(id, label, icon, tags)
-		{
-			this.Index = index;
-		}
-
-		public int Index { get; private set; }
+		public int Index { get; private set; } = index;
 	}
 }

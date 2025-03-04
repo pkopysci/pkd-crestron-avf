@@ -1,5 +1,8 @@
 ﻿namespace pkd_hardware_service.AvIpMatrix
 {
+	/// <summary>
+	/// required methods and properties for implementing a transmitter or receiver AV-IP endpoint.
+	/// </summary>
 	public interface IAvIpEndpoint
 	{
 		/// <summary>

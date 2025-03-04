@@ -1,6 +1,6 @@
 ﻿namespace pkd_application_service.AudioControl
 {
-	using pkd_application_service.Base;
+	using Base;
 	using pkd_common_utils.GenericEventArgs;
 	using System;
 	using System.Collections.ObjectModel;
@@ -13,38 +13,38 @@
 		/// <summary>
 		/// Triggered when the internal audio monitor detects a change on an output channel level status.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioOutputLevelChanged;
+		event EventHandler<GenericSingleEventArgs<string>>? AudioOutputLevelChanged;
 
 		/// <summary>
 		/// Triggered when the internal audio monitor detects a change on an output channel mute status.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioOutputMuteChanged;
+		event EventHandler<GenericSingleEventArgs<string>>? AudioOutputMuteChanged;
 
 		/// <summary>
 		/// Triggered when the internal audio monitor detects a change on an input channel level status.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioInputLevelChanged;
+		event EventHandler<GenericSingleEventArgs<string>>? AudioInputLevelChanged;
 
 		/// <summary>
 		/// Triggered when the internal audio monitor detects a change on an input channel mute status.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioInputMuteChanged;
+		event EventHandler<GenericSingleEventArgs<string>> ?AudioInputMuteChanged;
 
 		/// <summary>
 		/// Triggered whenever the connection to the DSP changes (if a DSP is present in the system).
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioDspConnectionStatusChanged;
+		event EventHandler<GenericSingleEventArgs<string>>? AudioDspConnectionStatusChanged;
 
 		/// <summary>
 		/// Triggered whenever an audio-routable DSP reports a route change on an output channel.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioOutputRouteChanged;
+		event EventHandler<GenericSingleEventArgs<string>>? AudioOutputRouteChanged;
 
 		/// <summary>
 		/// Triggered whenever the system detects an audio zone enable/disable event.
 		/// Args package: arg1 = the channel ID that was changed, arg2 = the zone ID that was changed.
 		/// </summary>
-		event EventHandler<GenericDualEventArgs<string, string>> AudioZoneEnableChanged;
+		event EventHandler<GenericDualEventArgs<string, string>>? AudioZoneEnableChanged;
 
 		/// <summary>
 		/// Get all input channels defined in the system configuration (both DSP and AV switch channels
@@ -79,7 +79,7 @@
 		/// Get the current level of the target input.
 		/// </summary>
 		/// <param name="id">The unique ID of the input to query.</param>
-		/// <returns>a value in the range 0-100 represnting the current volume level of the input.</returns>
+		/// <returns>a value in the range 0-100 representing the current volume level of the input.</returns>
 		int QueryAudioInputLevel(string id);
 
 		/// <summary>
@@ -149,7 +149,7 @@
 		/// <summary>
 		/// Set the audio route on the target output channel.
 		/// </summary>
-		/// <param name="srcId">The uinque ID of the input channel to route.</param>
+		/// <param name="srcId">The unique ID of the input channel to route.</param>
 		/// <param name="destId">The unique ID of the output channel to update.</param>
 		void SetAudioOutputRoute(string srcId, string destId);
 

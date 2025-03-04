@@ -1,4 +1,7 @@
-﻿namespace pkd_hardware_service
+﻿using pkd_domain_service.Data.VideoWallData;
+using pkd_hardware_service.VideoWallDevices;
+
+namespace pkd_hardware_service
 {
 	using pkd_domain_service.Data.DisplayData;
 	using pkd_domain_service.Data.DspData;
@@ -6,13 +9,13 @@
 	using pkd_domain_service.Data.LightingData;
 	using pkd_domain_service.Data.RoutingData;
 	using pkd_domain_service.Data.TransportDeviceData;
-	using pkd_hardware_service.AudioDevices;
-	using pkd_hardware_service.AvSwitchDevices;
-	using pkd_hardware_service.BaseDevice;
-	using pkd_hardware_service.DisplayDevices;
-	using pkd_hardware_service.EndpointDevices;
-	using pkd_hardware_service.LightingDevices;
-	using pkd_hardware_service.TransportDevices;
+	using AudioDevices;
+	using AvSwitchDevices;
+	using BaseDevice;
+	using DisplayDevices;
+	using EndpointDevices;
+	using LightingDevices;
+	using TransportDevices;
 	using System;
 
 	/// <summary>
@@ -51,6 +54,11 @@
 		DeviceContainer<ILightingDevice> LightingDevices { get; }
 
 		/// <summary>
+		/// Gets a collection of video wall controllers that are in the system configuration.
+		/// </summary>
+		DeviceContainer<IVideoWallDevice> VideoWallDevices { get; }
+		
+		/// <summary>
 		/// Add a DSP control object to the current collection. Any DSP in the collection with
 		/// a matching ID will be replaced.
 		/// </summary>
@@ -58,7 +66,7 @@
 		void AddDsp(Dsp dsp);
 
 		/// <summary>
-		/// Add an audio input or output channel to a DSP in the current collecton. This will look for a DSP
+		/// Add an audio input or output channel to a DSP in the current collection. This will look for a DSP
 		/// with a matching ID and then configure that device with the channel.
 		/// </summary>
 		/// <param name="channel">The channel data object used to configure the DSP control.</param>
@@ -99,6 +107,12 @@
 		/// </summary>
 		/// <param name="lightingDevice">The lighting controller to add.</param>
 		void AddLightingDevice(LightingInfo lightingDevice);
+		
+		/// <summary>
+		/// Add a video wall controller to the current collection.
+		/// </summary>
+		/// <param name="videoWall">The config data for the video wall device to add.</param>
+		void AddVideoWall(VideoWall videoWall);
 
 		/// <summary>
 		/// Initialize all hardware connections and connect to the devices for control.

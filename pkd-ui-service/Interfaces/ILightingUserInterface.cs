@@ -5,19 +5,22 @@
 	using System;
 	using System.Collections.ObjectModel;
 
+	/// <summary>
+	/// Required events, methods and properties for implementing a user interface that supports lighting control.
+	/// </summary>
 	public interface ILightingUserInterface
 	{
 		/// <summary>
 		/// Triggered when the user requests to change the selected lighting scene on the target controller.
 		/// Arg1 = controller id, arg2 = scene id.
 		/// </summary>
-		event EventHandler<GenericDualEventArgs<string, string>> LightingSceneRecallRequest;
+		event EventHandler<GenericDualEventArgs<string, string>>? LightingSceneRecallRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to change the load level of a target lighting zone.
 		/// arg1 = controller id, arg2 = zone id, arg3 = level to set.
 		/// </summary>
-		event EventHandler<GenericTrippleEventArgs<string, string, int>> LightingLoadChangeRequest;
+		event EventHandler<GenericTrippleEventArgs<string, string, int>>? LightingLoadChangeRequest;
 
 		/// <summary>
 		/// Update the UI with a new collection of lighting controllers and their associated zones/scenes.
@@ -39,5 +42,9 @@
 		/// <param name="zoneId">The unique ID of the zone being updated.</param>
 		/// <param name="level">The new load level of the target zone.</param>
 		void UpdateLightingZoneLoad(string controlId, string zoneId, int level);
+		
+		/// <param name="controlId">The id of the lighting controller that changed.</param>
+		/// <param name="isOnline">true = device is connected, false = device is disconnected.</param>
+		void UpdateLightingControlConnectionStatus(string controlId, bool isOnline);
 	}
 }

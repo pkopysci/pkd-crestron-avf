@@ -1,7 +1,6 @@
 # pkd-crestron-avf
 - .NET framework for Crestron AV control systems.
-- Currently uses .NET FW 4.2
-- Will be updated to .NET 6 in the next major update
+- Currently uses .NET 8.0
 
 ## Software Design
 ### Plugin-based architecture
@@ -25,4 +24,3 @@ object used when creating device connections.
 #### UI Service
 - Creates and manages response/updates to all user interfaces defined in the configuration JSON file.
 - Manages the Crestron Fusion connection & error reporting.
-- In Progress: will have a REST API included using CWS in the next major update

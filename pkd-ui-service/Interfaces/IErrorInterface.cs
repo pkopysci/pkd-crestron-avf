@@ -1,5 +1,8 @@
 ﻿namespace pkd_ui_service.Interfaces
 {
+	/// <summary>
+	/// Required events, methods, and properties for implementing a user interface that supports device error reporting.
+	/// </summary>
 	public interface IErrorInterface
 	{
 		/// <summary>

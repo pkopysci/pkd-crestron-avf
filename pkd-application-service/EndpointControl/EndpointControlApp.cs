@@ -1,6 +1,6 @@
 ﻿namespace pkd_application_service.EndpointControl
 {
-	using pkd_application_service.Base;
+	using Base;
 	using pkd_common_utils.GenericEventArgs;
 	using pkd_domain_service.Data.EndpointData;
 	using pkd_hardware_service.BaseDevice;
@@ -21,20 +21,20 @@
 		public EndpointControlApp(DeviceContainer<IEndpointDevice> devices, ReadOnlyCollection<Endpoint> data)
 			: base(devices, data)
 		{
-			this.ReigsterHandlers();
+			RegisterHandlers();
 		}
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, int>> EndpointRelayChanged;
+		public event EventHandler<GenericDualEventArgs<string, int>>? EndpointRelayChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, bool>> EndpointConnectionChanged;
+		public event EventHandler<GenericDualEventArgs<string, bool>>? EndpointConnectionChanged;
 
 		/// <inheritdoc/>
 		public void LatchRelayClosed(string id, int index)
 		{
-			var found = this.GetDevice(id);
-			if (found != default(IEndpointDevice) && found is IRelayDevice relayDev)
+			var found = GetDevice(id);
+			if (found is IRelayDevice relayDev)
 			{
 				relayDev.LatchRelayClosed(index);
 			}
@@ -43,8 +43,8 @@
 		/// <inheritdoc/>
 		public void LatchRelayOpen(string id, int index)
 		{
-			var found = this.GetDevice(id);
-			if (found != default(IEndpointDevice) && found is IRelayDevice relayDev)
+			var found = GetDevice(id);
+			if (found is IRelayDevice relayDev)
 			{
 				relayDev.LatchRelayOpen(index);
 			}
@@ -53,41 +53,39 @@
 		/// <inheritdoc/>
 		public void PulseEndpointRelay(string id, int index, int timeMs)
 		{
-			var found = this.GetDevice(id);
-			if (found != default(IEndpointDevice) && found is IRelayDevice relayDev)
+			var found = GetDevice(id);
+			if (found is IRelayDevice relayDev)
 			{
 				relayDev.PulseRelay(index, timeMs);
 			}
 		}
 
-		private void ReigsterHandlers()
+		private void RegisterHandlers()
 		{
-			foreach (var device in this.GetAllDevices())
+			foreach (var device in GetAllDevices())
 			{
-				device.ConnectionChanged += this.Device_ConnectionChanged;
+				device.ConnectionChanged += Device_ConnectionChanged;
 				if (device is IRelayDevice relayDev)
 				{
 					// TODO: Support other endpoint device types
-					relayDev.RelayChanged += this.RelayDev_RelayChanged;
+					relayDev.RelayChanged += RelayDev_RelayChanged;
 				}
 			}
 		}
 
-		private void RelayDev_RelayChanged(object sender, GenericDualEventArgs<string, int> e)
+		private void RelayDev_RelayChanged(object? sender, GenericDualEventArgs<string, int> e)
 		{
-			var temp = this.EndpointRelayChanged;
+			var temp = EndpointRelayChanged;
 			temp?.Invoke(this, e);
 		}
 
-		private void Device_ConnectionChanged(object sender, GenericSingleEventArgs<string> e)
+		private void Device_ConnectionChanged(object? sender, GenericSingleEventArgs<string> e)
 		{
-			if (sender is IEndpointDevice endpointDev)
-			{
-				var temp = this.EndpointConnectionChanged;
-				temp?.Invoke(
-						this,
-						new GenericDualEventArgs<string, bool>(endpointDev.Id, endpointDev.IsOnline));
-			}
+			if (sender is not IEndpointDevice endpointDev) return;
+			var temp = EndpointConnectionChanged;
+			temp?.Invoke(
+				this,
+				new GenericDualEventArgs<string, bool>(endpointDev.Id, endpointDev.IsOnline));
 		}
 	}
 }

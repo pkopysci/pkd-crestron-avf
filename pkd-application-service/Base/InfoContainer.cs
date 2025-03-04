@@ -10,7 +10,7 @@
 		/// <summary>
 		/// Default / Empty data object.
 		/// </summary>
-		public static readonly InfoContainer Empty = new InfoContainer("EMPTYINFO", "EMPTY INFO", "alert", new List<string>());
+		public static readonly InfoContainer Empty = new("EMPTYINFO", "EMPTY INFO", "alert", []);
 
 		/// <summary>
 		/// Instantiates a new instance of <see cref="InfoContainer"/>
@@ -22,15 +22,15 @@
 		/// <param name="isOnline">true = the device is currently connected for communication, false = device offline (defaults to false)</param>
 		public InfoContainer(string id, string label, string icon, List<string> tags, bool isOnline = false)
 		{
-			this.Icon = icon;
-			this.Id = id;
-			this.Label = label;
-			this.Tags = tags;
-			this.IsOnline = isOnline;
+			Icon = icon;
+			Id = id;
+			Label = label;
+			Tags = tags;
+			IsOnline = isOnline;
 		}
 
 		/// <summary>
-		/// Gets the unqiue ID of this data item.
+		/// Gets the unique ID of this data item.
 		/// </summary>
 		public string Id { get; protected set; }
 
@@ -45,9 +45,9 @@
 		public string Icon { get; protected set; }
 
 		/// <summary>
-		/// Gets a value indicating whether or not the device is currently online or offline.
+		/// Gets a value indicating whether the device is currently online or offline.
 		/// </summary>
-		public bool IsOnline { get; protected set; }
+		public bool IsOnline { get; set; }
 
 		/// <summary>
 		/// Gets the various tags that are associated with this data item.

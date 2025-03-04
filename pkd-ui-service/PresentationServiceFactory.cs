@@ -1,4 +1,9 @@
-﻿namespace pkd_ui_service
+﻿// ReSharper disable SuspiciousTypeConversion.Global
+
+using System.Collections.ObjectModel;
+using pkd_application_service.VideoWallControl;
+
+namespace pkd_ui_service
 {
 	using Crestron.SimplSharpPro;
 	using pkd_application_service;
@@ -7,8 +12,8 @@
 	using pkd_common_utils.FileOps;
 	using pkd_common_utils.Logging;
 	using pkd_common_utils.Validation;
-	using pkd_ui_service.Fusion;
-	using pkd_ui_service.Interfaces;
+	using Fusion;
+	using Interfaces;
 
 
 	/// <summary>
@@ -17,11 +22,11 @@
 	public static class PresentationServiceFactory
 	{
 		/// <summary>
-		/// Creates a full presentation service object that hooks into the application service evetns.
+		/// Creates a full presentation service object that hooks into the application service events.
 		/// </summary>
 		/// <param name="appService">The base application service used to control business logic.</param>
 		/// <param name="control">The control system entry point for this program.</param>
-		/// <returns>A Presentation service that can be initilized for interacting with user interface hardware.</returns>
+		/// <returns>A Presentation service that can be initialized for interacting with user interface hardware.</returns>
 		public static IPresentationService CreatePresentationService(IApplicationService appService, CrestronControlSystem control)
 		{
 			ParameterValidator.ThrowIfNull(appService, "CreatePresentationService", "appService");
@@ -29,20 +34,20 @@
 			return new PresentationService(appService, control);
 		}
 
-		internal static IUserInterface CreateUserInterface(
+		internal static IUserInterface? CreateUserInterface(
 			CrestronControlSystem parent,
-			UserInterfaceDataContainer UiData,
+			UserInterfaceDataContainer uiData,
 			IApplicationService appService)
 		{
-			if (string.IsNullOrEmpty(UiData.ClassName) || string.IsNullOrEmpty(UiData.Library))
+			if (string.IsNullOrEmpty(uiData.ClassName) || string.IsNullOrEmpty(uiData.Library))
 			{
 				Logger.Error("pkd_ui_service.PresentationServiceFactory.CreateUserInterface() - UiData argument must contain ClassName and Library entries.");
 				return null;
 			}
 			else
 			{
-				Logger.Debug($"PresentationServiceFactory.CreateUserInterface() - Loading {UiData.Library}.{UiData.ClassName}");
-				return CreateInterfaceFromPlugin(parent, UiData, appService);
+				Logger.Debug($"PresentationServiceFactory.CreateUserInterface() - Loading {uiData.Library}.{uiData.ClassName}");
+				return CreateInterfaceFromPlugin(parent, uiData, appService);
 			}
 		}
 
@@ -51,7 +56,7 @@
 			CrestronControlSystem parent)
 		{
 			var data = appService.GetFusionInterface();
-			FusionInterface fusion = new FusionInterface((uint)data.IpId, parent, data.Label, data.Id);
+			var fusion = new FusionInterface((uint)data.IpId, parent, data.Label, data.Id);
 			foreach (var mic in appService.GetAudioInputChannels())
 			{
 				fusion.AddMicrophone(mic.Id, mic.Label, mic.Tags.ToArray());
@@ -71,14 +76,14 @@
 			return fusion;
 		}
 
-		private static IUserInterface CreateInterfaceFromPlugin(
+		private static IUserInterface? CreateInterfaceFromPlugin(
 			CrestronControlSystem parent,
-			UserInterfaceDataContainer UiData,
+			UserInterfaceDataContainer uiData,
 			IApplicationService appService)
 		{
-			IUserInterface device = DriverLoader.LoadClassByInterface<IUserInterface>(
-				UiData.Library,
-				UiData.ClassName,
+			var device = DriverLoader.LoadClassByInterface<IUserInterface>(
+				uiData.Library,
+				uiData.ClassName,
 				"IUserInterface");
 
 			if (device == null)
@@ -87,51 +92,31 @@
 				return null;
 			}
 
-			device.SetUiData(UiData);
-			
-			if (device is IHtmlUserInterface htmlInterface)
-			{
-				htmlInterface.SetSystemType(appService.GetRoomInfo().SystemType);
-			}
+			(device as IHtmlUserInterface)?.SetSystemType(appService.GetRoomInfo().SystemType);
+			device.SetUiData(uiData);
+			(device as ICrestronUserInterface)?.SetCrestronControl(parent, uiData.IpId);
+			(device as IDisplayUserInterface)?.SetDisplayData(appService.GetAllDisplayInfo());
+			(device as IRoutingUserInterface)?.SetRoutingData(appService.GetAllAvSources(), appService.GetAllAvDestinations(), appService.GetAllAvRouters());
+			(device as IAudioUserInterface)?.SetAudioData(
+				appService.GetAudioInputChannels(),
+				appService.GetAudioOutputChannels(),
+				appService.GetAllAudioDspDevices());
+			(device as ITransportControlUserInterface)?.SetCableBoxData(appService.GetAllCableBoxes());
+			(device as ILightingUserInterface)?.SetLightingData(appService.GetAllLightingDeviceInfo());
 
-			if (device is ICrestronUserInterface crestronInterface)
+			if (device is ICustomEventUserInterface eventUi && appService is ICustomEventAppService eventApp)
 			{
-				crestronInterface.SetCrestronControl(parent, UiData.IpId);
-			}
-
-			if (device is IDisplayUserInterface displayUI)
-			{
-				displayUI.SetDisplayData(appService.GetAllDisplayInfo());
-			}
-
-			if (device is IRoutingUserInterface routingUI)
-			{
-				routingUI.SetRoutingData(appService.GetAllAvSources(), appService.GetAllAvDestinations(), appService.GetAllAvRouters());
-			}
-
-			if (device is IAudioUserInterface audioUI)
-			{
-				audioUI.SetAudioData(appService.GetAudioInputChannels(), appService.GetAudioOutputChannels());
-			}
-
-			if (device is ITransportControlUserInterface transportControlUI)
-			{
-				transportControlUI.SetCableBoxData(appService.GetAllCableBoxes());
-			}
-
-			if (device is ILightingUserInterface lightingUI)
-			{
-				lightingUI.SetLightingData(appService.GetAllLightingDeviceInfo());
-			}
-
-			if (device is ICustomEventUserInterface && appService is ICustomEventAppService)
-			{
-				var eventApp = appService as ICustomEventAppService;
-				var eventUi = device as ICustomEventUserInterface;
 				foreach (var item in eventApp.QueryAllCustomEvents())
 				{
 					eventUi.AddCustomEvent(item.Id, item.Label, item.IsActive);
 				}
+			}
+
+			if (device is IVideoWallUserInterface videoWallUi)
+			{
+				var wallDevices = (appService as IVideoWallApp)?.GetAllVideoWalls() ??
+				                  ReadOnlyCollection<VideoWallInfoContainer>.Empty;
+				videoWallUi.SetVideoWallData(wallDevices);
 			}
 
 			return device;

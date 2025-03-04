@@ -12,65 +12,69 @@
 	using System.Collections.Generic;
 	using System.Globalization;
 
+	/// <summary>
+	/// Factory class for creating display control objects from configuration data.
+	/// </summary>
 	public static class DisplayDeviceFactory
 	{
-		private const int WARMUP_COODLOWN_TIME = 30;
-
-		public static IDisplayDevice CreateDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
+		private const int WarmupCooldownTime = 30;
+		
+		/// <param name="displayData">configuration data for the display to create.</param>
+		/// <param name="processor">the root Crestron control system object.</param>
+		/// <param name="hwService">the hardware service that will manage the device after creation.</param>
+		/// <returns>a control object for the display, or false if an error occurs.</returns>
+		public static IDisplayDevice? CreateDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
 		{
-			ParameterValidator.ThrowIfNull(displayData, "CreateDisplay", "displayData");
-			ParameterValidator.ThrowIfNull(processor, "CreateDisplay", "processor");
-			ParameterValidator.ThrowIfNull(hwService, "CreateDisplay", "hwService");
-			Logger.Info(string.Format("CreateDisplay() - Creating display with ID {0}", displayData.Id));
+			ParameterValidator.ThrowIfNull(displayData, "CreateDisplay", nameof(displayData));
+			ParameterValidator.ThrowIfNull(processor, "CreateDisplay", nameof(processor));
+			ParameterValidator.ThrowIfNull(hwService, "CreateDisplay", nameof(hwService));
+			Logger.Info($"CreateDisplay() - Creating display with ID {displayData.Id}");
 
 
-			if (displayData.Connection.Transport.ToUpper().Equals("TCP"))
-			{
-				return LoadCcdDisplay(displayData, processor, hwService);
-			}
-			else
-			{
-				return LoadPluginDisplay(displayData, processor, hwService);
-			}
+			return displayData.Connection.Transport.ToUpper().Equals("TCP") ?
+				LoadCcdDisplay(displayData, processor, hwService) : 
+				LoadPluginDisplay(displayData, processor, hwService);
 		}
 
-		private static IDisplayDevice LoadCcdDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
+		private static CcdDisplayDevice? LoadCcdDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
 		{
-			Logger.Info(string.Format(
-				"DisplayDeviceFactory.CreateDisplay() - Creating Crestron certified driver for {0}.",
-				displayData.Id));
+			var transport = DriverLoader.GetTransportType(displayData.Connection.Transport);
+			var driverPath = DirectoryHelper.NormalizePath(displayData.Connection.Driver);
 
-			IBasicVideoDisplay device = null;
-			string transport = DriverLoader.GetTransportType(displayData.Connection.Transport);
-			string driverPath = DirectoryHelper.NormalizePath(displayData.Connection.Driver);
-
-			device = DriverLoader.LoadDriverInstance<IBasicVideoDisplay>(
+			var device = DriverLoader.LoadDriverInstance<IBasicVideoDisplay>(
 				driverPath,
 				"IBasicVideoDisplay",
 				transport);
 
-			if (device is IBasicVideoDisplay2)
+			if (device == null)
 			{
-				SetUserAttributes(device as IBasicVideoDisplay2, displayData.UserAttributes);
+				Logger.Error("DisplayDeviceFactory.LoadCcdDisplay() - failed to load driver for display {0}", displayData.Id);
+				return null;
 			}
 
-			if (device is ITcp2)
+			if (device is IBasicVideoDisplay2 basicDisplayDevice)
 			{
-				var tcpDevice = device as ITcp2;
-				tcpDevice.Initialize(displayData.Connection.Host, displayData.Connection.Port);
-			}
-			else if (device is ITcp)
-			{
-				var tcpDevice = device as ITcp;
-				tcpDevice.Initialize(IPAddress.Parse(displayData.Connection.Host), displayData.Connection.Port);
-			}
-			else if (device is ISerialComport)
-			{
-				Logger.Warn(string.Format("DisplayDeviceFactory.CreateDisplay({0}) - Serial drivers are not supported.", displayData.Id));
+				SetUserAttributes(basicDisplayDevice, displayData.UserAttributes);
 			}
 
-			device.WarmUpTime = WARMUP_COODLOWN_TIME;
-			device.CoolDownTime = WARMUP_COODLOWN_TIME;
+			switch (device)
+			{
+				// warning disabled due to external CCD implementations being able to implement ITcp2 and IBasicVideoDisplay
+				// ReSharper disable once SuspiciousTypeConversion.Global
+				case ITcp2 tcpDevice2:
+					tcpDevice2.Initialize(displayData.Connection.Host, displayData.Connection.Port);
+					break;
+				case ITcp tcpDevice:
+					tcpDevice.Initialize(IPAddress.Parse(displayData.Connection.Host), displayData.Connection.Port);
+					break;
+				case ISerialComport:
+					Logger.Warn(
+						$"DisplayDeviceFactory.CreateDisplay({displayData.Id}) - Serial drivers are not supported yet.");
+					break;
+			}
+
+			device.WarmUpTime = WarmupCooldownTime;
+			device.CoolDownTime = WarmupCooldownTime;
 			var ccd = new CcdDisplayDevice(device, displayData);
 			ccd.Initialize(
 				displayData.Connection.Host,
@@ -83,15 +87,8 @@
 
 		private static void SetUserAttributes(IBasicVideoDisplay2 driver, IEnumerable<UserAttribute> data)
 		{
-			// Ignore displays with no attributes
-			if (data == null)
-			{
-				return;
-			}
-
 			try
 			{
-				//IBasicVideoDisplay2 driver = device as IBasicVideoDisplay2;
 				foreach (var attribute in data)
 				{
 					switch (attribute.DataType.ToUpper(CultureInfo.InvariantCulture))
@@ -113,10 +110,8 @@
 							break;
 
 						default:
-							Logger.Error(string.Format(
-								"DisplayDeviceFactory.SetUserAttribute({0}) - Unknown data type encounterd: {1}",
-								driver.GetType(),
-								attribute.DataType));
+							Logger.Error(
+								$"DisplayDeviceFactory.SetUserAttribute({driver.GetType()}) - Unknown data type encountered: {attribute.DataType}");
 							break;
 					}
 				}
@@ -127,14 +122,10 @@
 			}
 		}
 
-		private static IDisplayDevice LoadPluginDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
+		private static IDisplayDevice? LoadPluginDisplay(Display displayData, CrestronControlSystem processor, IInfrastructureService hwService)
 		{
-			Logger.Info(string.Format(
-				"DisplayDeviceFactory.CreateDisplay() - Creating display from plugin library for {0}...",
-				displayData.Id));
-
-			string driverPath = DirectoryHelper.NormalizePath(displayData.Connection.Driver);
-			IDisplayDevice device = DriverLoader.LoadClassByInterface<IDisplayDevice>(
+			var driverPath = DirectoryHelper.NormalizePath(displayData.Connection.Driver);
+			var device = DriverLoader.LoadClassByInterface<IDisplayDevice>(
 				driverPath,
 				displayData.Connection.Transport,
 				"IDisplayDevice");
@@ -155,5 +146,4 @@
 			return device;
 		}
 	}
-
 }

@@ -4,7 +4,7 @@
 	using pkd_common_utils.GenericEventArgs;
 
 	/// <summary>
-	/// Common protperties and methods for a video output device.
+	/// Common properties and methods for a video output device.
 	/// </summary>
 	public interface IVideoControllable
 	{

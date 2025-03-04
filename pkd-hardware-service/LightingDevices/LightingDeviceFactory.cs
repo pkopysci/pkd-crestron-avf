@@ -8,7 +8,7 @@
 
 	internal static class LightingDeviceFactory
 	{
-		public static ILightingDevice CreateLightingDevice(
+		public static ILightingDevice? CreateLightingDevice(
 			LightingInfo data,
 			CrestronControlSystem processor,
 			IInfrastructureService hwService)
@@ -17,8 +17,8 @@
 			ParameterValidator.ThrowIfNull(processor, "CreateLightingDevice", "processor");
 			ParameterValidator.ThrowIfNull(hwService, "CreateLightingDevice", "hwService");
 
-			string dllPath = DirectoryHelper.NormalizePath(data.Connection.Driver);
-			ILightingDevice device = DriverLoader.LoadClassByInterface<ILightingDevice>(dllPath, data.ClassName, "ILightingDevice");
+			var dllPath = DirectoryHelper.NormalizePath(data.Connection.Driver);
+			var device = DriverLoader.LoadClassByInterface<ILightingDevice>(dllPath, data.ClassName, "ILightingDevice");
 
 			if (device == null)
 			{

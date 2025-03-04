@@ -8,14 +8,17 @@
 	using pkd_common_utils.Logging;
 	using pkd_common_utils.Validation;
 	using pkd_domain_service.Data.DisplayData;
-	using pkd_hardware_service.BaseDevice;
-	using pkd_hardware_service.Routable;
+	using BaseDevice;
+	using Routable;
 	using System;
 	using System.Collections.Generic;
 
+	/// <summary>
+	/// Display control object that uses a Crestron certified driver for control.
+	/// </summary>
 	public class CcdDisplayDevice : BaseDevice, IDisplayDevice, IVideoRoutable, IDisposable
 	{
-		private static readonly Dictionary<uint, VideoConnections> inputs = new Dictionary<uint, VideoConnections>()
+		private static readonly Dictionary<uint, VideoConnections> Inputs = new Dictionary<uint, VideoConnections>()
 		{
 			{ 1, VideoConnections.Hdmi1 },
 			{ 2, VideoConnections.Hdmi2 },
@@ -28,90 +31,62 @@
 			{ 9, VideoConnections.Vga1 },
 		};
 
-		private const int OFFLINE_TIMEOUT = 15000;
+		private const int OfflineTimeout = 15000;
 
 		private readonly IBasicVideoDisplay driver;
 		private readonly Display config;
-		private bool freezeActive;
-		private CTimer offlineTimer;
+		private CTimer? offlineTimer;
 		private bool disposed;
 
+		/// <param name="driver">the Crestron Certified Driver object for controlling the device.</param>
+		/// <param name="config">The device config data that was created during boot.</param>
 		public CcdDisplayDevice(IBasicVideoDisplay driver, Display config)
 		{
-			ParameterValidator.ThrowIfNull(driver, "DisplayDevice.Ctor", "driver");
-			ParameterValidator.ThrowIfNull(config, "DisplayDevice.Ctor", "config");
+			ParameterValidator.ThrowIfNull(driver, "DisplayDevice.Ctor", nameof(driver));
+			ParameterValidator.ThrowIfNull(config, "DisplayDevice.Ctor", nameof(config));
 
-			this.Id = config.Id;
-			this.Label = config.Label;
-			this.driver = driver;
 			this.config = config;
-			this.freezeActive = false;
+			this.driver = driver;
+			Id = config.Id;
+			Label = config.Label;
+			FreezeState = false;
 		}
 
+		/// <inheritdoc />
 		~CcdDisplayDevice()
 		{
-			this.Dispose(false);
+			Dispose(false);
 		}
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> PowerChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? PowerChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> VideoBlankChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? VideoBlankChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> VideoFreezeChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? VideoFreezeChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> HoursUsedChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? HoursUsedChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, uint>> VideoRouteChanged;
+		public event EventHandler<GenericDualEventArgs<string, uint>>? VideoRouteChanged;
 
 		/// <inheritdoc/>
-		public bool PowerState
-		{
-			get
-			{
-				return this.driver.PowerIsOn;
-			}
-		}
+		public bool PowerState => driver.PowerIsOn;
 
 		/// <inheritdoc/>
-		public bool BlankState
-		{
-			get
-			{
-				return this.driver.VideoMuteIsOn;
-			}
-		}
+		public bool BlankState => driver.VideoMuteIsOn;
 
 		/// <inheritdoc/>
-		public bool SupportsFreeze
-		{
-			get
-			{
-				return !string.IsNullOrEmpty(this.config.CustomCommands.FreezeOnRx);
-			}
-		}
+		public bool SupportsFreeze => !string.IsNullOrEmpty(config.CustomCommands.FreezeOnRx);
 
 		/// <inheritdoc/>
-		public bool FreezeState
-		{
-			get
-			{
-				return this.freezeActive;
-			}
-		}
+		public bool FreezeState { get; private set; }
 
 		/// <inheritdoc/>
-		public uint HoursUsed
-		{
-			get
-			{
-				return this.driver.LampHours.Count > 0 ? this.driver.LampHours[0] : 0;
-			}
-		}
+		public uint HoursUsed => driver.LampHours.Count > 0 ? driver.LampHours[0] : 0;
 
 		/// <inheritdoc/>
 		public bool EnableReconnect { get; set; }
@@ -119,71 +94,71 @@
 		/// <inheritdoc/>
 		public void PowerOn()
 		{
-			if (!this.driver.Connected)
+			if (!driver.Connected)
 			{
-				Logger.Warn(string.Format("DisplayDevice {0} - sending power on command while disconnected.", this.Id));
+				Logger.Warn($"DisplayDevice {Id} - sending power on command while disconnected.");
 			}
 
-			this.driver.PowerOn();
+			driver.PowerOn();
 		}
 
 		/// <inheritdoc/>
 		public void PowerOff()
 		{
-			if (!this.driver.Connected)
+			if (!driver.Connected)
 			{
-				Logger.Warn(string.Format("DisplayDevice {0} - sending power off command while disconnected.", this.Id));
+				Logger.Warn($"DisplayDevice {Id} - sending power off command while disconnected.");
 			}
 
-			this.driver.PowerOff();
+			driver.PowerOff();
 		}
 
 		/// <inheritdoc/>
 		public void VideoBlankOn()
 		{
-			if (!this.driver.Connected)
+			if (!driver.Connected)
 			{
-				Logger.Warn(string.Format("DisplayDevice {0} - sending video blank on command while disconnected.", this.Id));
+				Logger.Warn($"DisplayDevice {Id} - sending video blank on command while disconnected.");
 			}
 
-			this.driver.VideoMuteOn();
+			driver.VideoMuteOn();
 		}
 
 		/// <inheritdoc/>
 		public void VideoBlankOff()
 		{
-			if (!this.driver.Connected)
+			if (!driver.Connected)
 			{
-				Logger.Warn(string.Format("DisplayDevice {0} - sending video blank off command while disconnected.", this.Id));
+				Logger.Warn($"DisplayDevice {Id} - sending video blank off command while disconnected.");
 			}
 
-			this.driver.VideoMuteOff();
+			driver.VideoMuteOff();
 		}
 
 		/// <inheritdoc/>
 		public void FreezeOn()
 		{
-			if (!this.driver.Connected)
+			if (!driver.Connected)
 			{
-				Logger.Warn(string.Format("DisplayDevice {0} - sending freeze on command while disconnected.", this.Id));
+				Logger.Warn($"DisplayDevice {Id} - sending freeze on command while disconnected.");
 			}
 
-			this.driver.SendCustomCommand(this.config.CustomCommands.FreezeOnTx);
-			this.freezeActive = true;
-			this.NotifyEvent(this.VideoFreezeChanged);
+			driver.SendCustomCommand(config.CustomCommands.FreezeOnTx);
+			FreezeState = true;
+			NotifyEvent(VideoFreezeChanged);
 		}
 
 		/// <inheritdoc/>
 		public void FreezeOff()
 		{
-			if (!this.driver.Connected)
+			if (!driver.Connected)
 			{
-				Logger.Warn(string.Format("DisplayDevice {0} - sending freeze off command while disconencted.", this.Id));
+				Logger.Warn($"DisplayDevice {Id} - sending freeze off command while disconencted.");
 			}
 
-			this.driver.SendCustomCommand(this.config.CustomCommands.FreezeOffTx);
-			this.freezeActive = false;
-			this.NotifyEvent(this.VideoFreezeChanged);
+			driver.SendCustomCommand(config.CustomCommands.FreezeOffTx);
+			FreezeState = false;
+			NotifyEvent(VideoFreezeChanged);
 		}
 
 		/// <inheritdoc/>
@@ -201,29 +176,29 @@
 		/// <inheritdoc/>
 		public void Initialize(string host, int port, string label, string id)
 		{
-			this.Label = label;
-			this.Id = id;
-			this.SubscribeToEvents();
+			Label = label;
+			Id = id;
+			SubscribeToEvents();
 		}
 
 		/// <inheritdoc/>
 		public override void Connect()
 		{
-			this.driver.Connect();
+			driver.Connect();
 		}
 
 		/// <inheritdoc/>
 		public override void Disconnect()
 		{
-			this.driver.Disconnect();
+			driver.Disconnect();
 		}
 
 		/// <inheritdoc/>
 		public uint GetCurrentVideoSource(uint output)
 		{
-			foreach (var kvp in inputs)
+			foreach (var kvp in Inputs)
 			{
-				if (kvp.Value == this.driver.InputSource.InputType)
+				if (kvp.Value == driver.InputSource.InputType)
 				{
 					return kvp.Key;
 				}
@@ -231,7 +206,7 @@
 
 			Logger.Error(
 				"CcdDisplayDevice {0}  GetCurrentVideoSource({0}) - Could not find a supported input.",
-				this.Id,
+				Id,
 				output);
 
 			return 0;
@@ -240,16 +215,16 @@
 		/// <inheritdoc/>
 		public void RouteVideo(uint source, uint output)
 		{
-			if (inputs.TryGetValue(source, out VideoConnections input))
+			if (Inputs.TryGetValue(source, out var input))
 			{
-				Logger.Debug("CcdDisplayDevice {0}.RouteVideo({0}, {1}) - found = {2}", source, output, VideoConnections.None);
-				this.driver.SetInputSource(VideoConnections.None);
+				Logger.Debug("CcdDisplayDevice {0}.RouteVideo({0}, {1}) - found = {2}", source, output, input);
+				driver.SetInputSource(input);
 			}
 			else
 			{
 				Logger.Error(
 					"CcdDisplayDevice {0} - RouteVideo({1},{2}) - input value not supported.",
-					this.Id,
+					Id,
 					source,
 					output);
 			}
@@ -258,16 +233,19 @@
 		/// <inheritdoc/>
 		public void Dispose()
 		{
-			this.Dispose(true);
+			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
+		/// <summary>
+		/// This is not supported by CCD devices.
+		/// </summary>
 		public void ClearVideoRoute(uint output) { }
 
 		private void SubscribeToEvents()
 		{
-			Logger.Info(string.Format("DisplayDevice {0} - Subscribing to events.", this.Id));
-			this.driver.StateChangeEvent += this.StateChangeHandler;
+			Logger.Info($"DisplayDevice {Id} - Subscribing to events.");
+			driver.StateChangeEvent += StateChangeHandler;
 		}
 
 		private void StateChangeHandler(DisplayStateObjects arg1, IBasicVideoDisplay arg2, byte arg3)
@@ -275,106 +253,94 @@
 			switch (arg1)
 			{
 				case DisplayStateObjects.Power:
-					this.NotifyEvent(this.PowerChanged);
+					NotifyEvent(PowerChanged);
 					break;
 
 				case DisplayStateObjects.Connection:
-					this.IsOnline = this.driver.Connected;
-					if (this.IsOnline)
+					IsOnline = driver.Connected;
+					if (IsOnline)
 					{
-						this.NotifyOnlineStatus();
+						NotifyOnlineStatus();
 					}
 					else
 					{
-						this.StartOfflineTimer();
+						StartOfflineTimer();
 					}
 					break;
 
 				case DisplayStateObjects.LampHours:
-					this.NotifyEvent(this.HoursUsedChanged);
+					NotifyEvent(HoursUsedChanged);
 					break;
 
 				case DisplayStateObjects.VideoMute:
-					this.NotifyEvent(this.VideoBlankChanged);
+					NotifyEvent(VideoBlankChanged);
 					break;
 
 				case DisplayStateObjects.Authentication:
-					Logger.Warn(string.Format("Display {0} - Authentication event received.", this.Id));
+					Logger.Warn($"Display {Id} - Authentication event received.");
 					break;
 
 				case DisplayStateObjects.Input:
-					this.ReportNewInput(this.driver.InputSource);
-					break;
-
-				default:
+					ReportNewInput(driver.InputSource);
 					break;
 			}
 		}
 
 		private void ReportNewInput(InputDetail source)
 		{
-			foreach (var kvp in inputs)
+			foreach (var kvp in Inputs)
 			{
-				if (kvp.Value == source.InputType)
-				{
-					var temp = this.VideoRouteChanged;
-					if (temp != null)
-					{
-						temp.Invoke(this, new GenericDualEventArgs<string, uint>(this.Id, kvp.Key));
-						break;
-					}
-				}
+				if (kvp.Value != source.InputType) continue;
+				var temp = VideoRouteChanged;
+				temp?.Invoke(this, new GenericDualEventArgs<string, uint>(Id, kvp.Key));
+				break;
 			}
 		}
 
-		private void NotifyEvent(EventHandler<GenericSingleEventArgs<string>> handler)
+		private void NotifyEvent(EventHandler<GenericSingleEventArgs<string>>? handler)
 		{
-			var temp = handler;
-			temp?.Invoke(this, new GenericSingleEventArgs<string>(this.Id));
+			handler?.Invoke(this, new GenericSingleEventArgs<string>(Id));
 		}
 
 		private void StartOfflineTimer()
 		{
-			if (this.offlineTimer == null)
+			if (offlineTimer == null)
 			{
-				this.offlineTimer = new CTimer(OfflineTimerTriggered, OFFLINE_TIMEOUT);
+				offlineTimer = new CTimer(OfflineTimerTriggered, OfflineTimeout);
 			}
 			else
 			{
-				this.offlineTimer.Reset(OFFLINE_TIMEOUT);
+				offlineTimer.Reset(OfflineTimeout);
 			}
 		}
 
-		private void OfflineTimerTriggered(object obj)
+		private void OfflineTimerTriggered(object? obj)
 		{
-			this.IsOnline = this.driver.Connected;
+			IsOnline = driver.Connected;
 			if (!IsOnline)
 			{
-				this.NotifyOnlineStatus();
+				NotifyOnlineStatus();
 			}
 		}
 
 		private void Dispose(bool disposing)
 		{
-			if (!this.disposed)
+			if (disposed) return;
+			if (disposing)
 			{
-				if (disposing)
+				if (offlineTimer != null)
 				{
-					if (this.offlineTimer != null)
-					{
-						this.offlineTimer.Stop();
-						this.offlineTimer.Dispose();
-						this.offlineTimer = null;
-					}
-
-					this.driver.StateChangeEvent -= this.StateChangeHandler;
-					this.driver.Disconnect();
-					this.driver.Dispose();
+					offlineTimer.Stop();
+					offlineTimer.Dispose();
+					offlineTimer = null;
 				}
 
-				this.disposed = true;
+				driver.StateChangeEvent -= StateChangeHandler;
+				driver.Disconnect();
+				driver.Dispose();
 			}
+
+			disposed = true;
 		}
 	}
-
 }

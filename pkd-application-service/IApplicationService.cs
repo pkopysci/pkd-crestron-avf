@@ -1,14 +1,14 @@
 ﻿namespace pkd_application_service
 {
-	using pkd_application_service.AudioControl;
-	using pkd_application_service.AvRouting;
-	using pkd_application_service.Base;
-	using pkd_application_service.DisplayControl;
-	using pkd_application_service.EndpointControl;
-	using pkd_application_service.LightingControl;
-	using pkd_application_service.SystemPower;
-	using pkd_application_service.TransportControl;
-	using pkd_application_service.UserInterface;
+	using AudioControl;
+	using AvRouting;
+	using Base;
+	using DisplayControl;
+	using EndpointControl;
+	using LightingControl;
+	using SystemPower;
+	using TransportControl;
+	using UserInterface;
 	using pkd_domain_service;
 	using pkd_hardware_service;
 	using System;
@@ -44,7 +44,7 @@
 		ReadOnlyCollection<UserInterfaceDataContainer> GetAllUserInterfaces();
 
 		/// <summary>
-		/// Query the service for the Fusion connection intformation. Data container properties that contain
+		/// Query the service for the Fusion connection information. Data container properties that contain
 		/// information are:
 		/// Id = GUID used for Fusion discovery
 		/// Label = the room name to display in Fusion
@@ -67,7 +67,7 @@
 		void SetGlobalVideoBlank(bool state);
 
 		/// <summary>
-		/// Freeze the video output on all display enpdoints. This can bet set either at the displays or
+		/// Freeze the video output on all display endpoints. This can bet set either at the displays or
 		/// on the AV routing hardware.
 		/// </summary>
 		/// <param name="state">true = freeze on (no motion), false = freeze off (normal video).</param>
@@ -82,7 +82,7 @@
 		/// <summary>
 		/// Get the current state of the global video freeze.
 		/// </summary>
-		/// <returns>True = global video is frozen, false = nomral video output.</returns>
+		/// <returns>True = global video is frozen, false = normal video output.</returns>
 		bool QueryGlobalVideoFreeze();
 
 		/// <summary>

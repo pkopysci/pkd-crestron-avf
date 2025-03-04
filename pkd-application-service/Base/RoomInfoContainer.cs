@@ -11,7 +11,7 @@
 		/// <param name="id">The unique ID of the room set in the configuration.</param>
 		/// <param name="label">The user-friendly room name.</param>
 		/// <param name="helpContact">The contact information to use when contacting tech support.</param>
-		/// <param name="systemType">The system behvior identifier that was set in the configuration file.</param>
+		/// <param name="systemType">The system behavior identifier that was set in the configuration file.</param>
 		public RoomInfoContainer(string id, string label, string helpContact, string systemType)
 			: base(id, label, InfoContainer.Empty.Icon, InfoContainer.Empty.Tags)
 		{

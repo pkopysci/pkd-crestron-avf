@@ -8,7 +8,7 @@
 	public class TransportInfoContainer : InfoContainer
 	{
 		/// <summary>
-		/// Instantiates a new instance of <see cref="TransportInterfaceContainer"/>.
+		/// Instantiates a new instance of <see cref="TransportInfoContainer"/>.
 		/// </summary>
 		/// <param name="id">The unique ID of the transport device. Used for internal referencing.</param>
 		/// <param name="label">The user-friendly name of the transport device.</param>
@@ -27,9 +27,9 @@
 			List<TransportFavorite> favorites)
 			: base(id, label, icon, tags)
 		{
-			this.SupportsColors = supportsColors;
-			this.SupportsDiscretePower = supportsDiscretePower;
-			this.Favorites = favorites;
+			SupportsColors = supportsColors;
+			SupportsDiscretePower = supportsDiscretePower;
+			Favorites = favorites;
 		}
 
 		/// <summary>
@@ -38,7 +38,7 @@
 		public bool SupportsColors { get; private set; }
 
 		/// <summary>
-		/// Gets a value indicating whether or not this transport device supports discrete power on/off (false = supports toggle only).
+		/// Gets a value indicating whether this transport device supports discrete power on/off (false = supports toggle only).
 		/// </summary>
 		public bool SupportsDiscretePower { get; private set; }
 
@@ -60,8 +60,8 @@
 		/// <param name="label">The user-friendly name of the favorite</param>
 		public TransportFavorite(string id, string label)
 		{
-			this.Id = id;
-			this.Label = label;
+			Id = id;
+			Label = label;
 		}
 
 		/// <summary>

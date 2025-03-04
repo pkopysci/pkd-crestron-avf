@@ -18,21 +18,21 @@
 		/// Query the device for the audio input that is currently routed to the target output.
 		/// An error will be written to the logging system if a failure occurs.
 		/// </summary>
-		/// <param name="output">The output ID to query.</param>
+		/// <param name="outputId">The output ID to query.</param>
 		/// <returns>the audio input ID that is currently routed, or 0 if the query fails.</returns>
 		string GetCurrentAudioSource(string outputId);
 
 		/// <summary>
 		/// Route the target audio input to the target video output.
 		/// </summary>
-		/// <param name="source">The input ID that will be routed.</param>
-		/// <param name="output">The output ID to route to.</param>
+		/// <param name="sourceId">The input ID that will be routed.</param>
+		/// <param name="outputId">The output ID to route to.</param>
 		void RouteAudio(string sourceId, string outputId);
 
 		/// <summary>
 		/// Clear the output of all audio signals.
 		/// </summary>
-		/// <param name="output">The output to clear audio content on.</param>
+		/// <param name="outputId">The output to clear audio content on.</param>
 		void ClearAudioRoute(string outputId);
 	}
 }

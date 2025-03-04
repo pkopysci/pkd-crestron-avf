@@ -16,9 +16,15 @@
 		where TDevice : IBaseDevice
 		where TDeviceData : BaseData
 	{
-		protected readonly DeviceContainer<TDevice> devices;
-		protected readonly ReadOnlyCollection<TDeviceData> data;
-
+		/// <summary>
+		/// Container for managing the hardware interaction objects.
+		/// </summary>
+		protected readonly DeviceContainer<TDevice> Devices;
+		
+		/// <summary>
+		/// Collection of configuration data representing the devices.
+		/// </summary>
+		protected readonly ReadOnlyCollection<TDeviceData> Data;
 		private bool disposed;
 
 		/// <summary>
@@ -28,24 +34,24 @@
 		/// <param name="data">The collection of config data associated with the devices being controlled.</param>
 		public BaseApp(DeviceContainer<TDevice> devices, ReadOnlyCollection<TDeviceData> data)
 		{
-			ParameterValidator.ThrowIfNull(devices, "Ctor", "devices");
-			ParameterValidator.ThrowIfNull(data, "Ctor", "data");
-			this.devices = devices;
-			this.data = data;
+			ParameterValidator.ThrowIfNull(devices, "Ctor", nameof(devices));
+			ParameterValidator.ThrowIfNull(data, "Ctor", nameof(data));
+			Devices = devices;
+			Data = data;
 		}
 
 		/// <summary>
-		/// Finalizes an instance of the <see cref="BaseApp{TDevice}"/> class.
+		/// Finalizes an instance of the <see cref="BaseApp{TDevice, TDeviceData}"/> class.
 		/// </summary>
 		~BaseApp()
 		{
-			this.Dispose(false);
+			Dispose(false);
 		}
 
 		/// <inheritdoc/>
 		public void Dispose()
 		{
-			this.Dispose(true);
+			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
@@ -54,10 +60,10 @@
 		/// </summary>
 		/// <param name="id">The unique ID of the device to find.</param>
 		/// <returns>The device control object if found, otherwise null.</returns>
-		protected TDevice GetDevice(string id)
+		protected TDevice? GetDevice(string id)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(id, "FindDevice", "id");
-			return this.devices.GetDevice(id);
+			return Devices.GetDevice(id);
 		}
 
 		/// <summary>
@@ -65,40 +71,42 @@
 		/// </summary>
 		/// <param name="id">The unique ID of the devices to look for.</param>
 		/// <returns>The configuration info for the device, or null if the device cannot be found.</returns>
-		protected TDeviceData GetDeviceInfo(string id)
+		protected TDeviceData? GetDeviceInfo(string id)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(id, "GetDeviceInfo", "id");
 
 			try
 			{
-				return this.data.First(x => x.Id == id);
+				return Data.First(x => x.Id == id);
 			}
 			catch (InvalidOperationException)
 			{
-				return default;
+				return null;
 			}
 		}
 
 		/// <summary>
-		/// Get all of the devices in the collection
+		/// Get all the devices in the collection
 		/// </summary>
 		/// <returns>the collection of devices.</returns>
 		protected ReadOnlyCollection<TDevice> GetAllDevices()
 		{
-			return this.devices.GetAllDevices();
+			return Devices.GetAllDevices();
 		}
 
+		/// <summary>
+		/// Dispose of all managed objects.
+		/// </summary>
+		/// <param name="disposing">true = this device is disposing, false = not disposing.</param>
 		protected void Dispose(bool disposing)
 		{
-			if (!this.disposed)
+			if (disposed) return;
+			if (disposing)
 			{
-				if (disposing)
-				{
-					// TODO: dispose any managed objects.
-				}
-
-				this.disposed = true;
+				// dispose any managed objects.
 			}
+
+			disposed = true;
 		}
 	}
 }

@@ -2,22 +2,22 @@
 {
 	using System;
 	using pkd_common_utils.GenericEventArgs;
-	using pkd_hardware_service.BaseDevice;
+	using BaseDevice;
 
 	/// <summary>
 	/// Common attributes and methods of all video display devices.
 	/// </summary>
 	public interface IDisplayDevice : IBaseDevice, IVideoControllable
 	{
-		/// <summary>
-		/// Event triggered whenever the power status change is reported by the display.
-		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> PowerChanged;
+        /// <summary>
+        /// Event triggered whenever the power status change is reported by the display.
+        /// </summary>
+        event EventHandler<GenericSingleEventArgs<string>>? PowerChanged;
 
 		/// <summary>
 		/// Event triggered when a "lamp hours" update is reported by the display driver.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> HoursUsedChanged;
+		event EventHandler<GenericSingleEventArgs<string>>? HoursUsedChanged;
 
 		/// <summary>
 		/// Gets a value indicating whether the device is on or off.
@@ -37,7 +37,7 @@
 		uint HoursUsed { get; }
 
 		/// <summary>
-		/// Gets or sets a value that indicates whether or not the object should
+		/// Gets or sets a value that indicates whether the object should
 		/// try to reconnect if disconnected from the hardware for any reason.
 		/// </summary>
 		bool EnableReconnect { get; set; }
@@ -67,6 +67,8 @@
 		/// </summary>
 		/// <param name="ipAddress">The IP address or hostname to connect to.</param>
 		/// <param name="port">The port number used to connect to the device.</param>
+		/// <param name="label">The user-friendly name of the display.</param>
+		/// <param name="id">The unique ID of the display used when referencing it for control.</param>
 		void Initialize(string ipAddress, int port, string label, string id);
 	}
 }

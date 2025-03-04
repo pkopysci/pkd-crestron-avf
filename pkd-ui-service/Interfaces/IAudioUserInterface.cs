@@ -1,60 +1,65 @@
 ﻿namespace pkd_ui_service.Interfaces
 {
 	using pkd_application_service.AudioControl;
+	using pkd_application_service.Base;
 	using pkd_common_utils.GenericEventArgs;
 	using System;
 	using System.Collections.ObjectModel;
 
+	/// <summary>
+	/// Required events, methods, and parameters for creating a user interface that supports audio controls.
+	/// </summary>
 	public interface IAudioUserInterface
 	{
 		/// <summary>
 		/// Triggered when the user requests to increase the target output volume.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioOutputLevelUpRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? AudioOutputLevelUpRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to lower the target output volume.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioOutputLevelDownRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? AudioOutputLevelDownRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to toggle the output mute state.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioOutputMuteChangeRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? AudioOutputMuteChangeRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to increase the target input volume.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioInputLevelUpRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? AudioInputLevelUpRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to lower the target input volume.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioInputLevelDownRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? AudioInputLevelDownRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to toggle the input mute state.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> AudioInputMuteChangeRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? AudioInputMuteChangeRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to change an audio route. 
 		/// args.Arg1 = source id, args.Agr2 = destination id.
 		/// </summary>
-		event EventHandler<GenericDualEventArgs<string, string>> AudioOutputRouteRequest;
+		event EventHandler<GenericDualEventArgs<string, string>>? AudioOutputRouteRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to toggle the status of a zone audio enable/disable control.
 		/// Args package: arg1 = channel ID, arg2 = zone ID.
 		/// </summary>
-		event EventHandler<GenericDualEventArgs<string, string>> AudioZoneEnableToggleRequest;
-
-		/// <summary>
-		/// Update the UI with all supported input and output audio channels.
-		/// </summary>
+		event EventHandler<GenericDualEventArgs<string, string>>? AudioZoneEnableToggleRequest;
+		
 		/// <param name="inputs">Collection of input/microphone data that the user can control.</param>
 		/// <param name="outputs">Collection of output data that the user can control.</param>
-		void SetAudioData(ReadOnlyCollection<AudioChannelInfoContainer> inputs, ReadOnlyCollection<AudioChannelInfoContainer> outputs);
+		/// <param name="audioDevices">Collection of audio controllers in the system configuration.</param>
+		void SetAudioData(
+			ReadOnlyCollection<AudioChannelInfoContainer> inputs,
+			ReadOnlyCollection<AudioChannelInfoContainer> outputs,
+			ReadOnlyCollection<InfoContainer> audioDevices);
 
 		/// <summary>
 		/// Update the UI with the audio channels current audio level.
@@ -98,5 +103,9 @@
 		/// <param name="zoneId">The unique ID of the zone that was changed.</param>
 		/// <param name="newState">True = audio for that channel is active in the zone, false = audio disabled for that channel/zone.</param>
 		void UpdateAudioZoneState(string channelId, string zoneId, bool newState);
+		
+		/// <param name="deviceId">The id of the audio controller being updated.</param>
+		/// <param name="isOnline">true = device is online, false = device is offline.</param>
+		void UpdateAudioDeviceConnectionStatus(string deviceId, bool isOnline);
 	}
 }

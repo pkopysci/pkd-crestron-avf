@@ -27,8 +27,8 @@
 		/// <summary>
 		/// Add a display to the internal collection used for tracking use statistics
 		/// </summary>
-		/// <param name="id">The unique Id of the display to track. This will be used to locate a display when starting or stopping use tracking.</param>
-		/// <param name="label">The user friendly name of the display to track. This will be used in the usage report.</param>
+		/// <param name="id">The unique id of the display to track. This will be used to locate a display when starting or stopping use tracking.</param>
+		/// <param name="label">The user-friendly name of the display to track. This will be used in the usage report.</param>
 		void AddDisplayToUseTracking(string id, string label);
 
 		/// <summary>

@@ -2,17 +2,17 @@
 {
 	using Crestron.RAD.Common.Enums;
 	using Crestron.RAD.Common.Interfaces;
-	using Crestron.SimplSharp.Reflection;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
+	using Logging;
+	using Validation;
 	using System;
 	using System.Globalization;
 	using System.Linq;
+    using System.Reflection;
 
-	/// <summary>
-	/// Helper class used to load a Crestron Certified Driver from a DLL using reflection.
-	/// </summary>
-	public class DriverLoader
+    /// <summary>
+    /// Helper class used to load a Crestron Certified Driver from a DLL using reflection.
+    /// </summary>
+    public class DriverLoader
 	{
 
 		/// <summary>
@@ -24,7 +24,7 @@
 		/// <param name="transportName">The CCD transport type to search for in the driver dll.</param>
 		/// <returns>The target T object, if found in the assembly, or T default if no matching driver is found.</returns>
 		/// <exception cref="Exception">Will propagate exceptions from System.Reflection.</exception>
-		public static T LoadDriverInstance<T>(string assemblyName, string interfaceName, string transportName)
+		public static T? LoadDriverInstance<T>(string assemblyName, string interfaceName, string transportName)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(assemblyName, "LoadDriverInstance", "assemblyName");
 			ParameterValidator.ThrowIfNullOrEmpty(interfaceName, "LoadDriverInstance", "interfaceName");
@@ -32,35 +32,27 @@
 
 			try
 			{
-				string dllPath = DirectoryHelper.NormalizePath(string.Format(
+				var dllPath = DirectoryHelper.NormalizePath(string.Format(
 					"{0}\\{1}",
 					DirectoryHelper.GetUserFolder(),
 					assemblyName));
 
-				Logger.Info(string.Format("DriverLoader.LoadDriverInstance() - Attempting to load driver from location {0}...", dllPath));
+				Logger.Debug($"DriverLoader.LoadDriverInstance() - Attempting to load driver from location {dllPath}...");
 
-				Assembly dll = Assembly.LoadFrom(dllPath);
-				if (dll == null)
+				var dll = Assembly.LoadFrom(dllPath);
+				foreach (var type in dll.GetTypes())
 				{
-					Logger.Error(string.Format("DriverLoader.LoadDriverInstance() - Failed to load driver. DLL {0} returned NULL when loading.", dllPath));
-				}
-				else
-				{
-					foreach (var type in dll.GetTypes())
+					var interfaces = type.GetInterfaces();
+					if (interfaces.Any(x => x.Name.Equals(interfaceName))
+					    && interfaces.Any(x => x.Name.Equals(transportName)))
 					{
-						CType[] interfaces = type.GetInterfaces();
-
-						if (interfaces.Any(x => x.Name.Equals(interfaceName))
-							&& interfaces.Any(x => x.Name.Equals(transportName)))
-						{
-							return (T)dll.CreateInstance(type.FullName);
-						}
+						return type.FullName != null ? (T?)dll.CreateInstance(type.FullName) : default;
 					}
 				}
 			}
 			catch (Exception e)
 			{
-				Logger.Error(e, string.Format("DriverLoader.LoadDriverInstance({0},{1},{2})", assemblyName, interfaceName, transportName));
+				Logger.Error(e, $"DriverLoader.LoadDriverInstance({assemblyName},{interfaceName},{transportName})");
 			}
 
 			return default;
@@ -75,45 +67,36 @@
 		/// <param name="interfaceName">The interface to search for in the assembly dll.</param>
 		/// <returns>The target T object, if found in the assembly, or T default if no matching driver is found.</returns>
 		/// <exception cref="Exception">Will propagate exceptions from System.Reflection.</exception>
-		public static T LoadClassByInterface<T>(string assemblyName, string className, string interfaceName)
+		public static T? LoadClassByInterface<T>(string assemblyName, string className, string interfaceName)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(assemblyName, "LoadClassByInterface", "assemblyName");
 			ParameterValidator.ThrowIfNullOrEmpty(interfaceName, "LoadClassByInterface", "interfaceName");
 
-			T device = default;
+			T? device = default;
 			try
 			{
-				string dllPath = DirectoryHelper.NormalizePath(string.Format(
+				var dllPath = DirectoryHelper.NormalizePath(string.Format(
 					"{0}\\{1}",
 					DirectoryHelper.GetUserFolder(),
 					assemblyName));
 
-				Logger.Info("Attempting to load driver from file {0}...", dllPath);
-				Assembly dll = Assembly.LoadFrom(dllPath);
-
-
-				if (dll == null)
-				{
-					Logger.Error(string.Format("LoadClassByInterface() - Unable to find assembly {0}", assemblyName));
-					return device;
-				}
-
+				Logger.Debug("Attempting to load driver from file {0}...", dllPath);
+				var dll = Assembly.LoadFrom(dllPath);
 				foreach (var type in dll.GetTypes())
 				{
-					if (type.Name.Equals(className, StringComparison.InvariantCulture))
-					{
-						if (type.GetInterfaces().Any(x => x.Name.Equals(interfaceName, StringComparison.InvariantCulture)))
-						{
-							device = (T)dll.CreateInstance(type.FullName);
-						}
-					}
+					if (!type.Name.Equals(className, StringComparison.InvariantCulture)) continue;
+					if (!type.GetInterfaces()
+						    .Any(x => x.Name.Equals(interfaceName, StringComparison.InvariantCulture))) continue;
+					
+					device = type.FullName != null ? (T?)dll.CreateInstance(type.FullName) : default;
+					break;
 				}
 
-				Logger.Info("Done!");
+				Logger.Debug("Done!");
 			}
 			catch (Exception e)
 			{
-				Logger.Error(e, string.Format("DriverLoader.LoadClassByInterface({0},{1})", assemblyName, interfaceName));
+				Logger.Error(e, $"DriverLoader.LoadClassByInterface({assemblyName},{interfaceName})");
 			}
 
 			return device;
@@ -127,33 +110,30 @@
 		/// <returns>The name of the CCD transport type, or the empty string if the give tag is not supported.</returns>
 		public static string GetTransportType(string connectionTag)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(connectionTag, "GetTransportType", "connectionTag");
+			ParameterValidator.ThrowIfNullOrEmpty(connectionTag, "GetTransportType", nameof(connectionTag));
 
 			switch (connectionTag.ToUpper(CultureInfo.InvariantCulture))
 			{
 				case "TCP":
-					return typeof(ITcp).Name;
+					return nameof(ITcp);
 
 				case "HTTP":
-					return typeof(IHttp).Name;
+					return nameof(IHttp);
 
 				case "TELNET":
-					return typeof(ITelnet).Name;
+					return nameof(ITelnet);
 
 				case "REST":
-					return typeof(IRestable).Name;
+					return nameof(IRestable);
 
 				case "SERIAL":
-					return typeof(ISerial).Name;
+					return nameof(ISerial);
 
 				case "IR":
-					return typeof(IIr).Name;
+					return nameof(IIr);
 
-				case "HTTPS":
-				case "SSL":
-				case "CEC":
 				default:
-					Logger.Error(string.Format("GetTransportType() - Unsupported transport in config: {0}", connectionTag));
+					Logger.Error($"GetTransportType() - Unsupported transport in config: {connectionTag}");
 					break;
 			}
 
@@ -161,7 +141,7 @@
 		}
 
 		/// <summary>
-		/// Convert a configuration buad rate argument to a CCD buad rate value.
+		/// Convert a configuration baud rate argument to a CCD baud rate value.
 		/// Writes a warning to the logging system if an unrecognized value is encountered.
 		/// </summary>
 		/// <param name="baudRate">The config-defined baud rate to convert.</param>
@@ -216,14 +196,14 @@
 					return eComBaudRates.ComspecBaudRate9600;
 
 				default:
-					Logger.Warn(string.Format("GetBaudRate - {0} is an unsupported buad rate. Setting to 9600.", baudRate));
+					Logger.Warn($"GetBaudRate - {baudRate} is an unsupported bad rate. Setting to 9600.");
 					goto case 9600;
 			}
 		}
 
 		/// <summary>
 		/// Convert a configuration data bits number to a CCD data bits definition.
-		/// Writes an error to the logging system if an unrecongized argument is given.
+		/// Writes an error to the logging system if an unrecognized argument is given.
 		/// </summary>
 		/// <param name="data">The data bits number set in the configuration.</param>
 		/// <returns>The CCD data bits equivalent to 'data', or NotSpecified if unable to parse.</returns>
@@ -238,14 +218,14 @@
 					return eComDataBits.ComspecDataBits8;
 
 				default:
-					Logger.Error(string.Format("GetBaudeRate() - undefined data bits encountered: {0}", data));
+					Logger.Error($"GetBaudeRate() - undefined data bits encountered: {data}");
 					return eComDataBits.NotSpecified;
 			}
 		}
 
 		/// <summary>
 		/// Convert a configuration data bits number to a CCD stop bits definition.
-		/// Writes an error to the logging system if an unrecongized argument is given.
+		/// Writes an error to the logging system if an unrecognized argument is given.
 		/// </summary>
 		/// <param name="data">The stop bits number set in the configuration.</param>
 		/// <returns>The CCD stop bits equivalent to 'data', or NotSpecified if unable to parse.</returns>
@@ -260,14 +240,14 @@
 					return eComStopBits.ComspecStopBits2;
 
 				default:
-					Logger.Error(string.Format("GetStopBits() - Unknown stop bit value: {0}, setting to NotSpecified.", data));
+					Logger.Error($"GetStopBits() - Unknown stop bit value: {data}, setting to NotSpecified.");
 					return eComStopBits.NotSpecified;
 			}
 		}
 
 		/// <summary>
 		/// Convert a configuration Hardware Handshake argument to a CCD hardware handshake definition.
-		/// Writes an error to the logging system if an unrecongized argument is given.
+		/// Writes an error to the logging system if an unrecognized argument is given.
 		/// </summary>
 		/// <param name="data">The Hardware Handshake argument set in the configuration.</param>
 		/// <returns>The CCD Hardware Handshake equivalent to 'data', or NotSpecified if unable to parse.</returns>
@@ -288,14 +268,14 @@
 					return eComHardwareHandshakeType.ComspecHardwareHandshakeRTSCTS;
 
 				default:
-					Logger.Error(string.Format("GetHwHandshake() - Unknown argument given: {0}, setting to NotSpecified.", data));
+					Logger.Error($"GetHwHandshake() - Unknown argument given: {data}, setting to NotSpecified.");
 					return eComHardwareHandshakeType.NotSpecified;
 			}
 		}
 
 		/// <summary>
 		/// Convert a configuration Software Handshake argument to a CCD software handshake definition.
-		/// Writes an error to the logging system if an unrecongized argument is given.
+		/// Writes an error to the logging system if an unrecognized argument is given.
 		/// </summary>
 		/// <param name="data">The Software Handshake argument set in the configuration.</param>
 		/// <returns>The CCD Software Handshake equivalent to 'data', or NotSpecified if unable to parse.</returns>
@@ -316,14 +296,14 @@
 					return eComSoftwareHandshakeType.ComspecSoftwareHandshakeXONR;
 
 				default:
-					Logger.Error(string.Format("GetSwHandshake() - Unknown argument given: {0}, setting to NotSpecified.", data));
+					Logger.Error($"GetSwHandshake() - Unknown argument given: {data}, setting to NotSpecified.");
 					return eComSoftwareHandshakeType.NotSpecified;
 			}
 		}
 
 		/// <summary>
 		/// Convert a configuration parity argument to a CCD parity definition.
-		/// Writes an error to the logging system if an unrecongized argument is given.
+		/// Writes an error to the logging system if an unrecognized argument is given.
 		/// </summary>
 		/// <param name="data">The parity argument set in the configuration.</param>
 		/// <returns>The CCD parity equivalent to 'data', or NotSpecified if unable to parse.</returns>
@@ -341,14 +321,14 @@
 					return eComParityType.ComspecParityOdd;
 
 				default:
-					Logger.Error(string.Format("GetParity() - Unknown argument given: {0}, setting to NotSpecified.", data));
+					Logger.Error($"GetParity() - Unknown argument given: {data}, setting to NotSpecified.");
 					return eComParityType.NotSpecified;
 			}
 		}
 
 		/// <summary>
 		/// Convert a configuration serial protocol argument to a CCD protocol definition.
-		/// Writes an error to the logging system if an unrecongized argument is given.
+		/// Writes an error to the logging system if an unrecognized argument is given.
 		/// </summary>
 		/// <param name="data">The serial protocol argument set in the configuration.</param>
 		/// <returns>The CCD serial protocol equivalent to 'data', or NotSpecified if unable to parse.</returns>
@@ -366,11 +346,12 @@
 					return eComProtocolType.ComspecProtocolRS485;
 
 				default:
-					Logger.Error(string.Format("GetProtocol() - Unknown argument given: {0}, setting to NotSpecified.", data));
+					Logger.Error($"GetProtocol() - Unknown argument given: {data}, setting to NotSpecified.");
 					return eComProtocolType.NotSpecified;
 			}
 		}
 
+		// TODO: update assembly handling to not use sandbox.
 		// .NET 4.0+ support only. Commented out for 3-series support.
 		//private static Assembly CurrentDomain_AssemblyResolve()
 		//{

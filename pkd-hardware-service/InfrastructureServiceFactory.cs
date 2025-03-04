@@ -5,7 +5,7 @@
 	using pkd_domain_service;
 
 	/// <summary>
-	/// Helper class for creating the Ifrastracture service that will control the actual hardware in the system.
+	/// Helper class for creating the IInfrastructureService object that will control the actual hardware in the system.
 	/// </summary>
 	public static class InfrastructureServiceFactory
 	{
@@ -19,10 +19,10 @@
 		/// <exception cref="ArgumentNullException">If domain or control are null.</exception>
 		public static IInfrastructureService CreateInfrastructureService(IDomainService domain, CrestronControlSystem control)
 		{
-			ParameterValidator.ThrowIfNull(domain, "Ctor", "domain");
-			ParameterValidator.ThrowIfNull(control, "Ctor", "control");
+			ParameterValidator.ThrowIfNull(domain, "Ctor", nameof(domain));
+			ParameterValidator.ThrowIfNull(control, "Ctor", nameof(control));
 
-			InfrastructureService hwService = new InfrastructureService(control);
+			var hwService = new InfrastructureService(control);
 			foreach (var display in domain.Displays)
 			{
 				hwService.AddDisplay(display);
@@ -58,7 +58,13 @@
 				hwService.AddLightingDevice(lighting);
 			}
 
+			foreach (var videoWall in domain.VideoWalls)
+			{
+				hwService.AddVideoWall(videoWall);
+			}
+			
 			// TODO: Cameras
+
 			return hwService;
 		}
 	}

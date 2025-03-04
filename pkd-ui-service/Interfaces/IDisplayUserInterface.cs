@@ -5,45 +5,48 @@
 	using System;
 	using System.Collections.ObjectModel;
 
+	/// <summary>
+	/// Required methods, events, and properties for implementing a user interface that supports display control.
+	/// </summary>
 	public interface IDisplayUserInterface
 	{
 		/// <summary>
 		/// Triggered when the user requests to change the current power status of a display.
 		/// arg = display ID.
 		/// </summary>
-		event EventHandler<GenericDualEventArgs<string, bool>> DisplayPowerChangeRequest;
+		event EventHandler<GenericDualEventArgs<string, bool>>? DisplayPowerChangeRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to change the current video freeze status of a display.
 		/// arg = display ID.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> DisplayFreezeChangeRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? DisplayFreezeChangeRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to change the current video blank/mute status of a display.
 		/// arg = display ID.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> DisplayBlankChangeRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? DisplayBlankChangeRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to raise the screen associated with a display.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> DisplayScreenUpRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? DisplayScreenUpRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to lower the screen associated with a display.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> DisplayScreenDownRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? DisplayScreenDownRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to change a student workstation to the local input.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> StationLocalInputRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? StationLocalInputRequest;
 
 		/// <summary>
 		/// Triggered when the user requests to change a student workstation to the lectern input.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> StationLecternInputRequest;
+		event EventHandler<GenericSingleEventArgs<string>>? StationLecternInputRequest;
 
 		/// <summary>
 		/// Update the UI with the current power status of the display.
@@ -65,6 +68,13 @@
 		/// <param name="id">The unique ID of the display to update.</param>
 		/// <param name="newState">True = freeze on (no motion), false = freeze off (show motion).</param>
 		void UpdateDisplayFreeze(string id, bool newState);
+		
+		/// <summary>
+		/// Update the UI with the current connection status of the target display/projector.
+		/// </summary>
+		/// <param name="id">The id of the displays being updated.</param>
+		/// <param name="isOnline">True = device is connected, false = device is disconnected.</param>
+		void UpdateDisplayConnectionStatus(string id, bool isOnline);
 
 		/// <summary>
 		/// Updates the user interface to display the new collection of controllable video outputs.

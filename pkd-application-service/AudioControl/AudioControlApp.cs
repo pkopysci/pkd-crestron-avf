@@ -1,6 +1,7 @@
-﻿namespace pkd_application_service.AudioControl
+﻿// ReSharper disable SuspiciousTypeConversion.Global
+namespace pkd_application_service.AudioControl
 {
-    using pkd_application_service.Base;
+    using Base;
     using pkd_common_utils.GenericEventArgs;
     using pkd_common_utils.Logging;
     using pkd_common_utils.Validation;
@@ -27,71 +28,72 @@
 		/// Initializes a new instance of the <see cref="AudioControlApp"/> class.
 		/// </summary>
 		/// <param name="dspDevices">Collection of all devices in the system with audio controls.</param>
-		/// <param name="inputChannels">Collection of all input auido channels in the system with level control.</param>
+		/// <param name="inputChannels">Collection of all input audio channels in the system with level control.</param>
 		/// <param name="outputChannels">Collection of all audio output channels in the system with level control.</param>
+		/// <param name="allPresets">Collection of audio preset data that was included in the config.</param>
 		public AudioControlApp(
 			DeviceContainer<IAudioControl> dspDevices,
 			List<AudioChannelInfoContainer> inputChannels,
 			List<AudioChannelInfoContainer> outputChannels,
 			Dictionary<string, List<InfoContainer>> allPresets)
 		{
-			ParameterValidator.ThrowIfNull(dspDevices, "Ctor", "dspDevices");
-			ParameterValidator.ThrowIfNull(inputChannels, "Ctor", "inputChannels");
-			ParameterValidator.ThrowIfNull(outputChannels, "Ctor", "outputChannels");
-			ParameterValidator.ThrowIfNull(allPresets, "Ctor", "allPresets");
+			ParameterValidator.ThrowIfNull(dspDevices, "Ctor", nameof(dspDevices));
+			ParameterValidator.ThrowIfNull(inputChannels, "Ctor", nameof(inputChannels));
+			ParameterValidator.ThrowIfNull(outputChannels, "Ctor", nameof(outputChannels));
+			ParameterValidator.ThrowIfNull(allPresets, "Ctor", nameof(allPresets));
 
 			this.dspDevices = dspDevices;
 			this.inputChannels = inputChannels;
 			this.outputChannels = outputChannels;
 			this.allPresets = allPresets;
-			this.SubscribeDevices();
+			SubscribeDevices();
 		}
 
 		~AudioControlApp()
 		{
-			this.Dispose(false);
+			Dispose(false);
 		}
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioOutputLevelChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioOutputLevelChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioOutputMuteChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioOutputMuteChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioInputLevelChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioInputLevelChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioInputMuteChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioInputMuteChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioDspConnectionStatusChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioDspConnectionStatusChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioOutputRouteChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioOutputRouteChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, string>> AudioZoneEnableChanged;
+		public event EventHandler<GenericDualEventArgs<string, string>>? AudioZoneEnableChanged;
 
 		/// <inheritdoc/>
 		public ReadOnlyCollection<AudioChannelInfoContainer> GetAudioInputChannels()
 		{
-			return new ReadOnlyCollection<AudioChannelInfoContainer>(this.inputChannels);
+			return new ReadOnlyCollection<AudioChannelInfoContainer>(inputChannels);
 		}
 
 		/// <inheritdoc/>
 		public ReadOnlyCollection<AudioChannelInfoContainer> GetAudioOutputChannels()
 		{
-			return new ReadOnlyCollection<AudioChannelInfoContainer>(this.outputChannels);
+			return new ReadOnlyCollection<AudioChannelInfoContainer>(outputChannels);
 		}
 
 		/// <inheritdoc/>
 		public ReadOnlyCollection<InfoContainer> GetAllAudioDspDevices()
 		{
-			List<InfoContainer> deviceInfo = new List<InfoContainer>();
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			var deviceInfo = new List<InfoContainer>();
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
-				deviceInfo.Add(new InfoContainer(dsp.Id, dsp.Label, string.Empty, new List<string>(), dsp.IsOnline));
+				deviceInfo.Add(new InfoContainer(dsp.Id, dsp.Label, string.Empty, [], dsp.IsOnline));
 			}
 
 			return new ReadOnlyCollection<InfoContainer>(deviceInfo);
@@ -100,7 +102,7 @@
 		/// <inheritdoc/>
 		public bool QueryAudioDspConnectionStatus(string id)
 		{
-			var device = this.dspDevices.GetDevice(id);
+			var device = dspDevices.GetDevice(id);
 			if (device == null)
 			{
 				Logger.Error("AudioControlApp.QueryAudioDspConnectionStatus({0}) - no device with that id.", id);
@@ -120,7 +122,7 @@
 				return 0;
 			}
 
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioInputIds().Contains(id))
 				{
@@ -141,7 +143,7 @@
 				return 0;
 			}
 
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioOutputIds().Contains(id))
 				{
@@ -163,7 +165,7 @@
 			}
 
 			Logger.Debug("AudioControlApp.QueryAudioOutputMute({0})", id);
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioOutputIds().Contains(id))
 				{
@@ -184,11 +186,11 @@
 				return string.Empty;
 			}
 
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
-				if (dsp.GetAudioOutputIds().Contains(id) && (dsp is IAudioRoutable))
+				if (dsp.GetAudioOutputIds().Contains(id) && dsp is IAudioRoutable routable)
 				{
-					return (dsp as IAudioRoutable).GetCurrentAudioSource(id);
+					return routable.GetCurrentAudioSource(id);
 				}
 			}
 
@@ -205,7 +207,7 @@
 				return false;
 			}
 
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioInputIds().Contains(id))
 				{
@@ -230,16 +232,13 @@
 				return false;
 			}
 
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
-				if (!(dsp is IAudioZoneEnabler))
+				if (dsp is not IAudioZoneEnabler) continue;
+				if ((dsp.GetAudioInputIds().Contains(channelId) || dsp.GetAudioOutputIds().Contains(channelId))
+				    && dsp is IAudioZoneEnabler zoneEnabler)
 				{
-					continue;
-				}
-
-				if (dsp.GetAudioInputIds().Contains(channelId) || dsp.GetAudioOutputIds().Contains(channelId))
-				{
-					return (dsp as IAudioZoneEnabler).QueryAudioZoneEnable(channelId, zoneId);
+					return zoneEnabler.QueryAudioZoneEnable(channelId, zoneId);
 				}
 			}
 
@@ -250,8 +249,8 @@
 		/// <inheritdoc/>
 		public void SetAudioInputLevel(string id, int level)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "SetAudioInputLevel", "id");
-			if (level < 0 || level > 100)
+			ParameterValidator.ThrowIfNullOrEmpty(id, "SetAudioInputLevel", nameof(id));
+			if (level is < 0 or > 100)
 			{
 				Logger.Error("SetAudioInputLevel() - level {0} is out of range 0-100.", level);
 				return;
@@ -259,15 +258,13 @@
 
 			Logger.Debug("ApplicationService.AudioControlApp.SetAudioInputLevel({0},{1}", id, level);
 
-			bool found = false;
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			var found = false;
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
-				if (dsp.GetAudioInputIds().Contains(id))
-				{
-					dsp.SetAudioInputLevel(id, level);
-					found = true;
-					break;
-				}
+				if (!dsp.GetAudioInputIds().Contains(id)) continue;
+				dsp.SetAudioInputLevel(id, level);
+				found = true;
+				break;
 			}
 
 			if (!found)
@@ -282,7 +279,7 @@
 			ParameterValidator.ThrowIfNullOrEmpty(id, "SetAudioInputMute", "id");
 
 			bool found = false;
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioInputIds().Contains(id))
 				{
@@ -309,7 +306,7 @@
 			}
 
 			bool found = false;
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioOutputIds().Contains(id))
 				{
@@ -330,15 +327,13 @@
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(id, "SetAudioOutputMute", "id");
 
-			bool found = false;
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			var found = false;
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
-				if (dsp.GetAudioOutputIds().Contains(id))
-				{
-					found = true;
-					dsp.SetAudioOutputMute(id, mute);
-					break;
-				}
+				if (!dsp.GetAudioOutputIds().Contains(id)) continue;
+				found = true;
+				dsp.SetAudioOutputMute(id, mute);
+				break;
 			}
 
 			if (!found)
@@ -355,13 +350,11 @@
 				Logger.Error("AudioControlApp.SetAudioOutputRoute({0}, {1}) - srcId and destId cannot be null or empty.", srcId, destId);
 				return;
 			}
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
-				if (dsp.GetAudioOutputIds().Contains(destId) && (dsp is IAudioRoutable))
-				{
-					(dsp as IAudioRoutable).RouteAudio(srcId, destId);
-					break;
-				}
+				if (!dsp.GetAudioOutputIds().Contains(destId) || dsp is not IAudioRoutable routable) continue;
+				routable.RouteAudio(srcId, destId);
+				break;
 			}
 		}
 
@@ -376,16 +369,12 @@
 				return;
 			}
 
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
-				if (!(dsp is IAudioZoneEnabler))
-				{
-					continue;
-				}
-
+				if (dsp is not IAudioZoneEnabler enabler) continue;
 				if (dsp.GetAudioInputIds().Contains(channelId) || dsp.GetAudioOutputIds().Contains(channelId))
 				{
-					(dsp as IAudioZoneEnabler).ToggleAudioZoneEnable(channelId, zoneId);
+					enabler.ToggleAudioZoneEnable(channelId, zoneId);
 				}
 			}
 		}
@@ -393,23 +382,19 @@
 		/// <inheritdoc/>
 		public ReadOnlyCollection<InfoContainer> QueryDspAudioPresets(string dspId)
 		{
-			if (this.allPresets.TryGetValue(dspId, out List<InfoContainer> presets))
-			{
-				return new ReadOnlyCollection<InfoContainer>(presets);
-			}
-			else
-			{
-				return new ReadOnlyCollection<InfoContainer>(new List<InfoContainer>());
-			}
+			return allPresets.TryGetValue(dspId, out var presets) ? 
+				new ReadOnlyCollection<InfoContainer>(presets) :
+				new ReadOnlyCollection<InfoContainer>(new List<InfoContainer>());
 		}
 
 		/// <inheritdoc/>
 		public void RecallAudioPreset(string dspId, string presetId)
 		{
-			var dsp = this.dspDevices.GetDevice(dspId);
+			var dsp = dspDevices.GetDevice(dspId);
 			if (dsp == null)
 			{
 				Logger.Error("AudioControlApp.RecallAudioPreset({0}, {1}) - DSP not found.", dspId, presetId);
+				return;
 			}
 
 			dsp.RecallAudioPreset(presetId);
@@ -417,99 +402,95 @@
 
 		public void Dispose()
 		{
-			this.Dispose(true);
+			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
 		private void SubscribeDevices()
 		{
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
-				dsp.ConnectionChanged += this.DspConnectionChangeHandler;
-				dsp.AudioInputLevelChanged += this.AudioInputLevelChangeHandler;
-				dsp.AudioInputMuteChanged += this.AudioInputMuteChangeHandler;
-				dsp.AudioOutputLevelChanged += this.AudioOutputLevelChangeHandler;
-				dsp.AudioOutputMuteChanged += this.AudioOutputMuteChangeHandler;
+				dsp.ConnectionChanged += DspConnectionChangeHandler;
+				dsp.AudioInputLevelChanged += AudioInputLevelChangeHandler;
+				dsp.AudioInputMuteChanged += AudioInputMuteChangeHandler;
+				dsp.AudioOutputLevelChanged += AudioOutputLevelChangeHandler;
+				dsp.AudioOutputMuteChanged += AudioOutputMuteChangeHandler;
 
 				if (dsp is IAudioRoutable routable)
 				{
-					routable.AudioRouteChanged += this.AudioRouteChangeHandler;
+					routable.AudioRouteChanged += AudioRouteChangeHandler;
 				}
 
-				if (dsp is IAudioZoneEnabler dspZoneControlable)
+				if (dsp is IAudioZoneEnabler dspZoneControllable)
 				{
-					dspZoneControlable.AudioZoneEnableChanged += this.ZoneEnableChangeHandler;
+					dspZoneControllable.AudioZoneEnableChanged += ZoneEnableChangeHandler;
 				}
 			}
 		}
 
-		private void UnsusbcribeDevices()
+		private void UnsubscribeDevices()
 		{
-			foreach (var dsp in this.dspDevices.GetAllDevices())
+			foreach (var dsp in dspDevices.GetAllDevices())
 			{
-				dsp.ConnectionChanged -= this.DspConnectionChangeHandler;
-				dsp.AudioInputLevelChanged -= this.AudioInputLevelChangeHandler;
-				dsp.AudioInputMuteChanged -= this.AudioInputMuteChangeHandler;
-				dsp.AudioOutputLevelChanged -= this.AudioOutputLevelChangeHandler;
-				dsp.AudioOutputMuteChanged -= this.AudioOutputMuteChangeHandler;
+				dsp.ConnectionChanged -= DspConnectionChangeHandler;
+				dsp.AudioInputLevelChanged -= AudioInputLevelChangeHandler;
+				dsp.AudioInputMuteChanged -= AudioInputMuteChangeHandler;
+				dsp.AudioOutputLevelChanged -= AudioOutputLevelChangeHandler;
+				dsp.AudioOutputMuteChanged -= AudioOutputMuteChangeHandler;
 			}
 		}
 
-		private void DspConnectionChangeHandler(object sender, GenericSingleEventArgs<string> e)
+		private void DspConnectionChangeHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
-			this.Notify(this.AudioDspConnectionStatusChanged, e.Arg);
+			Notify(AudioDspConnectionStatusChanged, e.Arg);
 		}
 
-		private void ZoneEnableChangeHandler(object sender, GenericDualEventArgs<string, string> e)
+		private void ZoneEnableChangeHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
-			var temp = this.AudioZoneEnableChanged;
+			var temp = AudioZoneEnableChanged;
 			temp?.Invoke(this, e);
 		}
 
-		private void AudioOutputMuteChangeHandler(object sender, GenericDualEventArgs<string, string> e)
+		private void AudioOutputMuteChangeHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
 			Logger.Debug("AudioControlApp.AudioOutputMuteChangeHandler()- {0}, {1}", e.Arg1, e.Arg2);
-			this.Notify(this.AudioOutputMuteChanged, e.Arg2);
+			Notify(AudioOutputMuteChanged, e.Arg2);
 		}
 
-		private void AudioOutputLevelChangeHandler(object sender, GenericDualEventArgs<string, string> e)
+		private void AudioOutputLevelChangeHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
-			this.Notify(this.AudioOutputLevelChanged, e.Arg2);
+			Notify(AudioOutputLevelChanged, e.Arg2);
 		}
 
-		private void AudioInputMuteChangeHandler(object sender, GenericDualEventArgs<string, string> e)
+		private void AudioInputMuteChangeHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
-			this.Notify(this.AudioInputMuteChanged, e.Arg2);
+			Notify(AudioInputMuteChanged, e.Arg2);
 		}
 
-		private void AudioInputLevelChangeHandler(object sender, GenericDualEventArgs<string, string> e)
+		private void AudioInputLevelChangeHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
-			this.Notify(this.AudioInputLevelChanged, e.Arg2);
+			Notify(AudioInputLevelChanged, e.Arg2);
 		}
 
-		private void AudioRouteChangeHandler(object sender, GenericDualEventArgs<string, string> e)
+		private void AudioRouteChangeHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
-			this.Notify(this.AudioOutputRouteChanged, e.Arg2);
+			Notify(AudioOutputRouteChanged, e.Arg2);
 		}
 
 		private void Dispose(bool disposing)
 		{
-			if (!this.disposed)
+			if (disposed) return;
+			if (disposing)
 			{
-				if (disposing)
-				{
-					this.UnsusbcribeDevices();
-				}
-
-				this.disposed = true;
+				UnsubscribeDevices();
 			}
+
+			disposed = true;
 		}
 
-		private void Notify(EventHandler<GenericSingleEventArgs<string>> handler, string arg)
+		private void Notify(EventHandler<GenericSingleEventArgs<string>>? handler, string arg)
 		{
-			var temp = handler;
-			temp?.Invoke(this, new GenericSingleEventArgs<string>(arg));
+			handler?.Invoke(this, new GenericSingleEventArgs<string>(arg));
 		}
 	}
-
 }

@@ -4,7 +4,7 @@
 	using System;
 
 	/// <summary>
-	/// Common properties and methods for endpoing control applications.
+	/// Common properties and methods for endpoint control applications.
 	/// </summary>
 	public interface IEndpointControlApp
 	{
@@ -23,7 +23,7 @@
 		/// </summary>
 		/// <param name="id">The unique ID of the endpoint to control</param>
 		/// <param name="index">the 0-based relay index on the endpoint.</param>
-		/// <param name="timeMs">The ammount of time to latch the relay closed.</param>
+		/// <param name="timeMs">The amount of time to latch the relay closed.</param>
 		void PulseEndpointRelay(string id, int index, int timeMs);
 
 		/// <summary>

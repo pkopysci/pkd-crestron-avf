@@ -1,14 +1,17 @@
-﻿namespace pkd_application_service
+﻿// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable SuspiciousTypeConversion.Global
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+namespace pkd_application_service
 {
-	using pkd_application_service.AudioControl;
-	using pkd_application_service.AvRouting;
-	using pkd_application_service.Base;
-	using pkd_application_service.DisplayControl;
-	using pkd_application_service.EndpointControl;
-	using pkd_application_service.LightingControl;
-	using pkd_application_service.SystemPower;
-	using pkd_application_service.TransportControl;
-	using pkd_application_service.UserInterface;
+	using AudioControl;
+	using AvRouting;
+	using Base;
+	using DisplayControl;
+	using EndpointControl;
+	using LightingControl;
+	using SystemPower;
+	using TransportControl;
+	using UserInterface;
 	using pkd_common_utils.GenericEventArgs;
 	using pkd_common_utils.Logging;
 	using pkd_domain_service;
@@ -26,179 +29,219 @@
 	/// </summary>
 	public class ApplicationService : IApplicationService, IDisposable
 	{
-		protected readonly List<IDisposable> disposables = new List<IDisposable>();
-		protected List<UserInterfaceDataContainer> interfaceData;
-		protected IDisplayControlApp displayControl;
-		protected ISystemPowerApp systemPowerControl;
-		protected IEndpointControlApp endpointControl;
-		protected IInfrastructureService hwService;
-		protected IDomainService domain;
-		protected IAudioControlApp audioControl;
-		protected IAvRoutingApp routingControl;
-		protected ITransportControlApp transportControl;
-		protected ILightingControlApp lightingControl;
+		/// <summary>
+		/// Collection of objects that need to be disposed when this object is disposed.
+		/// </summary>
+		protected readonly List<IDisposable> Disposables = [];
+		
+		/// <summary>
+		/// Collection of all user interfaces defined in the configuration.
+		/// </summary>
+		protected List<UserInterfaceDataContainer> InterfaceData;
+		
+		/// <summary>
+		/// internal control object for managing display control state.
+		/// </summary>
+		protected IDisplayControlApp DisplayControl;
+		
+		/// <summary>
+		/// Internal control object for managing system power state and requests
+		/// </summary>
+		protected ISystemPowerApp SystemPowerControl;
+		
+		/// <summary>
+		/// Internal control object for managing relay endpoint control requests.
+		/// </summary>
+		protected IEndpointControlApp EndpointControl;
+		
+		/// <summary>
+		/// The hardware device interface manager part of the AV framework.
+		/// </summary>
+		protected IInfrastructureService HwService;
+		
+		/// <summary>
+		/// The system configuration representation of the AV Framework.
+		/// </summary>
+		protected IDomainService Domain;
+		
+		/// <summary>
+		/// Internal control object for managing audio state and requests.
+		/// </summary>
+		protected IAudioControlApp AudioControl;
+		
+		/// <summary>
+		/// Internal control object for managing video routing state and requests.
+		/// </summary>
+		protected IAvRoutingApp RoutingControl;
+		
+		/// <summary>
+		/// Internal control object for managing dvd, cable tv, and other transport-based requests.
+		/// </summary>
+		protected ITransportControlApp TransportControl;
+		
+		/// <summary>
+		/// Internal control object for managing all lighting states and requests.
+		/// </summary>
+		protected ILightingControlApp LightingControl;
+		
+		/// <summary>
+		/// Flag to indicate whether to use an AV Router in the configuration for video mute and freeze or if these controls
+		/// should be sent to the individual displays.
+		/// </summary>
+		protected bool UseAvrMuteFreeze;
 		private bool disposed;
-		protected bool useAvrMuteFreeze;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ApplicationService"/> class.
+		/// Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.
 		/// </summary>
-		public ApplicationService() { }
-
 		~ApplicationService()
 		{
-			this.Dispose(false);
+			Dispose(false);
 		}
 
 		/// <inheritdoc/>
 		public virtual void Initialize(IInfrastructureService hwService, IDomainService domain)
 		{
-			this.domain = domain;
-			this.hwService = hwService;
+			Domain = domain;
+			HwService = hwService;
 
-			this.systemPowerControl = ApplicationControlFactory.CreateSystemPower(hwService, domain, this);
-			if (this.systemPowerControl is IDisposable pwrd)
+			SystemPowerControl = ApplicationControlFactory.CreateSystemPower(hwService, domain, this);
+			if (SystemPowerControl is IDisposable disposablePower)
 			{
-				this.disposables.Add(pwrd);
+				Disposables.Add(disposablePower);
 			}
 
-			this.displayControl = ApplicationControlFactory.CreateDisplayControl(hwService, domain, this);
-			if (this.displayControl is IDisposable dispd)
+			DisplayControl = ApplicationControlFactory.CreateDisplayControl(hwService, domain, this);
+			if (DisplayControl is IDisposable disposableDisplay)
 			{
-				this.disposables.Add(dispd);
+				Disposables.Add(disposableDisplay);
 			}
 
-			this.endpointControl = ApplicationControlFactory.CreateEndpointControl(hwService, domain, this);
-			if (this.endpointControl is IDisposable epd)
+			EndpointControl = ApplicationControlFactory.CreateEndpointControl(hwService, domain, this);
+			if (EndpointControl is IDisposable disposableEndpoint)
 			{
-				this.disposables.Add(epd);
+				Disposables.Add(disposableEndpoint);
 			}
 
-			this.audioControl = ApplicationControlFactory.CreateAudioControl(hwService, domain, this);
-			if (this.audioControl is IDisposable acd)
+			AudioControl = ApplicationControlFactory.CreateAudioControl(hwService, domain, this);
+			if (AudioControl is IDisposable disposableAudio)
 			{
-				this.disposables.Add(acd);
+				Disposables.Add(disposableAudio);
 			}
 
-			this.routingControl = ApplicationControlFactory.CreateRoutingControl(hwService, domain, this);
-			if (this.routingControl is IDisposable)
+			RoutingControl = ApplicationControlFactory.CreateRoutingControl(hwService, domain, this);
+			if (RoutingControl is IDisposable disposableRouting)
 			{
-				this.disposables.Add(this.routingControl as IDisposable);
+				Disposables.Add(disposableRouting);
 			}
 
-			this.transportControl = ApplicationControlFactory.CreateTransportControl(hwService, domain, this);
-			if (this.transportControl is IDisposable)
+			TransportControl = ApplicationControlFactory.CreateTransportControl(hwService, domain, this);
+			if (TransportControl is IDisposable disposableTransport)
 			{
-				this.disposables.Add(this.transportControl as IDisposable);
+				Disposables.Add(disposableTransport);
 			}
 
-			this.lightingControl = ApplicationControlFactory.CreateLightingControl(hwService, domain, this);
-			if (this.lightingControl is IDisposable)
+			LightingControl = ApplicationControlFactory.CreateLightingControl(hwService, domain, this);
+			if (LightingControl is IDisposable disposableLighting)
 			{
-				this.disposables.Add(this.lightingControl as IDisposable);
+				Disposables.Add(disposableLighting);
 			}
 
-			this.interfaceData = ApplicationControlFactory.CreateUserInterfaceData(domain);
-			this.SubscribeEvents();
+			InterfaceData = ApplicationControlFactory.CreateUserInterfaceData(domain);
+			SubscribeEvents();
 		}
 
 		/// <inheritdoc/>
-		public event EventHandler SystemStateChanged;
+		public event EventHandler? SystemStateChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, bool>> DisplayPowerChange;
+		public event EventHandler<GenericDualEventArgs<string, bool>>? DisplayPowerChange;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, bool>> DisplayBlankChange;
+		public event EventHandler<GenericDualEventArgs<string, bool>>? DisplayBlankChange;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, bool>> DisplayFreezeChange;
+		public event EventHandler<GenericDualEventArgs<string, bool>>? DisplayFreezeChange;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, bool>> DisplayConnectChange;
+		public event EventHandler<GenericDualEventArgs<string, bool>>? DisplayConnectChange;
 
 		/// <inheritdoc />
-		public event EventHandler<GenericSingleEventArgs<string>> DisplayInputChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? DisplayInputChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, int>> EndpointRelayChanged;
+		public event EventHandler<GenericDualEventArgs<string, int>>? EndpointRelayChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, bool>> EndpointConnectionChanged;
+		public event EventHandler<GenericDualEventArgs<string, bool>>? EndpointConnectionChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> RouteChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? RouteChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioOutputRouteChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioOutputRouteChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> RouterConnectChange;
+		public event EventHandler<GenericSingleEventArgs<string>>? RouterConnectChange;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioOutputLevelChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioOutputLevelChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioOutputMuteChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioOutputMuteChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioInputLevelChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioInputLevelChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioInputMuteChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioInputMuteChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, string>> AudioZoneEnableChanged;
+		public event EventHandler<GenericDualEventArgs<string, string>>? AudioZoneEnableChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> AudioDspConnectionStatusChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? AudioDspConnectionStatusChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, string>> LightingLoadLevelChanged;
+		public event EventHandler<GenericDualEventArgs<string, string>>? LightingLoadLevelChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> LightingSceneChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? LightingSceneChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, bool>> LightingControlConnectionChanged;
+		public event EventHandler<GenericDualEventArgs<string, bool>>? LightingControlConnectionChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler GlobalVideoBlankChanged;
+		public event EventHandler? GlobalVideoBlankChanged;
 
 		/// <inheritdoc/>
-		public event EventHandler GlobalVideoFreezeChanged;
+		public event EventHandler? GlobalVideoFreezeChanged;
 
 		/// <inheritdoc/>
-		public bool CurrentSystemState
-		{
-			get { return this.systemPowerControl.CurrentSystemState; }
-		}
+		public bool CurrentSystemState => SystemPowerControl.CurrentSystemState;
 
 		/// <inheritdoc/>
-		public bool AutoShutdownEnabled
-		{
-			get { return this.systemPowerControl.AutoShutdownEnabled; }
-		}
+		public bool AutoShutdownEnabled => SystemPowerControl.AutoShutdownEnabled;
 
 		/// <inheritdoc/>
 		public void Dispose()
 		{
-			this.Dispose(true);
+			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
 		/// <inheritdoc/>
 		public virtual ReadOnlyCollection<UserInterfaceDataContainer> GetAllUserInterfaces()
 		{
-			return new ReadOnlyCollection<UserInterfaceDataContainer>(this.interfaceData);
+			return new ReadOnlyCollection<UserInterfaceDataContainer>(InterfaceData);
 		}
 
 		/// <inheritdoc/>
 		public virtual UserInterfaceDataContainer GetFusionInterface()
 		{
 			return new UserInterfaceDataContainer(
-				this.domain.Fusion.GUID,
-				this.domain.Fusion.RoomName,
+				Domain.Fusion.GUID,
+				Domain.Fusion.RoomName,
 				string.Empty,
 				string.Empty,
 				string.Empty,
@@ -206,235 +249,168 @@
 				string.Empty,
 				string.Empty,
 				string.Empty,
-				this.domain.Fusion.IpId,
-				new List<string>());
+				Domain.Fusion.IpId,
+				[]);
 		}
 
 		/// <inheritdoc/>
 		public virtual RoomInfoContainer GetRoomInfo()
 		{
 			return new RoomInfoContainer(
-				this.domain.RoomInfo.Id,
-				this.domain.RoomInfo.RoomName,
-				this.domain.RoomInfo.HelpContact,
-				this.domain.RoomInfo.SystemType
+				Domain.RoomInfo.Id,
+				Domain.RoomInfo.RoomName,
+				Domain.RoomInfo.HelpContact,
+				Domain.RoomInfo.SystemType
 			);
 		}
 
 		/// <inheritdoc/>
-		public virtual void SetActive() => this.systemPowerControl.SetActive();
+		public virtual void SetActive() => SystemPowerControl.SetActive();
 
 		/// <inheritdoc/>
-		public virtual void SetStandby() => this.systemPowerControl.SetStandby();
+		public virtual void SetStandby() => SystemPowerControl.SetStandby();
 
 		/// <inheritdoc/>
-		public virtual void AutoShutdownEnable() => this.systemPowerControl.AutoShutdownEnable();
+		public virtual void AutoShutdownEnable() => SystemPowerControl.AutoShutdownEnable();
 
 		/// <inheritdoc/>
-		public virtual void AutoShutdownDisable() => this.systemPowerControl.AutoShutdownDisable();
+		public virtual void AutoShutdownDisable() => SystemPowerControl.AutoShutdownDisable();
 
 		/// <inheritdoc/>
-		public virtual void SetAutoShutdownTime(int hour, int minute) => this.systemPowerControl.SetAutoShutdownTime(hour, minute);
+		public virtual void SetAutoShutdownTime(int hour, int minute) => SystemPowerControl.SetAutoShutdownTime(hour, minute);
 
 		/// <inheritdoc/>
-		public virtual void SetDisplayPower(string id, bool newState) => this.displayControl.SetDisplayPower(id, newState);
+		public virtual void SetDisplayPower(string id, bool newState) => DisplayControl.SetDisplayPower(id, newState);
 
 		/// <inheritdoc/>
-		public virtual bool DisplayPowerQuery(string id)
-		{
-			return this.displayControl.DisplayPowerQuery(id);
-		}
+		public virtual bool DisplayPowerQuery(string id) => DisplayControl.DisplayPowerQuery(id);
 
 		/// <inheritdoc/>
-		public virtual void SetDisplayBlank(string id, bool newState) => this.displayControl.SetDisplayBlank(id, newState);
+		public virtual void SetDisplayBlank(string id, bool newState) => DisplayControl.SetDisplayBlank(id, newState);
 
 		/// <inheritdoc/>
-		public virtual bool DisplayBlankQuery(string id)
-		{
-			return this.displayControl.DisplayBlankQuery(id);
-		}
-
-		/// <inheritdoc
-		public virtual void SetDisplayFreeze(string id, bool state) => this.displayControl.SetDisplayFreeze(id, state);
+		public virtual bool DisplayBlankQuery(string id) => DisplayControl.DisplayBlankQuery(id);
 
 		/// <inheritdoc/>
-		public virtual bool DisplayFreezeQuery(string id)
-		{
-			return this.displayControl.DisplayFreezeQuery(id);
-		}
+		public virtual void SetDisplayFreeze(string id, bool state) => DisplayControl.SetDisplayFreeze(id, state);
 
 		/// <inheritdoc/>
-		public virtual void RaiseScreen(string displayId)
-		{
-			Logger.Debug("ApplicationService.RaiseScreen({0})", displayId);
-
-			this.displayControl.RaiseScreen(displayId);
-		}
+		public virtual bool DisplayFreezeQuery(string id) => DisplayControl.DisplayFreezeQuery(id);
 
 		/// <inheritdoc/>
-		public virtual void LowerScreen(string displayId)
-		{
-			Logger.Debug("ApplicationService.LowerScreen({0})", displayId);
-
-			this.displayControl.LowerScreen(displayId);
-		}
+		public virtual void RaiseScreen(string displayId) => DisplayControl.RaiseScreen(displayId);
 
 		/// <inheritdoc/>
-		public virtual void SetInputLectern(string displayId) => this.displayControl.SetInputLectern(displayId);
+		public virtual void LowerScreen(string displayId) => DisplayControl.LowerScreen(displayId);
 
 		/// <inheritdoc/>
-		public virtual void SetInputStation(string displayId) => this.displayControl.SetInputStation(displayId);
+		public virtual void SetInputLectern(string displayId) => DisplayControl.SetInputLectern(displayId);
 
 		/// <inheritdoc/>
-		public virtual bool DisplayInputLecternQuery(string displayId)
-		{
-			return this.displayControl.DisplayInputLecternQuery(displayId);
-		}
+		public virtual void SetInputStation(string displayId) => DisplayControl.SetInputStation(displayId);
 
 		/// <inheritdoc/>
-		public virtual bool DisplayInputStationQuery(string displayId)
-		{
-			return this.displayControl.DisplayInputStationQuery(displayId);
-		}
-
-		/// <inheritdoc
-		public virtual ReadOnlyCollection<DisplayInfoContainer> GetAllDisplayInfo()
-		{
-			return this.displayControl.GetAllDisplayInfo();
-		}
+		public virtual bool DisplayInputLecternQuery(string displayId) => DisplayControl.DisplayInputLecternQuery(displayId);
 
 		/// <inheritdoc/>
-		public virtual void PulseEndpointRelay(string id, int index, int timeMs) => this.endpointControl.PulseEndpointRelay(id, index, timeMs);
+		public virtual bool DisplayInputStationQuery(string displayId) => DisplayControl.DisplayInputStationQuery(displayId);
 
 		/// <inheritdoc/>
-		public virtual void LatchRelayClosed(string id, int index) => this.endpointControl.LatchRelayClosed(id, index);
+		public virtual ReadOnlyCollection<DisplayInfoContainer> GetAllDisplayInfo() => DisplayControl.GetAllDisplayInfo();
 
 		/// <inheritdoc/>
-		public virtual void LatchRelayOpen(string id, int index) => this.endpointControl.LatchRelayOpen(id, index);
+		public virtual void PulseEndpointRelay(string id, int index, int timeMs) => EndpointControl.PulseEndpointRelay(id, index, timeMs);
 
 		/// <inheritdoc/>
-		public virtual ReadOnlyCollection<AudioChannelInfoContainer> GetAudioInputChannels()
-		{
-			return this.audioControl.GetAudioInputChannels();
-		}
+		public virtual void LatchRelayClosed(string id, int index) => EndpointControl.LatchRelayClosed(id, index);
 
 		/// <inheritdoc/>
-		public virtual ReadOnlyCollection<AudioChannelInfoContainer> GetAudioOutputChannels()
-		{
-			return this.audioControl.GetAudioOutputChannels();
-		}
+		public virtual void LatchRelayOpen(string id, int index) => EndpointControl.LatchRelayOpen(id, index);
 
 		/// <inheritdoc/>
-		public virtual ReadOnlyCollection<InfoContainer> GetAllAudioDspDevices()
-		{
-			return this.audioControl.GetAllAudioDspDevices();
-		}
+		public virtual ReadOnlyCollection<AudioChannelInfoContainer> GetAudioInputChannels() => AudioControl.GetAudioInputChannels();
 
 		/// <inheritdoc/>
-		public virtual bool QueryAudioDspConnectionStatus(string id)
-		{
-			return this.audioControl.QueryAudioDspConnectionStatus(id);
-		}
+		public virtual ReadOnlyCollection<AudioChannelInfoContainer> GetAudioOutputChannels() => AudioControl.GetAudioOutputChannels();
 
 		/// <inheritdoc/>
-		public virtual int QueryAudioInputLevel(string id)
-		{
-			return this.audioControl.QueryAudioInputLevel(id);
-		}
+		public virtual ReadOnlyCollection<InfoContainer> GetAllAudioDspDevices() => AudioControl.GetAllAudioDspDevices();
 
 		/// <inheritdoc/>
-		public virtual int QueryAudioOutputLevel(string id)
-		{
-			return this.audioControl.QueryAudioOutputLevel(id);
-		}
+		public virtual bool QueryAudioDspConnectionStatus(string id) => AudioControl.QueryAudioDspConnectionStatus(id);
 
 		/// <inheritdoc/>
-		public virtual bool QueryAudioInputMute(string id)
-		{
-			return this.audioControl.QueryAudioInputMute(id);
-		}
+		public virtual int QueryAudioInputLevel(string id) => AudioControl.QueryAudioInputLevel(id);
 
 		/// <inheritdoc/>
-		public virtual bool QueryAudioOutputMute(string id)
-		{
-			return this.audioControl.QueryAudioOutputMute(id);
-		}
+		public virtual int QueryAudioOutputLevel(string id) => AudioControl.QueryAudioOutputLevel(id);
 
 		/// <inheritdoc/>
-		public virtual string QueryAudioOutputRoute(string id)
-		{
-			return this.audioControl.QueryAudioOutputRoute(id);
-		}
+		public virtual bool QueryAudioInputMute(string id) => AudioControl.QueryAudioInputMute(id);
 
 		/// <inheritdoc/>
-		public virtual bool QueryAudioZoneState(string channelId, string zoneId)
-		{
-			return this.audioControl.QueryAudioZoneState(channelId, zoneId);
-		}
+		public virtual bool QueryAudioOutputMute(string id) => AudioControl.QueryAudioOutputMute(id);
 
 		/// <inheritdoc/>
-		public virtual void SetAudioInputLevel(string id, int level) => this.audioControl.SetAudioInputLevel(id, level);
+		public virtual string QueryAudioOutputRoute(string id) => AudioControl.QueryAudioOutputRoute(id);
 
 		/// <inheritdoc/>
-		public virtual void SetAudioInputMute(string id, bool mute) => this.audioControl.SetAudioInputMute(id, mute);
+		public virtual bool QueryAudioZoneState(string channelId, string zoneId) => AudioControl.QueryAudioZoneState(channelId, zoneId);
 
 		/// <inheritdoc/>
-		public virtual void SetAudioOutputLevel(string id, int level) => this.audioControl.SetAudioOutputLevel(id, level);
+		public virtual void SetAudioInputLevel(string id, int level) => AudioControl.SetAudioInputLevel(id, level);
 
 		/// <inheritdoc/>
-		public virtual void SetAudioOutputMute(string id, bool mute) => this.audioControl.SetAudioOutputMute(id, mute);
+		public virtual void SetAudioInputMute(string id, bool mute) => AudioControl.SetAudioInputMute(id, mute);
 
 		/// <inheritdoc/>
-		public virtual void SetAudioOutputRoute(string srcId, string destId) => this.audioControl.SetAudioOutputRoute(srcId, destId);
+		public virtual void SetAudioOutputLevel(string id, int level) => AudioControl.SetAudioOutputLevel(id, level);
 
 		/// <inheritdoc/>
-		public virtual void ToggleAudioZoneState(string channelId, string zoneId) => this.audioControl.ToggleAudioZoneState(channelId, zoneId);
+		public virtual void SetAudioOutputMute(string id, bool mute) => AudioControl.SetAudioOutputMute(id, mute);
 
 		/// <inheritdoc/>
-		public virtual bool QueryRouterConnectionStatus(string id)
-		{
-			return this.routingControl.QueryRouterConnectionStatus(id);
-		}
+		public virtual void SetAudioOutputRoute(string srcId, string destId) => AudioControl.SetAudioOutputRoute(srcId, destId);
 
 		/// <inheritdoc/>
-		public virtual ReadOnlyCollection<AvSourceInfoContainer> GetAllAvSources() => routingControl.GetAllAvSources();
+		public virtual void ToggleAudioZoneState(string channelId, string zoneId) => AudioControl.ToggleAudioZoneState(channelId, zoneId);
 
 		/// <inheritdoc/>
-		public virtual ReadOnlyCollection<InfoContainer> GetAllAvDestinations() => routingControl.GetAllAvDestinations();
+		public virtual bool QueryRouterConnectionStatus(string id) => RoutingControl.QueryRouterConnectionStatus(id);
 
 		/// <inheritdoc/>
-		public virtual ReadOnlyCollection<InfoContainer> GetAllAvRouters() => routingControl.GetAllAvRouters();
+		public virtual ReadOnlyCollection<AvSourceInfoContainer> GetAllAvSources() => RoutingControl.GetAllAvSources();
 
 		/// <inheritdoc/>
-		public virtual void MakeRoute(string inputId, string outputId) => this.routingControl.MakeRoute(inputId, outputId);
+		public virtual ReadOnlyCollection<InfoContainer> GetAllAvDestinations() => RoutingControl.GetAllAvDestinations();
 
 		/// <inheritdoc/>
-		public virtual void RouteToAll(string inputId) => this.routingControl.RouteToAll(inputId);
+		public virtual ReadOnlyCollection<InfoContainer> GetAllAvRouters() => RoutingControl.GetAllAvRouters();
 
 		/// <inheritdoc/>
-		public virtual void ReportGraph()
-		{
-			this.routingControl.ReportGraph();
-		}
+		public virtual void MakeRoute(string inputId, string outputId) => RoutingControl.MakeRoute(inputId, outputId);
 
 		/// <inheritdoc/>
-		public virtual AvSourceInfoContainer QueryCurrentRoute(string outputId)
-		{
-			return this.routingControl.QueryCurrentRoute(outputId);
-		}
+		public virtual void RouteToAll(string inputId) => RoutingControl.RouteToAll(inputId);
+
+		/// <inheritdoc/>
+		public virtual void ReportGraph() => RoutingControl.ReportGraph();
+
+		/// <inheritdoc/>
+		public virtual AvSourceInfoContainer QueryCurrentRoute(string outputId) => RoutingControl.QueryCurrentRoute(outputId);
 
 		/// <inheritdoc/>
 		public virtual void SetGlobalVideoFreeze(bool state)
 		{
-			if (this.useAvrMuteFreeze)
+			if (UseAvrMuteFreeze)
 			{
-				this.SetAvrVideoFreeze(state);
+				SetAvrVideoFreeze(state);
 			}
 			else
 			{
-				foreach (var dispInfo in this.displayControl.GetAllDisplayInfo())
+				foreach (var displayInfo in DisplayControl.GetAllDisplayInfo())
 				{
-					this.displayControl.SetDisplayFreeze(dispInfo.Id, state);
+					DisplayControl.SetDisplayFreeze(displayInfo.Id, state);
 				}
 			}
 		}
@@ -444,23 +420,23 @@
 		{
 			bool result = false;
 
-			if (this.useAvrMuteFreeze)
+			if (UseAvrMuteFreeze)
 			{
-				foreach (var avr in this.hwService.AvSwitchers.GetAllDevices())
+				foreach (var avr in HwService.AvSwitchers.GetAllDevices())
 				{
-					if (avr is IVideoControllable)
+					if (avr is IVideoControllable videoApp)
 					{
-						result = (avr as IVideoControllable).BlankState;
+						result = videoApp.BlankState;
 					}
 				}
 			}
 			else
 			{
-				foreach (var display in this.hwService.Displays.GetAllDevices())
+				foreach (var display in HwService.Displays.GetAllDevices())
 				{
-					if (display is IVideoControllable)
+					if (display is IVideoControllable videoControllable)
 					{
-						result = (display as IVideoControllable).BlankState;
+						result = videoControllable.BlankState;
 					}
 				}
 			}
@@ -471,25 +447,24 @@
 		/// <inheritdoc/>
 		public virtual bool QueryGlobalVideoFreeze()
 		{
-			bool result = false;
-
-			if (this.useAvrMuteFreeze)
+			var result = false;
+			if (UseAvrMuteFreeze)
 			{
-				foreach (var avr in this.hwService.AvSwitchers.GetAllDevices())
+				foreach (var avr in HwService.AvSwitchers.GetAllDevices())
 				{
-					if (avr is IVideoControllable)
+					if (avr is IVideoControllable videoControllable)
 					{
-						result = (avr as IVideoControllable).FreezeState;
+						result = videoControllable.FreezeState;
 					}
 				}
 			}
 			else
 			{
-				foreach (var display in this.hwService.Displays.GetAllDevices())
+				foreach (var display in HwService.Displays.GetAllDevices())
 				{
-					if (display is IVideoControllable)
+					if (display is IVideoControllable videoControllable)
 					{
-						result = (display as IVideoControllable).FreezeState;
+						result = videoControllable.FreezeState;
 					}
 				}
 			}
@@ -500,165 +475,171 @@
 		/// <inheritdoc/>
 		public virtual void SetGlobalVideoBlank(bool state)
 		{
-			if (this.useAvrMuteFreeze)
+			if (UseAvrMuteFreeze)
 			{
 				SetAvrVideoBlank(state);
 			}
 			else
 			{
-				foreach (var dispInfo in this.displayControl.GetAllDisplayInfo())
+				foreach (var displayInfo in DisplayControl.GetAllDisplayInfo())
 				{
-					this.displayControl.SetDisplayBlank(dispInfo.Id, state);
+					DisplayControl.SetDisplayBlank(displayInfo.Id, state);
 				}
 			}
 		}
 
+		/// <inheritdoc/>
 		public virtual ReadOnlyCollection<TransportInfoContainer> GetAllCableBoxes()
 		{
-			return this.transportControl.GetAllCableBoxes();
+			return TransportControl.GetAllCableBoxes();
 		}
 
 		/// <inheritdoc/>
-		public virtual void TransportPowerOn(string id) => this.transportControl.TransportPowerOn(id);
+		public virtual void TransportPowerOn(string id) => TransportControl.TransportPowerOn(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportPowerOff(string id) => this.transportControl.TransportPowerOff(id);
+		public virtual void TransportPowerOff(string id) => TransportControl.TransportPowerOff(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportPowerToggle(string id) => this.transportControl.TransportPowerToggle(id);
+		public virtual void TransportPowerToggle(string id) => TransportControl.TransportPowerToggle(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportDial(string id, string channel) => this.transportControl.TransportDial(id, channel);
+		public virtual void TransportDial(string id, string channel) => TransportControl.TransportDial(id, channel);
 
 		/// <inheritdoc/>
-		public virtual void TransportDialFavorite(string id, string favId) => this.transportControl.TransportDialFavorite(id, favId);
+		public virtual void TransportDialFavorite(string id, string favId) => TransportControl.TransportDialFavorite(id, favId);
 
 		/// <inheritdoc/>
-		public virtual void TransportDash(string id) => this.transportControl.TransportDash(id);
+		public virtual void TransportDash(string id) => TransportControl.TransportDash(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportChannelUp(string id) => this.transportControl.TransportChannelUp(id);
+		public virtual void TransportChannelUp(string id) => TransportControl.TransportChannelUp(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportChannelDown(string id) => this.transportControl.TransportChannelDown(id);
+		public virtual void TransportChannelDown(string id) => TransportControl.TransportChannelDown(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportPageUp(string id) => this.transportControl.TransportPageUp(id);
+		public virtual void TransportPageUp(string id) => TransportControl.TransportPageUp(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportPageDown(string id) => this.transportControl.TransportPageDown(id);
+		public virtual void TransportPageDown(string id) => TransportControl.TransportPageDown(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportGuide(string id) => this.transportControl.TransportGuide(id);
+		public virtual void TransportGuide(string id) => TransportControl.TransportGuide(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportMenu(string id) => this.transportControl.TransportMenu(id);
+		public virtual void TransportMenu(string id) => TransportControl.TransportMenu(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportInfo(string id) => this.transportControl.TransportInfo(id);
+		public virtual void TransportInfo(string id) => TransportControl.TransportInfo(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportExit(string id) => this.transportControl.TransportExit(id);
+		public virtual void TransportExit(string id) => TransportControl.TransportExit(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportBack(string id) => this.transportControl.TransportBack(id);
+		public virtual void TransportBack(string id) => TransportControl.TransportBack(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportPlay(string id) => this.transportControl.TransportPlay(id);
+		public virtual void TransportPlay(string id) => TransportControl.TransportPlay(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportPause(string id) => this.transportControl.TransportPause(id);
+		public virtual void TransportPause(string id) => TransportControl.TransportPause(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportStop(string id) => this.transportControl.TransportStop(id);
+		public virtual void TransportStop(string id) => TransportControl.TransportStop(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportRecord(string id) => this.transportControl.TransportRecord(id);
+		public virtual void TransportRecord(string id) => TransportControl.TransportRecord(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportScanForward(string id) => this.transportControl.TransportScanForward(id);
+		public virtual void TransportScanForward(string id) => TransportControl.TransportScanForward(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportScanReverse(string id) => this.transportControl.TransportScanReverse(id);
+		public virtual void TransportScanReverse(string id) => TransportControl.TransportScanReverse(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportSkipForward(string id) => this.transportControl.TransportSkipForward(id);
+		public virtual void TransportSkipForward(string id) => TransportControl.TransportSkipForward(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportSelect(string id) => this.transportControl.TransportSelect(id);
+		public virtual void TransportSelect(string id) => TransportControl.TransportSelect(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportSkipReverse(string id) => this.transportControl.TransportSkipReverse(id);
+		public virtual void TransportSkipReverse(string id) => TransportControl.TransportSkipReverse(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportNavUp(string id) => this.transportControl.TransportNavUp(id);
+		public virtual void TransportNavUp(string id) => TransportControl.TransportNavUp(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportNavDown(string id) => this.transportControl.TransportNavDown(id);
+		public virtual void TransportNavDown(string id) => TransportControl.TransportNavDown(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportNavLeft(string id) => this.transportControl.TransportNavLeft(id);
+		public virtual void TransportNavLeft(string id) => TransportControl.TransportNavLeft(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportNavRight(string id) => this.transportControl.TransportNavRight(id);
+		public virtual void TransportNavRight(string id) => TransportControl.TransportNavRight(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportRed(string id) => this.transportControl.TransportRed(id);
+		public virtual void TransportRed(string id) => TransportControl.TransportRed(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportGreen(string id) => this.transportControl.TransportGreen(id);
+		public virtual void TransportGreen(string id) => TransportControl.TransportGreen(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportYellow(string id) => this.transportControl.TransportYellow(id);
+		public virtual void TransportYellow(string id) => TransportControl.TransportYellow(id);
 
 		/// <inheritdoc/>
-		public virtual void TransportBlue(string id) => this.transportControl.TransportBlue(id);
+		public virtual void TransportBlue(string id) => TransportControl.TransportBlue(id);
 
 		/// <inheritdoc/>
-		public virtual void RecallLightingScene(string deviceId, string sceneId) { this.lightingControl.RecallLightingScene(deviceId, sceneId); }
+		public virtual void RecallLightingScene(string deviceId, string sceneId) { LightingControl.RecallLightingScene(deviceId, sceneId); }
 
 		/// <inheritdoc/>
-		public virtual void SetLightingLoad(string deviceId, string sceneId, int level) { this.lightingControl.SetLightingLoad(deviceId, sceneId, level); }
+		public virtual void SetLightingLoad(string deviceId, string sceneId, int level) { LightingControl.SetLightingLoad(deviceId, sceneId, level); }
 
 		/// <inheritdoc/>
-		public virtual string GetActiveScene(string deviceId) { return this.lightingControl.GetActiveScene(deviceId); }
+		public virtual string GetActiveScene(string deviceId) { return LightingControl.GetActiveScene(deviceId); }
 
 		/// <inheritdoc/>
-		public virtual ReadOnlyCollection<LightingControlInfoContainer> GetAllLightingDeviceInfo() { return this.lightingControl.GetAllLightingDeviceInfo(); }
+		public virtual ReadOnlyCollection<LightingControlInfoContainer> GetAllLightingDeviceInfo() { return LightingControl.GetAllLightingDeviceInfo(); }
 
 		/// <inheritdoc/>
-		public virtual int GetZoneLoad(string deviceId, string zoneId) { return this.lightingControl.GetZoneLoad(deviceId, zoneId); }
+		public virtual int GetZoneLoad(string deviceId, string zoneId) { return LightingControl.GetZoneLoad(deviceId, zoneId); }
 
+		/// <summary>
+		/// Dispose all objects in <see cref="Disposables"/>.
+		/// </summary>
+		/// <param name="disposing"></param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!this.disposed)
+			if (disposed) return;
+			if (disposing)
 			{
-				if (disposing)
+				foreach (var item in Disposables)
 				{
-					foreach (var item in this.disposables)
-					{
-						item.Dispose();
-					}
-
-					this.disposables.Clear();
+					item.Dispose();
 				}
 
-				this.disposed = true;
+				Disposables.Clear();
 			}
+
+			disposed = true;
 		}
 
+		/// <summary>
+		/// recalls any startup or shutdown DSP presets that exist in the system configuration.
+		/// </summary>
 		protected virtual void HandleStartupShutdownPresets()
 		{
-			if (!(this.audioControl is IAudioPresetApp presetApp))
+			if (!(AudioControl is IAudioPresetApp presetApp))
 			{
 				return;
 			}
 
-			string presetId = this.systemPowerControl.CurrentSystemState ? "STARTUP" : "SHUTDOWN";
-			foreach (var dspInfo in this.audioControl.GetAllAudioDspDevices())
+			var presetId = SystemPowerControl.CurrentSystemState ? "STARTUP" : "SHUTDOWN";
+			foreach (var dspInfo in AudioControl.GetAllAudioDspDevices())
 			{
 				var allPresets = presetApp.QueryDspAudioPresets(dspInfo.Id);
-				InfoContainer startupInfo = allPresets.FirstOrDefault(
+				var startupInfo = allPresets.FirstOrDefault(
 					x => x.Id.ToUpper().Equals(presetId, StringComparison.InvariantCulture)
 				);
 
@@ -669,226 +650,245 @@
 				}
 			}
 		}
-
+		
+		/// <summary>
+		/// Trigger any startup or shutdown lighting presets if they exist in the system configuration.
+		/// </summary>
 		protected virtual void HandleLightingStartupShutdown()
 		{
-			foreach (var control in this.lightingControl.GetAllLightingDeviceInfo())
+			foreach (var control in LightingControl.GetAllLightingDeviceInfo())
 			{
-				if (this.systemPowerControl.CurrentSystemState && !string.IsNullOrEmpty(control.StartupSceneId))
+				if (SystemPowerControl.CurrentSystemState && !string.IsNullOrEmpty(control.StartupSceneId))
 				{
-					this.lightingControl.RecallLightingScene(control.Id, control.StartupSceneId);
+					LightingControl.RecallLightingScene(control.Id, control.StartupSceneId);
 				}
-				else if (!this.systemPowerControl.CurrentSystemState && !string.IsNullOrEmpty(control.ShutdownSceneId))
+				else if (!SystemPowerControl.CurrentSystemState && !string.IsNullOrEmpty(control.ShutdownSceneId))
 				{
-					this.lightingControl.RecallLightingScene(control.Id, control.ShutdownSceneId);
+					LightingControl.RecallLightingScene(control.Id, control.ShutdownSceneId);
 				}
 			}
 		}
 
+		/// <summary>
+		/// Triggers any AV routes flagged for the startup or shutdown events. Also recalls <see cref="HandleStartupShutdownPresets"/>
+		/// and <see cref="HandleLightingStartupShutdown"/>.
+		/// </summary>
 		protected virtual void OnSystemChange()
 		{
-			foreach (var destination in this.routingControl.GetAllAvDestinations())
+			foreach (var destination in RoutingControl.GetAllAvDestinations())
 			{
-				this.routingControl.MakeRoute(this.domain.RoutingInfo.StartupSource, destination.Id);
+				RoutingControl.MakeRoute(Domain.RoutingInfo.StartupSource, destination.Id);
 			}
 
-			this.HandleStartupShutdownPresets();
-			this.HandleLightingStartupShutdown();
+			HandleStartupShutdownPresets();
+			HandleLightingStartupShutdown();
 		}
 
+		/// <summary>
+		/// subscribes to all events triggered by the internal subject-specific control objects.
+		/// </summary>
 		protected virtual void SubscribeEvents()
 		{
-			this.systemPowerControl.SystemStateChanged += (obj, evt) =>
+			SystemPowerControl.SystemStateChanged += (_, evt) =>
 			{
-				var handler = this.SystemStateChanged;
+				var handler = SystemStateChanged;
 				handler?.Invoke(this, evt);
 
-				this.OnSystemChange();
+				OnSystemChange();
 			};
 
-			this.displayControl.DisplayBlankChange += (obj, evt) =>
+			DisplayControl.DisplayBlankChange += (_, evt) =>
 			{
-				var handler = this.DisplayBlankChange;
+				var handler = DisplayBlankChange;
 				handler?.Invoke(this, evt);
 
-				if (!this.useAvrMuteFreeze)
+				if (!UseAvrMuteFreeze)
 				{
-					var globalHandler = this.GlobalVideoBlankChanged;
+					var globalHandler = GlobalVideoBlankChanged;
 					globalHandler?.Invoke(this, EventArgs.Empty);
 				}
 			};
 
-			this.displayControl.DisplayConnectChange += (obj, evt) =>
+			DisplayControl.DisplayConnectChange += (_, evt) =>
 			{
-				var handler = this.DisplayConnectChange;
+				var handler = DisplayConnectChange;
 				handler?.Invoke(this, evt);
 			};
 
-			this.displayControl.DisplayFreezeChange += (obj, evt) =>
+			DisplayControl.DisplayFreezeChange += (_, evt) =>
 			{
-				var handler = this.DisplayFreezeChange;
+				var handler = DisplayFreezeChange;
 				handler?.Invoke(this, evt);
 
-				if (!this.useAvrMuteFreeze)
+				if (!UseAvrMuteFreeze)
 				{
-					var globalHandler = this.GlobalVideoFreezeChanged;
+					var globalHandler = GlobalVideoFreezeChanged;
 					globalHandler?.Invoke(this, EventArgs.Empty);
 				}
 			};
 
-			this.displayControl.DisplayPowerChange += (obj, evt) =>
+			DisplayControl.DisplayPowerChange += (_, evt) =>
 			{
 				Logger.Debug("ApplicationService.DisplayPowerChangeHandler");
-				var handler = this.DisplayPowerChange;
+				var handler = DisplayPowerChange;
 				handler?.Invoke(this, evt);
 			};
 
-			this.displayControl.DisplayInputChanged += (obj, evt) =>
+			DisplayControl.DisplayInputChanged += (_, evt) =>
 			{
 				Logger.Debug("ApplicationService.DisplayInputChangedHandler");
-				var handler = this.DisplayInputChanged;
+				var handler = DisplayInputChanged;
 				handler?.Invoke(this, evt);
 			};
 
 
-			this.endpointControl.EndpointConnectionChanged += (obj, evt) =>
+			EndpointControl.EndpointConnectionChanged += (_, evt) =>
 			{
-				var handler = this.EndpointConnectionChanged;
+				var handler = EndpointConnectionChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			this.endpointControl.EndpointRelayChanged += (obj, evt) =>
+			EndpointControl.EndpointRelayChanged += (_, evt) =>
 			{
-				var handler = this.EndpointRelayChanged;
+				var handler = EndpointRelayChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			this.audioControl.AudioDspConnectionStatusChanged += (obj, evt) =>
+			AudioControl.AudioDspConnectionStatusChanged += (_, evt) =>
 			{
-				var handler = this.AudioDspConnectionStatusChanged;
+				var handler = AudioDspConnectionStatusChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			this.audioControl.AudioInputLevelChanged += (obj, evt) =>
+			AudioControl.AudioInputLevelChanged += (_, evt) =>
 			{
-				var handler = this.AudioInputLevelChanged;
+				var handler = AudioInputLevelChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			this.audioControl.AudioInputMuteChanged += (obj, evt) =>
+			AudioControl.AudioInputMuteChanged += (_, evt) =>
 			{
-				var handler = this.AudioInputMuteChanged;
+				var handler = AudioInputMuteChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			this.audioControl.AudioOutputLevelChanged += (obj, evt) =>
+			AudioControl.AudioOutputLevelChanged += (_, evt) =>
 			{
-				var handler = this.AudioOutputLevelChanged;
+				var handler = AudioOutputLevelChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			this.audioControl.AudioOutputMuteChanged += (obj, evt) =>
+			AudioControl.AudioOutputMuteChanged += (_, evt) =>
 			{
-				var handler = this.AudioOutputMuteChanged;
+				var handler = AudioOutputMuteChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			this.audioControl.AudioOutputRouteChanged += (obj, evt) =>
+			AudioControl.AudioOutputRouteChanged += (_, evt) =>
 			{
-				var handler = this.AudioOutputRouteChanged;
+				var handler = AudioOutputRouteChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			this.audioControl.AudioZoneEnableChanged += (obj, evt) =>
+			AudioControl.AudioZoneEnableChanged += (_, evt) =>
 			{
-				var handler = this.AudioZoneEnableChanged;
+				var handler = AudioZoneEnableChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			this.routingControl.RouterConnectChange += (obj, evt) =>
+			RoutingControl.RouterConnectChange += (_, evt) =>
 			{
-				var handler = this.RouterConnectChange;
+				var handler = RouterConnectChange;
 				handler?.Invoke(this, evt);
 			};
 
-			this.routingControl.RouteChanged += (obj, evt) =>
+			RoutingControl.RouteChanged += (_, evt) =>
 			{
-				var handler = this.RouteChanged;
+				var handler = RouteChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			foreach (var avr in this.hwService.AvSwitchers.GetAllDevices())
+			foreach (var avr in HwService.AvSwitchers.GetAllDevices())
 			{
-				if (avr is IVideoControllable)
+				if (avr is IVideoControllable avrVideo)
 				{
-					IVideoControllable avrVideo = avr as IVideoControllable;
-					avrVideo.VideoBlankChanged += (obj, evt) =>
+					avrVideo.VideoBlankChanged += (_, _) =>
 					{
-						var temp = this.GlobalVideoBlankChanged;
+						var temp = GlobalVideoBlankChanged;
 						temp?.Invoke(this, EventArgs.Empty);
 					};
 
-					avrVideo.VideoFreezeChanged += (obj, evt) =>
+					avrVideo.VideoFreezeChanged += (_, _) =>
 					{
-						var temp = this.GlobalVideoFreezeChanged;
+						var temp = GlobalVideoFreezeChanged;
 						temp?.Invoke(this, EventArgs.Empty);
 					};
 
-					this.useAvrMuteFreeze = true;
+					UseAvrMuteFreeze = true;
 				}
 			}
 
-			this.lightingControl.LightingLoadLevelChanged += (obj, evt) =>
+			LightingControl.LightingLoadLevelChanged += (_, evt) =>
 			{
-				var handler = this.LightingLoadLevelChanged;
+				var handler = LightingLoadLevelChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			this.lightingControl.LightingSceneChanged += (obj, evt) =>
+			LightingControl.LightingSceneChanged += (_, evt) =>
 			{
-				var handler = this.LightingSceneChanged;
+				var handler = LightingSceneChanged;
 				handler?.Invoke(this, evt);
 			};
 
-			this.lightingControl.LightingControlConnectionChanged += (obj, evt) =>
+			LightingControl.LightingControlConnectionChanged += (_, evt) =>
 			{
-				var handler = this.LightingControlConnectionChanged;
+				var handler = LightingControlConnectionChanged;
 				handler?.Invoke(this, evt);
 			};
 		}
 
+		/// <summary>
+		/// Iterate through all AVRs in the system configuration and set their video freeze state to the given value, if
+		/// they support this feature.
+		/// </summary>
+		/// <param name="state">true = freeze active, false = freeze inactive.</param>
 		protected virtual void SetAvrVideoFreeze(bool state)
 		{
-			foreach (var avr in this.hwService.AvSwitchers.GetAllDevices())
+			foreach (var avr in HwService.AvSwitchers.GetAllDevices())
 			{
-				if (avr is IVideoControllable)
+				if (avr is IVideoControllable avrVideo)
 				{
 					if (state)
 					{
-						(avr as IVideoControllable).FreezeOn();
+						avrVideo.FreezeOn();
 					}
 					else
 					{
-						(avr as IVideoControllable).FreezeOff();
+						avrVideo.FreezeOff();
 					}
 
 				}
 			}
 		}
 
+		/// <summary>
+		/// Iterate through all AVRs in the system configuration and set their video blank state to the given value, if
+		/// they support this feature.
+		/// </summary>
+		/// <param name="state">true = blank active, false = blank inactive.</param>
 		protected virtual void SetAvrVideoBlank(bool state)
 		{
-			foreach (var avr in this.hwService.AvSwitchers.GetAllDevices())
+			foreach (var avr in HwService.AvSwitchers.GetAllDevices())
 			{
-				if (avr is IVideoControllable)
+				if (avr is IVideoControllable avrVideo)
 				{
 					if (state)
 					{
-						(avr as IVideoControllable).VideoBlankOn();
+						avrVideo.VideoBlankOn();
 					}
 					else
 					{
-						(avr as IVideoControllable).VideoBlankOff();
+						avrVideo.VideoBlankOff();
 					}
 
 				}

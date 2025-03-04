@@ -1,77 +1,68 @@
-﻿namespace pkd_application_service.AvRouting.Pathfinder
+﻿namespace pkd_application_service.AvRouting.Pathfinder;
+
+using pkd_common_utils.Logging;
+using System.Collections.Generic;
+
+/// <summary>
+/// Matrix routing graph for finding source -> destination paths
+/// </summary>
+internal class Graph
 {
-	using pkd_common_utils.Logging;
-	using System.Collections.Generic;
+	/// <summary>
+	/// Initializes a new instance of the <see cref="Graph"/> class.
+	/// </summary>
+	public Graph()
+	{
+		AdjList = new Dictionary<Vertex, List<Edge>>();
+	}
 
 	/// <summary>
-	/// Matrix routing graph for finding source -> destination paths
+	/// Gets the currently stored map of vertex and its associated edges.
 	/// </summary>
-	internal class Graph
+	public Dictionary<Vertex, List<Edge>> AdjList { get; }
+
+	/// <summary>
+	/// Create an edge between to vertices. This adds two edges to indicate a bidirectional
+	/// path.
+	/// </summary>
+	/// <param name="source">The first vertex in the edge.</param>
+	/// <param name="destination">The second vertex in the edge.</param>
+	/// <param name="weight">Value used if a weighted pathfinding analysis is used.</param>
+	public void AddEdgeUndirected(Vertex source, Vertex destination, int weight)
 	{
-		private readonly Dictionary<Vertex, List<Edge>> adjList;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Graph"/> class.
-		/// </summary>
-		public Graph()
+		if (AdjList.TryGetValue(source, out var value))
 		{
-			adjList = new Dictionary<Vertex, List<Edge>>();
+			value.Add(new Edge(source, destination, weight));
+		}
+		else
+		{
+			AdjList.Add(source, [new Edge(source, destination, weight)]);
 		}
 
-		/// <summary>
-		/// Gets the currently stored map of vertex and it's associated edges.
-		/// </summary>
-		public Dictionary<Vertex, List<Edge>> AdjList
+		if (AdjList.TryGetValue(destination, out var destinationValue))
 		{
-			get
-			{
-				return adjList;
-			}
+			destinationValue.Add(new Edge(destination, source, weight));
 		}
-
-		/// <summary>
-		/// Create an edge between to vertecies. This adds two edges to indicate a bi-directional
-		/// path.
-		/// </summary>
-		/// <param name="source">The first vertex in the edge.</param>
-		/// <param name="destination">The second vertex in the edge.</param>
-		/// <param name="weight">Value used if a weighted pathfinding analysis is used.</param>
-		public void AddEdgeUndirected(Vertex source, Vertex destination, int weight)
+		else
 		{
-			if (adjList.ContainsKey(source))
-			{
-				adjList[source].Add(new Edge(source, destination, weight));
-			}
-			else
-			{
-				adjList.Add(source, new List<Edge> { new Edge(source, destination, weight) });
-			}
-
-			if (adjList.ContainsKey(destination))
-			{
-				adjList[destination].Add(new Edge(destination, source, weight));
-			}
-			else
-			{
-				adjList.Add(destination, new List<Edge> { new Edge(destination, source, weight) });
-			}
+			AdjList.Add(destination, [new Edge(destination, source, weight)]);
 		}
+	}
 
-		/// <summary>
-		/// Prints out all verticies and their associated edges. 
-		/// </summary>
-		public void ReportGraph()
+	/// <summary>
+	/// Prints out all vertices and their associated edges. 
+	/// </summary>
+	public void ReportGraph()
+	{
+		foreach (var kvp in this.AdjList)
 		{
-			foreach (var kvp in this.AdjList)
+			Logger.Info("{0}:", kvp.Key.Key);
+			foreach (var edge in kvp.Value)
 			{
-				Logger.Info("{0}:", kvp.Key.Key);
-				foreach (var edge in kvp.Value)
-				{
-					Logger.Info(
-						"    {0}--{1}",
-						edge.Source.Key,
-						edge.Destination.Key);
-				}
+				Logger.Info(
+					"    {0}--{1}",
+					edge.Source.Key,
+					edge.Destination.Key);
 			}
 		}
 	}

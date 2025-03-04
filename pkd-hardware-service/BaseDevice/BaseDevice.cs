@@ -9,13 +9,13 @@
 	public abstract class BaseDevice : IBaseDevice
 	{
 		/// <inheritdoc/>
-		public event EventHandler<GenericSingleEventArgs<string>> ConnectionChanged;
+		public event EventHandler<GenericSingleEventArgs<string>>? ConnectionChanged;
 
 		/// <inheritdoc/>
-		public string Id { get; protected set; }
+		public string Id { get; protected set; } = string.Empty;
 
 		/// <inheritdoc/>
-		public string Label { get; protected set; }
+		public string Label { get; protected set; } = string.Empty;
 
 		/// <inheritdoc/>
 		public virtual bool IsOnline { get; protected set; }
@@ -34,8 +34,8 @@
 		/// </summary>
 		protected virtual void NotifyOnlineStatus()
 		{
-			var temp = this.ConnectionChanged;
-			temp?.Invoke(this, new GenericSingleEventArgs<string>(this.Id));
+			var temp = ConnectionChanged;
+			temp?.Invoke(this, new GenericSingleEventArgs<string>(Id));
 		}
 	}
 }

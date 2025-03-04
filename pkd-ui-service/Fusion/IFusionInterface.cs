@@ -1,62 +1,62 @@
 ﻿namespace pkd_ui_service.Fusion
 {
 	using pkd_common_utils.GenericEventArgs;
-	using pkd_ui_service.Fusion.DeviceUse;
-	using pkd_ui_service.Fusion.ErrorManagement;
+	using DeviceUse;
+	using ErrorManagement;
 	using System;
 
 	internal interface IFusionInterface : IFusionDeviceUse, IFusionErrorManager, IDisposable
 	{
 		/// <summary>
-		/// Triggered whenther the Fusion server connection comes online or goes offline.
+		/// Triggered when the Fusion server connection comes online or goes offline.
 		/// </summary>
-		event EventHandler<EventArgs> OnlineStatusChanged;
+		event EventHandler<EventArgs>? OnlineStatusChanged;
 
 		/// <summary>
 		/// Triggered whenever a system power event is received from the Fusion server.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<bool>> SystemStateChangeRequested;
+		event EventHandler<GenericSingleEventArgs<bool>>? SystemStateChangeRequested;
 
 		/// <summary>
 		/// Triggered whenever a display power event is received from the Fusion server.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<bool>> DisplayPowerChangeRequested;
+		event EventHandler<GenericSingleEventArgs<bool>>? DisplayPowerChangeRequested;
 
 		/// <summary>
 		/// Triggered whenever a program audio mute event is received from the Fusion server.
 		/// </summary>
-		event EventHandler<EventArgs> AudioMuteChangeRequested;
+		event EventHandler<EventArgs>? AudioMuteChangeRequested;
 
 		/// <summary>
 		/// Triggered whenever a "blank all displays" event is received from the Fusion server.
 		/// </summary>
-		event EventHandler<EventArgs> DisplayBlankChangeRequested;
+		event EventHandler<EventArgs>? DisplayBlankChangeRequested;
 
 		/// <summary>
 		/// Triggered whenever a "freeze all displays" event is received from the Fusion server.
 		/// </summary>
-		event EventHandler<EventArgs> DisplayFreezeChangeRequested;
+		event EventHandler<EventArgs>? DisplayFreezeChangeRequested;
 
 		/// <summary>
 		/// Triggered whenever a request to change the program audio is received from the server.
 		/// Args package will contain the 0-100 value that the level should be set to.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<uint>> ProgramAudioChangeRequested;
+		event EventHandler<GenericSingleEventArgs<uint>>? ProgramAudioChangeRequested;
 
 		/// <summary>
 		/// Triggered whenever a request to change the mute state of a microphone is received from the Fusion server.
 		/// Args package will contain the ID of the microphone to toggle.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> MicMuteChangeRequested;
+		event EventHandler<GenericSingleEventArgs<string>>? MicMuteChangeRequested;
 
 		/// <summary>
 		/// Triggered whenever a request to change the selected AV input is received from the Fusion server.
 		/// Args package with contain the ID of the input source to select.
 		/// </summary>
-		event EventHandler<GenericSingleEventArgs<string>> SourceSelectRequested;
+		event EventHandler<GenericSingleEventArgs<string>>? SourceSelectRequested;
 
 		/// <summary>
-		/// Gets a value inidcating whether or not the system is connected to the Fusion server.
+		/// Gets a value indicating whether the system is connected to the Fusion server.
 		/// </summary>
 		bool IsOnline { get; }
 
@@ -100,7 +100,7 @@
 		/// Add a microphone to the internal tracker used when requesting mic mute changes.
 		/// System will look for either "podium" and assign the associated 'id' parameter to the podium mute toggle in the Fusion interface.
 		/// Any other mic will be assigned to the generic "mic mute" trigger. If multiple mics are added to either trigger then the last mic added
-		/// will be send on the event.
+		/// will be sent on the event.
 		/// </summary>
 		/// <param name="id">The unique ID of the mic to add.</param>
 		/// <param name="label">The user-friendly name of the microphone</param>
@@ -111,7 +111,7 @@
 		/// Send a notification to the Fusion server that the mute state has changed for a microphone in the system.
 		/// </summary>
 		/// <param name="id">The unique ID of the microphone that changed, as set in the system configuration.</param>
-		/// <param name="state">True = mic is muted, false = mic is unmuted (passing audio).</param>
+		/// <param name="state">True = mic is muted, false = mic is passing audio.</param>
 		void UpdateMicMute(string id, bool state);
 
 		/// <summary>

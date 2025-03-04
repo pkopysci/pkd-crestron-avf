@@ -6,7 +6,7 @@
 	using pkd_common_utils.Logging;
 	using pkd_common_utils.Validation;
 	using pkd_domain_service.Data.EndpointData;
-	using pkd_hardware_service.BaseDevice;
+	using BaseDevice;
 	using System;
 	using System.Linq;
 
@@ -31,171 +31,140 @@
 			ParameterValidator.ThrowIfNull(data, "Ctor", "data");
 
 			this.data = data;
-			this.processor = controlSystem;
-			this.Id = data.Id;
-			this.Label = this.Id;
+			processor = controlSystem;
+			Id = data.Id;
+			Label = Id;
 		}
 
 		/// <inheritdoc/>
-		public event EventHandler<GenericDualEventArgs<string, int>> RelayChanged;
+		public event EventHandler<GenericDualEventArgs<string, int>>? RelayChanged;
 
 		/// <inheritdoc/>
 		public bool IsRegistered { get; private set; }
 
 		/// <inheritdoc/>
-		public bool SupportsRelays
-		{
-			get
-			{
-				return this.processor.SupportsRelay;
-			}
-		}
+		public bool SupportsRelays => processor.SupportsRelay;
 
 		/// <inheritdoc/>
-		public bool SupportsIr
-		{
-			get
-			{
-				return this.processor.SupportsIROut;
-			}
-		}
+		public bool SupportsIr => processor.SupportsIROut;
 
 		/// <inheritdoc/>
-		public bool SupportsRs232
-		{
-			get
-			{
-				return this.processor.SupportsComPort;
-			}
-		}
+		public bool SupportsRs232 => processor.SupportsComPort;
 
 		/// <inheritdoc/>
 		public void Register()
 		{
-			this.IsRegistered = false;
+			IsRegistered = false;
 
-			this.RegisterRelays();
-			this.RegisterComPorts();
-			this.RegisterIrPorts();
+			RegisterRelays();
+			RegisterComPorts();
+			RegisterIrPorts();
 
-			this.IsRegistered = true;
-			this.IsOnline = true;
-			this.NotifyOnlineStatus();
+			IsRegistered = true;
+			IsOnline = true;
+			NotifyOnlineStatus();
 		}
 
 		/// <inheritdoc/>
-		public bool GetCurrentRelayState(int index)
+		public bool? GetCurrentRelayState(int index)
 		{
-			if (this.ValidateRelayIndex(index))
-			{
-				return this.processor.RelayPorts[(uint)index].State;
-			}
-
-			return false;
+			return ValidateRelayIndex(index) ? processor.RelayPorts[(uint)index]?.State : false;
 		}
 
 		/// <inheritdoc/>
 		public void LatchRelayClosed(int index)
 		{
 
-			if (this.ValidateRelayIndex(index) && this.CheckRegistered("LatchRelayClosed"))
+			if (ValidateRelayIndex(index) && CheckRegistered("LatchRelayClosed"))
 			{
-				this.processor.RelayPorts[(uint)index].Close();
+				processor.RelayPorts[(uint)index]?.Close();
 			}
 		}
 
 		/// <inheritdoc/>
 		public void LatchRelayOpen(int index)
 		{
-			if (this.ValidateRelayIndex(index) && this.CheckRegistered("LatchRelayOpen"))
+			if (ValidateRelayIndex(index) && CheckRegistered("LatchRelayOpen"))
 			{
-				this.processor.RelayPorts[(uint)index].Open();
+				processor.RelayPorts[(uint)index]?.Open();
 			}
 		}
 
 		/// <inheritdoc/>
 		public void PulseRelay(int index, int timeMs)
 		{
-			if (this.ValidateRelayIndex(index) && this.CheckRegistered("PulseRelay"))
-			{
-				this.processor.RelayPorts[(uint)index].Close();
-				CTimer t = new CTimer(
-					(object sender) =>
-					{
-						this.processor.RelayPorts[(uint)index].Open();
-					}, timeMs);
-			}
+			if (!ValidateRelayIndex(index) || !CheckRegistered("PulseRelay")) return;
+			processor.RelayPorts[(uint)index]?.Close();
+			var t = new CTimer(
+				sender =>
+				{
+					processor.RelayPorts[(uint)index]?.Open();
+				}, timeMs);
 		}
 
 		private void RelayStateHandler(Relay relay, RelayEventArgs args)
 		{
-			Logger.Debug("ProcessorEndpoint {0} - RelayStateHandler() - {1}", this.Id, relay.ID);
-			var temp = this.RelayChanged;
-			temp?.Invoke(this, new GenericDualEventArgs<string, int>(this.Id, (int)relay.ID));
+			Logger.Debug("ProcessorEndpoint {0} - RelayStateHandler() - {1}", Id, relay.ID);
+			var temp = RelayChanged;
+			temp?.Invoke(this, new GenericDualEventArgs<string, int>(Id, (int)relay.ID));
 		}
 
 		private void RegisterRelays()
 		{
-			if (this.SupportsRelays)
+			if (!SupportsRelays) return;
+			foreach (var relay in data.Relays)
 			{
-				foreach (var relay in this.data.Relays)
-				{
-					if (relay > 0 && relay <= this.processor.RelayPorts.Count)
-					{
-						this.processor.RelayPorts[(uint)relay].StateChange += this.RelayStateHandler;
-						this.processor.RelayPorts[(uint)relay].Register();
-					}
-				}
+				if (relay <= 0 || relay > processor.RelayPorts.Count) continue;
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+				processor.RelayPorts[(uint)relay].StateChange += RelayStateHandler;
+				processor.RelayPorts[(uint)relay].Register();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 			}
 		}
 
 		private void RegisterComPorts()
 		{
-			if (this.SupportsRs232)
+			if (!SupportsRs232) return;
+			foreach (var comPort in data.Comports)
 			{
-				foreach (var comPort in this.data.Comports)
+				if (comPort > 0 && comPort <= processor.ComPorts.Count)
 				{
-					if (comPort > 0 && comPort <= this.processor.ComPorts.Count)
-					{
-						// TODO: Subscribe events and register comport
-					}
+					// TODO: Subscribe events and register comport
 				}
 			}
 		}
 
 		private void RegisterIrPorts()
 		{
-			if (this.SupportsIr)
+			if (!SupportsIr) return;
+			foreach (var irp in data.IrPorts)
 			{
-				foreach (var irp in this.data.IrPorts)
+				if (irp > 0 && irp <= processor.IROutputPorts.Count)
 				{
-					if (irp > 0 && irp <= this.processor.IROutputPorts.Count)
-					{
-						// TODO: Subscribe events and register IR ports
-					}
+					// TODO: Subscribe events and register IR ports
 				}
 			}
 		}
 
 		private bool CheckRegistered(string methodName)
 		{
-			if (!this.IsRegistered)
+			if (!IsRegistered)
 			{
 				Logger.Error(
 					"Endpoint {0}.{1} - Device not yet registered.",
-					this.Id,
+					Id,
 					methodName);
 			}
 
-			return this.IsRegistered;
+			return IsRegistered;
 		}
 
 		private bool ValidateRelayIndex(int index)
 		{
-			if (!this.data.Relays.Contains(index))
+			if (!data.Relays.Contains(index))
 			{
 				Logger.Error(
-					"Endpoing {this.Id}.GetCurrentRelayState() - relay {0} is not registered to this device.",
+					"Endpoint {Id}.GetCurrentRelayState() - relay {0} is not registered to this device.",
 					index);
 				return false;
 			}

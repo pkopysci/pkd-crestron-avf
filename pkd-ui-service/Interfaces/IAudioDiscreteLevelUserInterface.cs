@@ -11,11 +11,11 @@
 		/// <summary>
 		/// Triggered when the UI sends a command to set an input channel to a specific audio level.
 		/// </summary>
-		event EventHandler<GenericDualEventArgs<string, int>> SetAudioInputLevelRequest;
+		event EventHandler<GenericDualEventArgs<string, int>>? SetAudioInputLevelRequest;
 
 		/// <summary>
 		/// Triggered when the UI sends a command to set an output channel to a specific audio level.
 		/// </summary>
-		event EventHandler<GenericDualEventArgs<string, int>> SetAudioOutputLevelRequest;
+		event EventHandler<GenericDualEventArgs<string, int>>? SetAudioOutputLevelRequest;
 	}
 }

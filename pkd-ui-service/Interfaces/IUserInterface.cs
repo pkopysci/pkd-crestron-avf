@@ -4,6 +4,9 @@
 	using pkd_common_utils.GenericEventArgs;
 	using System;
 
+	/// <summary>
+	/// required events, methods, and properties for implementing any user interface.
+	/// </summary>
 	public interface IUserInterface
 	{
 		/// <summary>
@@ -13,7 +16,7 @@
 		event EventHandler<GenericSingleEventArgs<bool>> SystemStateChangeRequest;
 
 		/// <summary>
-		/// Triggered whenever the connection to the underlyingg device has changed.
+		/// Triggered whenever the connection to the underlying device has changed.
 		/// </summary>
 		event EventHandler<GenericSingleEventArgs<string>> OnlineStatusChanged;
 
@@ -28,19 +31,19 @@
 		event EventHandler GlobalBlankToggleRequest;
 
 		/// <summary>
-		/// Gets a value indicating whether or not the panel has been initialized and connected with the interface.
+		/// Gets a value indicating whether the panel has been initialized and connected with the interface.
 		/// true = is initialized, false = not yet initialized.
-		/// </summary
+		/// </summary>
 		bool IsInitialized { get; }
 
 		/// <summary>
-		/// Gets a value indicating whether or not the connected interface hardware is online with the control system.
+		/// Gets a value indicating whether the connected interface hardware is online with the control system.
 		/// True = device is online, false = devices is offline.
 		/// </summary>
 		bool IsOnline { get; }
 
 		/// <summary>
-		/// Gets a value indicating whether or not the user interface is an XPanel/support interface.
+		/// Gets a value indicating whether the user interface is an XPanel/support interface.
 		/// </summary>
 		bool IsXpanel { get; }
 
@@ -70,7 +73,7 @@
 		void HideSystemStateChanging();
 
 		/// <summary>
-		/// Update the user interface with the curent status of the global video freeze.
+		/// Update the user interface with the current status of the global video freeze.
 		/// </summary>
 		/// <param name="state">true = freeze active, false = normal video streaming.</param>
 		void SetGlobalFreezeState(bool state);
@@ -84,7 +87,7 @@
 		/// <summary>
 		/// Prepare the interface for initialization by defining the general configuration.
 		/// </summary>
-		/// <param name="uiData">The configuration data object that represesnts the UI being created.</param>
+		/// <param name="uiData">The configuration data object that represents the UI being created.</param>
 		void SetUiData(UserInterfaceDataContainer uiData);
 
 		/// <summary>
@@ -93,7 +96,7 @@
 		void Initialize();
 
 		/// <summary>
-		/// Call once all necessary data as been populated and Inititalize() has been successfully called. This will open a connection
+		/// Call once all necessary data as been populated and Initialize() has been successfully called. This will open a connection
 		/// with the interface hardware.
 		/// </summary>
 		void Connect();

@@ -3,13 +3,16 @@
 	using pkd_common_utils.GenericEventArgs;
 	using System;
 
+	/// <summary>
+	/// required events, methods, and properties for implementing a user interface that supports custom events.
+	/// </summary>
 	public interface ICustomEventUserInterface
 	{
 		/// <summary>
 		/// Triggered when the UI sends a command to change an event state.
 		/// Args package is [event tag], [new state].
 		/// </summary>
-		event EventHandler<GenericDualEventArgs<string, bool>> CustomEventChangeRequest;
+		event EventHandler<GenericDualEventArgs<string, bool>>? CustomEventChangeRequest;
 
 		/// <summary>
 		/// Update the internal collection of custom events. This will either add the event to the collection
@@ -28,7 +31,7 @@
 		void AddCustomEvent(string eventTag, string eventLabel, bool currentState);
 
 		/// <summary>
-		/// Removes the target custom event from the internall collection if it exists.
+		/// Removes the target custom event from the internal collection if it exists.
 		/// </summary>
 		/// <param name="eventTag">The unique tag of the custom event to remove.</param>
 		void RemoveCustomEvent(string eventTag);

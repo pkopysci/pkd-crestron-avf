@@ -6,43 +6,43 @@
 
 	internal static class TransportUtilities
 	{
-		private static readonly Dictionary<TransportTypes, Action<IApplicationService, string>> actions = new Dictionary<TransportTypes, Action<IApplicationService, string>>()
+		private static readonly Dictionary<TransportTypes, Action<IApplicationService, string>> Actions = new Dictionary<TransportTypes, Action<IApplicationService, string>>()
 		{
-			{ TransportTypes.PowerOn, new Action<IApplicationService, string>((app, devId) => { app.TransportPowerOn(devId); }) },
-			{ TransportTypes.PowerOff, new Action<IApplicationService, string>((app, devId) => { app.TransportPowerOff(devId); }) },
-			{ TransportTypes.PowerToggle, new Action<IApplicationService, string>((app, devId) => { app.TransportPowerToggle(devId); }) },
-			{ TransportTypes.Dash, new Action<IApplicationService, string>((app, devId) => { app.TransportDash(devId); }) },
-			{ TransportTypes.ChannelUp, new Action<IApplicationService, string>((app, devId) => { app.TransportChannelUp(devId); }) },
-			{ TransportTypes.ChannelDown, new Action<IApplicationService, string>((app, devId) => { app.TransportChannelDown(devId); }) },
-			{ TransportTypes.PageUp, new Action<IApplicationService, string>((app, devId) => { app.TransportPageUp(devId); }) },
-			{ TransportTypes.PageDown, new Action<IApplicationService, string>((app, devId) => { app.TransportPageDown(devId); }) },
-			{ TransportTypes.Guide, new Action<IApplicationService, string>((app, devId) => { app.TransportGuide(devId); }) },
-			{ TransportTypes.Menu, new Action<IApplicationService, string>((app, devId) => { app.TransportMenu(devId); }) },
-			{ TransportTypes.Info, new Action<IApplicationService, string>((app, devId) => { app.TransportInfo(devId); }) },
-			{ TransportTypes.Exit, new Action<IApplicationService, string>((app, devId) => { app.TransportExit(devId); }) },
-			{ TransportTypes.Back, new Action<IApplicationService, string>((app, devId) => { app.TransportBack(devId); }) },
-			{ TransportTypes.Play, new Action<IApplicationService, string>((app, devId) => { app.TransportPlay(devId); }) },
-			{ TransportTypes.Pause, new Action<IApplicationService, string>((app, devId) => { app.TransportPause(devId); }) },
-			{ TransportTypes.Stop, new Action<IApplicationService, string>((app, devId) => { app.TransportStop(devId); }) },
-			{ TransportTypes.Record, new Action<IApplicationService, string>((app, devId) => { app.TransportRecord(devId); }) },
-			{ TransportTypes.ScanForward, new Action<IApplicationService, string>((app, devId) => { app.TransportScanForward(devId); }) },
-			{ TransportTypes.ScanReverse, new Action<IApplicationService, string>((app, devId) => { app.TransportScanReverse(devId); }) },
-			{ TransportTypes.SkipForward, new Action<IApplicationService, string>((app, devId) => { app.TransportSkipForward(devId); }) },
-			{ TransportTypes.SkipReverse, new Action<IApplicationService, string>((app, devId) => { app.TransportSkipReverse(devId); }) },
-			{ TransportTypes.NavUp, new Action<IApplicationService, string>((app, devId) => { app.TransportNavUp(devId); }) },
-			{ TransportTypes.NavDown, new Action<IApplicationService, string>((app, devId) => { app.TransportNavDown(devId); }) },
-			{ TransportTypes.NavLeft, new Action<IApplicationService, string>((app, devId) => { app.TransportNavLeft(devId); }) },
-			{ TransportTypes.NavRight, new Action<IApplicationService, string>((app, devId) => { app.TransportNavRight(devId); }) },
-			{ TransportTypes.Red, new Action<IApplicationService, string>((app, devId) => { app.TransportRed(devId); }) },
-			{ TransportTypes.Green, new Action<IApplicationService, string>((app, devId) => { app.TransportGreen(devId); }) },
-			{ TransportTypes.Yellow, new Action<IApplicationService, string>((app, devId) => { app.TransportYellow(devId); }) },
-			{ TransportTypes.Blue, new Action<IApplicationService, string>((app, devId) => { app.TransportBlue(devId); }) },
-			{ TransportTypes.Select, new Action<IApplicationService, string>((app, devId) => {app.TransportSelect(devId); }) },
+			{ TransportTypes.PowerOn, (app, devId) => { app.TransportPowerOn(devId); } },
+			{ TransportTypes.PowerOff, (app, devId) => { app.TransportPowerOff(devId); } },
+			{ TransportTypes.PowerToggle, (app, devId) => { app.TransportPowerToggle(devId); } },
+			{ TransportTypes.Dash, (app, devId) => { app.TransportDash(devId); } },
+			{ TransportTypes.ChannelUp, (app, devId) => { app.TransportChannelUp(devId); } },
+			{ TransportTypes.ChannelDown, (app, devId) => { app.TransportChannelDown(devId); } },
+			{ TransportTypes.PageUp, (app, devId) => { app.TransportPageUp(devId); } },
+			{ TransportTypes.PageDown, (app, devId) => { app.TransportPageDown(devId); } },
+			{ TransportTypes.Guide, (app, devId) => { app.TransportGuide(devId); } },
+			{ TransportTypes.Menu, (app, devId) => { app.TransportMenu(devId); } },
+			{ TransportTypes.Info, (app, devId) => { app.TransportInfo(devId); } },
+			{ TransportTypes.Exit, (app, devId) => { app.TransportExit(devId); } },
+			{ TransportTypes.Back, (app, devId) => { app.TransportBack(devId); } },
+			{ TransportTypes.Play, (app, devId) => { app.TransportPlay(devId); } },
+			{ TransportTypes.Pause, (app, devId) => { app.TransportPause(devId); } },
+			{ TransportTypes.Stop, (app, devId) => { app.TransportStop(devId); } },
+			{ TransportTypes.Record, (app, devId) => { app.TransportRecord(devId); } },
+			{ TransportTypes.ScanForward, (app, devId) => { app.TransportScanForward(devId); } },
+			{ TransportTypes.ScanReverse, (app, devId) => { app.TransportScanReverse(devId); } },
+			{ TransportTypes.SkipForward, (app, devId) => { app.TransportSkipForward(devId); } },
+			{ TransportTypes.SkipReverse, (app, devId) => { app.TransportSkipReverse(devId); } },
+			{ TransportTypes.NavUp, (app, devId) => { app.TransportNavUp(devId); } },
+			{ TransportTypes.NavDown, (app, devId) => { app.TransportNavDown(devId); } },
+			{ TransportTypes.NavLeft, (app, devId) => { app.TransportNavLeft(devId); } },
+			{ TransportTypes.NavRight, (app, devId) => { app.TransportNavRight(devId); } },
+			{ TransportTypes.Red, (app, devId) => { app.TransportRed(devId); } },
+			{ TransportTypes.Green, (app, devId) => { app.TransportGreen(devId); } },
+			{ TransportTypes.Yellow, (app, devId) => { app.TransportYellow(devId); } },
+			{ TransportTypes.Blue, (app, devId) => { app.TransportBlue(devId); } },
+			{ TransportTypes.Select, (app, devId) => {app.TransportSelect(devId); } },
 		};
 
-		public static void SendCommand(IApplicationService appService, string id, TransportTypes ttype)
+		public static void SendCommand(IApplicationService appService, string id, TransportTypes transportType)
 		{
-			if (actions.TryGetValue(ttype, out Action<IApplicationService, string> act))
+			if (Actions.TryGetValue(transportType, out var act))
 			{
 				act.Invoke(appService, id);
 			}

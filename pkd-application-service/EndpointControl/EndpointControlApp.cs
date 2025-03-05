@@ -1,13 +1,12 @@
-﻿namespace pkd_application_service.EndpointControl
-{
-	using Base;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_domain_service.Data.EndpointData;
-	using pkd_hardware_service.BaseDevice;
-	using pkd_hardware_service.EndpointDevices;
-	using System;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.Base;
+using pkd_common_utils.GenericEventArgs;
+using pkd_domain_service.Data.EndpointData;
+using pkd_hardware_service.BaseDevice;
+using pkd_hardware_service.EndpointDevices;
 
+namespace pkd_application_service.EndpointControl
+{
 	/// <summary>
 	/// Endpoint device control application.
 	/// </summary>

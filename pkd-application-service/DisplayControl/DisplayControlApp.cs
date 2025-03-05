@@ -1,18 +1,15 @@
-﻿namespace pkd_application_service.DisplayControl
-{
-	using Base;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.DisplayData;
-	using pkd_hardware_service.BaseDevice;
-	using pkd_hardware_service.DisplayDevices;
-	using pkd_hardware_service.Routable;
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Linq;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.Base;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.DisplayData;
+using pkd_hardware_service.BaseDevice;
+using pkd_hardware_service.DisplayDevices;
+using pkd_hardware_service.Routable;
 
+namespace pkd_application_service.DisplayControl
+{
 	/// <summary>
 	/// Display device control app.
 	/// </summary>

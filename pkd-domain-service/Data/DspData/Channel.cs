@@ -1,8 +1,6 @@
 ﻿
 namespace pkd_domain_service.Data.DspData
 {
-	using System.Collections.Generic;
-
 	public class Channel : BaseData
 	{
 		public string LevelControlTag { get; set; } = string.Empty;

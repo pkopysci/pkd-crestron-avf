@@ -1,15 +1,13 @@
-﻿namespace pkd_application_service.TransportControl
-{
-	using Base;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.TransportDeviceData;
-	using pkd_hardware_service.BaseDevice;
-	using pkd_hardware_service.TransportDevices;
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Linq;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.Base;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.TransportDeviceData;
+using pkd_hardware_service.BaseDevice;
+using pkd_hardware_service.TransportDevices;
+using TransportFavorite = pkd_application_service.Base.TransportFavorite;
 
+namespace pkd_application_service.TransportControl
+{
 	/// <summary>
 	/// Application object for managing all transport-controlled devices, such as Cable TV devices and Blu-ray players.
 	/// </summary>
@@ -41,10 +39,10 @@
 				var hardware = cableBoxes.GetDevice(item.Id);
 				if (hardware == null) continue;
 				
-				List<Base.TransportFavorite> favorites = [];
+				List<TransportFavorite> favorites = [];
 				foreach (var fav in item.Favorites)
 				{
-					favorites.Add(new Base.TransportFavorite(fav.Id, fav.Label));
+					favorites.Add(new TransportFavorite(fav.Id, fav.Label));
 				}
 
 				var cableBox = new TransportInfoContainer(

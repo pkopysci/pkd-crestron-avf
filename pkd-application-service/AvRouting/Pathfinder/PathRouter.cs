@@ -1,7 +1,5 @@
 ﻿namespace pkd_application_service.AvRouting.Pathfinder;
 
-using System.Collections.Generic;
-
 /// <summary>
 /// Based on pathfinding solution shared by JB on Dev.To:
 /// https://dev.to/jjb/part-17-finding-shortest-paths-in-graphs-using-dijkstra-s-bfs-554m

@@ -1,7 +1,6 @@
-﻿namespace pkd_application_service.AvRouting.Pathfinder;
+﻿using pkd_common_utils.Logging;
 
-using pkd_common_utils.Logging;
-using System.Collections.Generic;
+namespace pkd_application_service.AvRouting.Pathfinder;
 
 /// <summary>
 /// Matrix routing graph for finding source -> destination paths

@@ -1,8 +1,7 @@
-﻿namespace pkd_application_service.DisplayControl
-{
-	using Base;
-	using System.Collections.Generic;
+﻿using pkd_application_service.Base;
 
+namespace pkd_application_service.DisplayControl
+{
 	/// <summary>
 	/// Data object used for sending display information to subscribers.
 	/// </summary>

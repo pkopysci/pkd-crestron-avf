@@ -1,8 +1,8 @@
-﻿namespace pkd_application_service.AudioControl
-{
-	using Base;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.Base;
 
+namespace pkd_application_service.AudioControl
+{
 	/// <summary>
 	/// required methods when implementing an application service that supports managing audio presets.
 	/// </summary>

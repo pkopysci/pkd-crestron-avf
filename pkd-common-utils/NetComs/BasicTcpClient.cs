@@ -1,13 +1,11 @@
-﻿namespace pkd_common_utils.NetComs
-{
-	using System;
-	using System.Linq;
-	using System.Text;
-	using GenericEventArgs;
-	using Logging;
-	using Crestron.SimplSharp;
-	using Crestron.SimplSharp.CrestronSockets;
+﻿using System.Text;
+using Crestron.SimplSharp;
+using Crestron.SimplSharp.CrestronSockets;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
 
+namespace pkd_common_utils.NetComs
+{
 	/// <summary>
 	/// Simple TCP/IP client for ethernet communications.
 	/// </summary>

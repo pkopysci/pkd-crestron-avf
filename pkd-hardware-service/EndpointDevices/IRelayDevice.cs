@@ -1,9 +1,8 @@
-﻿namespace pkd_hardware_service.EndpointDevices
-{
-	using pkd_common_utils.GenericEventArgs;
-	using BaseDevice;
-	using System;
+﻿using pkd_common_utils.GenericEventArgs;
+using pkd_hardware_service.BaseDevice;
 
+namespace pkd_hardware_service.EndpointDevices
+{
 	/// <summary>
 	/// Common properties and methods for basic relay device control.
 	/// </summary>

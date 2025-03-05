@@ -1,7 +1,5 @@
 ﻿namespace pkd_domain_service.Data.RoutingData
 {
-	using System.Collections.Generic;
-
 	public class Routing : BaseData
 	{
 		public bool RouteOnSourceSelect { get; set; }

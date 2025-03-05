@@ -1,21 +1,18 @@
-﻿namespace pkd_hardware_service.EndpointDevices
+﻿using Crestron.SimplSharp;
+using Crestron.SimplSharpPro;
+using Crestron.SimplSharpPro.GeneralIO;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.EndpointData;
+
+namespace pkd_hardware_service.EndpointDevices
 {
-	using Crestron.SimplSharp;
-	using Crestron.SimplSharpPro;
-	using Crestron.SimplSharpPro.GeneralIO;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.EndpointData;
-	using BaseDevice;
-	using System;
-
-
 	/// <summary>
 	/// Crestron CEN-IO-RY-401 relay controller via ethernet.
 	/// </summary>
 
-	public class CenIoRy401RelayDevice : BaseDevice, IEndpointDevice, IRelayDevice, IDisposable
+	public class CenIoRy401RelayDevice : BaseDevice.BaseDevice, IEndpointDevice, IRelayDevice, IDisposable
 	{
 		private readonly CenIoRy104 _device;
 		private bool _disposed;

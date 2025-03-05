@@ -1,7 +1,5 @@
 ﻿namespace pkd_common_utils.Validation
 {
-	using System;
-
 	/// <summary>
 	/// Helper class for checking method arguments.
 	/// </summary>

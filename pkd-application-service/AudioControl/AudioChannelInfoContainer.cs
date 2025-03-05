@@ -1,8 +1,7 @@
-﻿namespace pkd_application_service.AudioControl
-{
-	using Base;
-	using System.Collections.Generic;
+﻿using pkd_application_service.Base;
 
+namespace pkd_application_service.AudioControl
+{
 	/// <summary>
 	/// Data object for sending information to subscribers about a single audio channel in the system.
 	/// </summary>

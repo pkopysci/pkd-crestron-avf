@@ -1,8 +1,7 @@
-﻿namespace pkd_domain_service.Data.LightingData
-{
-	using pkd_domain_service.Data.ConnectionData;
-	using System.Collections.Generic;
+﻿using pkd_domain_service.Data.ConnectionData;
 
+namespace pkd_domain_service.Data.LightingData
+{
 	public class LightingInfo : BaseData
 	{
 		public string Label { get; set; } = string.Empty;

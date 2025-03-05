@@ -1,7 +1,5 @@
 ﻿namespace pkd_ui_service.Fusion
 {
-	using System;
-
 	internal class FusionDeviceData
 	{
 		public string Id { get; init; } = string.Empty;

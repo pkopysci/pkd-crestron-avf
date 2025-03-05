@@ -1,10 +1,9 @@
-﻿namespace pkd_application_service.AudioControl
-{
-	using Base;
-	using pkd_common_utils.GenericEventArgs;
-	using System;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.Base;
+using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_application_service.AudioControl
+{
 	/// <summary>
 	/// Common properties and methods for audio device control management.
 	/// </summary>

@@ -1,10 +1,9 @@
-﻿namespace pkd_ui_service.Fusion
-{
-	using pkd_common_utils.GenericEventArgs;
-	using DeviceUse;
-	using ErrorManagement;
-	using System;
+﻿using pkd_common_utils.GenericEventArgs;
+using pkd_ui_service.Fusion.DeviceUse;
+using pkd_ui_service.Fusion.ErrorManagement;
 
+namespace pkd_ui_service.Fusion
+{
 	internal interface IFusionInterface : IFusionDeviceUse, IFusionErrorManager, IDisposable
 	{
 		/// <summary>

@@ -1,35 +1,35 @@
 ﻿// ReSharper disable SuspiciousTypeConversion.Global
 
+using Crestron.SimplSharpPro;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.CameraData;
+using pkd_domain_service.Data.DisplayData;
+using pkd_domain_service.Data.DspData;
+using pkd_domain_service.Data.EndpointData;
+using pkd_domain_service.Data.LightingData;
+using pkd_domain_service.Data.RoutingData;
+using pkd_domain_service.Data.TransportDeviceData;
 using pkd_domain_service.Data.VideoWallData;
+using pkd_hardware_service.AudioDevices;
+using pkd_hardware_service.AvSwitchDevices;
+using pkd_hardware_service.BaseDevice;
+using pkd_hardware_service.CameraDevices;
+using pkd_hardware_service.DisplayDevices;
+using pkd_hardware_service.EndpointDevices;
+using pkd_hardware_service.LightingDevices;
+using pkd_hardware_service.TransportDevices;
 using pkd_hardware_service.VideoWallDevices;
 
 namespace pkd_hardware_service
 {
-	using Crestron.SimplSharpPro;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.DisplayData;
-	using pkd_domain_service.Data.DspData;
-	using pkd_domain_service.Data.EndpointData;
-	using pkd_domain_service.Data.LightingData;
-	using pkd_domain_service.Data.RoutingData;
-	using pkd_domain_service.Data.TransportDeviceData;
-	using AudioDevices;
-	using AvSwitchDevices;
-	using BaseDevice;
-	using DisplayDevices;
-	using EndpointDevices;
-	using LightingDevices;
-	using TransportDevices;
-	using System;
-
 	/// <summary>
 	/// Hardware management service for controlling real-world hardware devices.
 	/// </summary>
 	public class InfrastructureService : IInfrastructureService
 	{
-		private readonly CrestronControlSystem controlSystem;
-		private bool isDisposed;
+		private readonly CrestronControlSystem _controlSystem;
+		private bool _isDisposed;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="InfrastructureService"/> class.
@@ -39,7 +39,7 @@ namespace pkd_hardware_service
 		{
 			ParameterValidator.ThrowIfNull(controlSystem, "Ctor", nameof(controlSystem));
 
-			this.controlSystem = controlSystem;
+			_controlSystem = controlSystem;
 			Dsps = new DeviceContainer<IAudioControl>();
 			AvSwitchers = new DeviceContainer<IAvSwitcher>();
 			Displays = new DeviceContainer<IDisplayDevice>();
@@ -47,6 +47,7 @@ namespace pkd_hardware_service
 			CableBoxes = new DeviceContainer<ITransportDevice>();
 			LightingDevices = new DeviceContainer<ILightingDevice>();
 			VideoWallDevices = new DeviceContainer<IVideoWallDevice>();
+			CameraDevices = new DeviceContainer<ICameraDevice>();
 		}
 
 		/// <summary>
@@ -77,6 +78,9 @@ namespace pkd_hardware_service
 		
 		/// <inheritdoc/>
 		public DeviceContainer<IVideoWallDevice> VideoWallDevices { get; }
+		
+		/// <inheritdoc/>
+		public DeviceContainer<ICameraDevice> CameraDevices { get; }
 
 		/// <inheritdoc/>
 		public void AddAvSwitch(MatrixData avSwitch, Routing routingData)
@@ -89,7 +93,7 @@ namespace pkd_hardware_service
 					routingData.Sources,
 					routingData.Destinations,
 					avSwitch,
-					controlSystem,
+					_controlSystem,
 					this);
 
 				if (device == null) return;
@@ -114,7 +118,7 @@ namespace pkd_hardware_service
 			{
 				ParameterValidator.ThrowIfNull(display, "AddDisplay", nameof(display));
 				Logger.Info("Adding display {0} to collection.", display.Id);
-				var device = DisplayDeviceFactory.CreateDisplay(display, controlSystem, this);
+				var device = DisplayDeviceFactory.CreateDisplay(display, _controlSystem, this);
 				if (device != null)
 				{
 					Displays.AddDevice(display.Id, device);
@@ -139,7 +143,7 @@ namespace pkd_hardware_service
 			{
 				ParameterValidator.ThrowIfNull(dsp, "AddDsp", nameof(dsp));
 				Logger.Info("Adding DSP {0} to collection.", dsp.Id);
-				var device = AudioDeviceFactory.CreateDspDevice(dsp, controlSystem, this);
+				var device = AudioDeviceFactory.CreateDspDevice(dsp, _controlSystem, this);
 				if (device != null)
 				{
 					Dsps.AddDevice(dsp.Id, device);
@@ -214,7 +218,7 @@ namespace pkd_hardware_service
 			{
 				ParameterValidator.ThrowIfNull(endpointData, "AddEndpoint", nameof(endpointData));
 				Logger.Info("Adding endpoint {0} to collection.", endpointData.Id);
-				var endpoint = EndpointDeviceFactory.CreateEndpointDevice(endpointData, controlSystem);
+				var endpoint = EndpointDeviceFactory.CreateEndpointDevice(endpointData, _controlSystem);
 				if (endpoint == null) return;
 				Endpoints.AddDevice(endpoint.Id, endpoint);
 				endpoint.Register();
@@ -232,7 +236,7 @@ namespace pkd_hardware_service
 			{
 				ParameterValidator.ThrowIfNull(cableBox, "AddCableBox", nameof(cableBox));
 				Logger.Info("Adding cable box {0} to collection.", cableBox.Id);
-				var device = TransportDeviceFactory.CreateCableBox(cableBox, controlSystem, this);
+				var device = TransportDeviceFactory.CreateCableBox(cableBox, _controlSystem, this);
 				if (device == null) return;
 				CableBoxes.AddDevice(cableBox.Id, device);
 			}
@@ -247,7 +251,7 @@ namespace pkd_hardware_service
 		{
 			try
 			{
-				var lightingObj = LightingDeviceFactory.CreateLightingDevice(lighting, controlSystem, this);
+				var lightingObj = LightingDeviceFactory.CreateLightingDevice(lighting, _controlSystem, this);
 				if (lightingObj == null) return;
 				LightingDevices.AddDevice(lighting.Id, lightingObj);
 			}
@@ -260,9 +264,17 @@ namespace pkd_hardware_service
 		/// <inheritdoc/>
 		public void AddVideoWall(VideoWall videoWall)
 		{
-			var videoWallObj = VideoWallFactory.CreateVideoWallDevice(videoWall, controlSystem, this);
+			var videoWallObj = VideoWallFactory.CreateVideoWallDevice(videoWall, _controlSystem, this);
 			if (videoWallObj == null) return;
 			VideoWallDevices.AddDevice(videoWallObj.Id, videoWallObj);
+		}
+
+		/// <inheritdoc/>
+		public void AddCamera(Camera cameraData)
+		{
+			var device = CameraDeviceFactory.CreateCameraDevice(cameraData, _controlSystem, this);
+			if (device == null) return;
+			CameraDevices.AddDevice(device.Id, device);
 		}
 
 		/// <inheritdoc/>
@@ -307,6 +319,11 @@ namespace pkd_hardware_service
 				{
 					videoWallControl.Connect();
 				}
+
+				foreach (var camera in CameraDevices.GetAllDevices())
+				{
+					camera.Connect();
+				}
 			}
 			catch (Exception ex)
 			{
@@ -323,7 +340,7 @@ namespace pkd_hardware_service
 
 		private void Dispose(bool disposing)
 		{
-			if (isDisposed) return;
+			if (_isDisposed) return;
 			if (disposing)
 			{
 				Dsps.Dispose();
@@ -331,9 +348,11 @@ namespace pkd_hardware_service
 				AvSwitchers.Dispose();
 				Endpoints.Dispose();
 				LightingDevices.Dispose();
+				VideoWallDevices.Dispose();
+				CameraDevices.Dispose();
 			}
 
-			isDisposed = true;
+			_isDisposed = true;
 		}
 	}
 }

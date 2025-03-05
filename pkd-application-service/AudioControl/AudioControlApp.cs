@@ -1,19 +1,17 @@
 ﻿// ReSharper disable SuspiciousTypeConversion.Global
+
+using System.Collections.ObjectModel;
+using pkd_application_service.Base;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_hardware_service.AudioDevices;
+using pkd_hardware_service.BaseDevice;
+using pkd_hardware_service.Routable;
+
 namespace pkd_application_service.AudioControl
 {
-    using Base;
-    using pkd_common_utils.GenericEventArgs;
-    using pkd_common_utils.Logging;
-    using pkd_common_utils.Validation;
-    using pkd_hardware_service.AudioDevices;
-    using pkd_hardware_service.BaseDevice;
-    using pkd_hardware_service.Routable;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-
-    /// <summary>
+	/// <summary>
     /// Class for handling audio adjustments and updates.
     /// </summary>
     internal class AudioControlApp : IAudioControlApp, IAudioPresetApp, IDisposable

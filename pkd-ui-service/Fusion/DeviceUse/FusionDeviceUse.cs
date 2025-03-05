@@ -1,12 +1,10 @@
-﻿namespace pkd_ui_service.Fusion.DeviceUse
-{
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using System;
-	using System.Collections.Generic;
-	using System.Text;
-	using Crestron.SimplSharpPro.Fusion;
+﻿using System.Text;
+using Crestron.SimplSharpPro.Fusion;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
 
+namespace pkd_ui_service.Fusion.DeviceUse
+{
 	internal class FusionDeviceUse : IFusionDeviceUse
 	{
 		private const string DeviceTag = "Source";

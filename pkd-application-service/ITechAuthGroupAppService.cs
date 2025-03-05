@@ -1,8 +1,7 @@
-﻿namespace pkd_application_service
-{
-	using pkd_common_utils.GenericEventArgs;
-	using System;
+﻿using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_application_service
+{
 	/// <summary>
 	/// Interface for adding technician-level access during runtime, such as broadcasting requests to lock all interfaces that are not
 	/// tagged as a technician control point.

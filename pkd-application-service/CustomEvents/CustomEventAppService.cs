@@ -1,12 +1,9 @@
-﻿namespace pkd_application_service.CustomEvents
-{
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Linq;
+﻿using System.Collections.ObjectModel;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
 
+namespace pkd_application_service.CustomEvents
+{
 	/// <summary>
 	/// An extension of the base ApplicationService class. This adds custom event features, such as entering and exiting a "theater mode" or other non-standard
 	/// system states.

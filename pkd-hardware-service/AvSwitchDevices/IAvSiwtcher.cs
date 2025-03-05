@@ -1,8 +1,8 @@
-﻿namespace pkd_hardware_service.AvSwitchDevices
-{
-	using BaseDevice;
-	using Routable;
+﻿using pkd_hardware_service.BaseDevice;
+using pkd_hardware_service.Routable;
 
+namespace pkd_hardware_service.AvSwitchDevices
+{
 	/// <summary>
 	/// Properties and methods common to all devices that are capable of audio and video routing.
 	/// </summary>

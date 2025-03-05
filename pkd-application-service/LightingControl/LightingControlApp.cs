@@ -1,16 +1,14 @@
-﻿namespace pkd_application_service.LightingControl
-{
-	using Base;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.LightingData;
-	using pkd_hardware_service.BaseDevice;
-	using pkd_hardware_service.LightingDevices;
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.Base;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.LightingData;
+using pkd_hardware_service.BaseDevice;
+using pkd_hardware_service.LightingDevices;
 
+namespace pkd_application_service.LightingControl
+{
 	/// <summary>
 	/// Application control class for handling lighting requests and events.
 	/// </summary>

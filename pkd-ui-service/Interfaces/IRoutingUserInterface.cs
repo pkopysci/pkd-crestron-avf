@@ -1,11 +1,10 @@
-﻿namespace pkd_ui_service.Interfaces
-{
-	using pkd_application_service.AvRouting;
-	using pkd_application_service.Base;
-	using pkd_common_utils.GenericEventArgs;
-	using System;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.AvRouting;
+using pkd_application_service.Base;
+using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_ui_service.Interfaces
+{
 	/// <summary>
 	/// Required events, methods and properties for implementing a user interface that supports AV routing.
 	/// </summary>

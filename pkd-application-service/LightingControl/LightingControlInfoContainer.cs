@@ -1,8 +1,7 @@
-﻿namespace pkd_application_service.LightingControl
-{
-	using Base;
-	using System.Collections.Generic;
+﻿using pkd_application_service.Base;
 
+namespace pkd_application_service.LightingControl
+{
 	/// <summary>
 	/// Data object representing a single lighting control object managed by the application service.
 	/// </summary>

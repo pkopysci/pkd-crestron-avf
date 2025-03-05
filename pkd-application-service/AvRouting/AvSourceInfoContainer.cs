@@ -1,7 +1,6 @@
-﻿namespace pkd_application_service.AvRouting;
+﻿using pkd_application_service.Base;
 
-using Base;
-using System.Collections.Generic;
+namespace pkd_application_service.AvRouting;
 
 /// <summary>
 /// Container object for sending information a single audio/video source to subscribers.

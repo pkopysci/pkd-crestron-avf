@@ -1,5 +1,6 @@
-namespace pkd_hardware_service;
 using Crestron.SimplSharpPro;
+
+namespace pkd_hardware_service;
 
 /// <summary>
 /// Required methods for implementing a hardware plugin that requires direct hooks into the root control system object.

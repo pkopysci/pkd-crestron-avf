@@ -1,21 +1,20 @@
 ﻿// ReSharper disable SuspiciousTypeConversion.Global
 
 using System.Collections.ObjectModel;
+using Crestron.SimplSharpPro;
+using pkd_application_service;
+using pkd_application_service.CameraControl;
+using pkd_application_service.CustomEvents;
+using pkd_application_service.UserInterface;
 using pkd_application_service.VideoWallControl;
+using pkd_common_utils.FileOps;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_ui_service.Fusion;
+using pkd_ui_service.Interfaces;
 
 namespace pkd_ui_service
 {
-	using Crestron.SimplSharpPro;
-	using pkd_application_service;
-	using pkd_application_service.CustomEvents;
-	using pkd_application_service.UserInterface;
-	using pkd_common_utils.FileOps;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using Fusion;
-	using Interfaces;
-
-
 	/// <summary>
 	/// Helper class for creating presentation service objects.
 	/// </summary>
@@ -117,6 +116,11 @@ namespace pkd_ui_service
 				var wallDevices = (appService as IVideoWallApp)?.GetAllVideoWalls() ??
 				                  ReadOnlyCollection<VideoWallInfoContainer>.Empty;
 				videoWallUi.SetVideoWallData(wallDevices);
+			}
+
+			if (device is ICameraUserInterface cameraUi && appService is ICameraControlApp cameraControlApp)
+			{
+				cameraUi.SetCameraData(cameraControlApp.GetAllCameraDeviceInfo());
 			}
 
 			return device;

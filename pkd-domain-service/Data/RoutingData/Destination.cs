@@ -1,7 +1,5 @@
 ﻿namespace pkd_domain_service.Data.RoutingData
 {
-	using System.Collections.Generic;
-	
 	public class Destination : BaseData
 	{
 		public string Label { get; set; } = string.Empty;

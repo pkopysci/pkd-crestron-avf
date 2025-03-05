@@ -1,9 +1,7 @@
-﻿namespace pkd_ui_service.Utility
-{
-	using pkd_application_service;
-	using System;
-	using System.Collections.Generic;
+﻿using pkd_application_service;
 
+namespace pkd_ui_service.Utility
+{
 	internal static class TransportUtilities
 	{
 		private static readonly Dictionary<TransportTypes, Action<IApplicationService, string>> Actions = new Dictionary<TransportTypes, Action<IApplicationService, string>>()

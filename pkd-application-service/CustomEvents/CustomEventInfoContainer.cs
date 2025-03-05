@@ -1,8 +1,7 @@
-﻿namespace pkd_application_service.CustomEvents
-{
-	using Base;
-	using System.Collections.Generic;
+﻿using pkd_application_service.Base;
 
+namespace pkd_application_service.CustomEvents
+{
 	/// <summary>
 	/// Data container for a single custom event.
 	/// </summary>

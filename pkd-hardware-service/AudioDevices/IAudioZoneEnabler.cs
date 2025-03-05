@@ -1,8 +1,7 @@
-﻿namespace pkd_hardware_service.AudioDevices
-{
-	using System;
-	using pkd_common_utils.GenericEventArgs;
+﻿using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_hardware_service.AudioDevices
+{
 	/// <summary>
 	/// events, properties, and methods for controlling which audio output channels a given input channel should be sending signal
 	/// to.

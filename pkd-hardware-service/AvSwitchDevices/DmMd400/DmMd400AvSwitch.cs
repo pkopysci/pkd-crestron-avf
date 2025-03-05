@@ -1,20 +1,17 @@
-﻿namespace pkd_hardware_service.AvSwitchDevices.DmMd400
-{
-	using System;
-	using System.Collections.Generic;
-	using Crestron.SimplSharpPro;
-	using Crestron.SimplSharpPro.DM;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.RoutingData;
-	using AudioDevices;
-	using BaseDevice;
+﻿using Crestron.SimplSharpPro;
+using Crestron.SimplSharpPro.DM;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.RoutingData;
+using pkd_hardware_service.AudioDevices;
 
+namespace pkd_hardware_service.AvSwitchDevices.DmMd400
+{
 	/// <summary>
 	/// Wrapper class for controlling a Crestron DM-MD-400 tx/rx pair.
 	/// </summary>
-	public class DmMd400AvSwitch : BaseDevice, IAvSwitcher, IDisposable, IAudioControl
+	public class DmMd400AvSwitch : BaseDevice.BaseDevice, IAvSwitcher, IDisposable, IAudioControl
 	{
 		private const int VolMax = 200;
 		private const int VolMin = -800;

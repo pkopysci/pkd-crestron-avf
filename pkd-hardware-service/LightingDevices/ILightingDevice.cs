@@ -1,10 +1,8 @@
-﻿namespace pkd_hardware_service.LightingDevices;
-
+﻿using System.Collections.ObjectModel;
 using pkd_common_utils.GenericEventArgs;
-using BaseDevice;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using pkd_hardware_service.BaseDevice;
+
+namespace pkd_hardware_service.LightingDevices;
 
 /// <summary>
 /// Required events, methods, and properties required for creating a device control plugin.

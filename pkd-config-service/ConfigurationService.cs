@@ -1,19 +1,15 @@
-﻿namespace pkd_config_service
-{
-    using Crestron.SimplSharp;
-    using Crestron.SimplSharp.Ssh;
-    using Crestron.SimplSharpPro;
-    using pkd_common_utils.FileOps;
-    using pkd_common_utils.Logging;
-    using pkd_common_utils.NetComs;
-    using pkd_domain_service;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
+﻿using System.Text;
+using Crestron.SimplSharp;
+using Crestron.SimplSharp.Ssh;
+using Crestron.SimplSharpPro;
+using pkd_common_utils.FileOps;
+using pkd_common_utils.Logging;
+using pkd_common_utils.NetComs;
+using pkd_domain_service;
 
-    /// <summary>
+namespace pkd_config_service
+{
+	/// <summary>
     /// Class for loading configuration data from a JSON file.
     /// </summary>
     /// <remarks>

@@ -1,11 +1,10 @@
-﻿namespace pkd_hardware_service.EndpointDevices
-{
-	using Crestron.SimplSharpPro;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.EndpointData;
-	using System;
+﻿using Crestron.SimplSharpPro;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.EndpointData;
 
+namespace pkd_hardware_service.EndpointDevices
+{
 	/// <summary>
 	/// Factory class used to build a hardware control interface for all endpoint types (relay, ir, rs-232, ect.)
 	/// </summary>

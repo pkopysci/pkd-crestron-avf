@@ -1,8 +1,7 @@
-﻿namespace pkd_hardware_service.Routable
-{
-	using System;
-	using pkd_common_utils.GenericEventArgs;
+﻿using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_hardware_service.Routable
+{
 	/// <summary>
 	/// Common methods and attributes for all devices that can route video.
 	/// </summary>

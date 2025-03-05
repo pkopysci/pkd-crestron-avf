@@ -1,10 +1,9 @@
-﻿namespace pkd_application_service.UserInterface
-{
-	using Base;
-	using pkd_common_utils.Validation;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.Base;
+using pkd_common_utils.Validation;
 
+namespace pkd_application_service.UserInterface
+{
 	/// <summary>
 	/// Data object for sending information about an interface to subscribers.
 	/// </summary>

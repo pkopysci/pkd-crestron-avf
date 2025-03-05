@@ -1,12 +1,9 @@
-﻿namespace pkd_ui_service.Fusion.ErrorManagement
-{
-	using Crestron.SimplSharpPro.Fusion;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
+﻿using Crestron.SimplSharpPro.Fusion;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
 
+namespace pkd_ui_service.Fusion.ErrorManagement
+{
 	/// <summary>
 	/// Queue-based implementation of the IFusionErrorManager interface.
 	/// </summary>

@@ -1,7 +1,5 @@
 ﻿namespace pkd_application_service.Base
 {
-	using System.Collections.Generic;
-
 	/// <summary>
 	/// data object for sending information about a Transport device (Blu-ray, Cable TV, DVD, etc.) to subscribers.
 	/// </summary>

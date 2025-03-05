@@ -1,8 +1,7 @@
-﻿namespace pkd_ui_service.Interfaces
-{
-	using pkd_common_utils.GenericEventArgs;
-	using System;
+﻿using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_ui_service.Interfaces
+{
 	/// <summary>
 	/// Interface that should be implemented if the user interface allows touch-settable audio level controls.
 	/// </summary>

@@ -1,21 +1,18 @@
-﻿namespace pkd_hardware_service.AvSwitchDevices.DmMd8x1
-{
-    using Crestron.SimplSharpPro;
-    using Crestron.SimplSharpPro.DM;
-    using pkd_common_utils.GenericEventArgs;
-    using pkd_common_utils.Logging;
-    using pkd_common_utils.Validation;
-    using pkd_domain_service.Data.RoutingData;
-    using BaseDevice;
-    using AudioDevices;
-    using SimplSharpProDM;
-    using System;
-    using System.Collections.Generic;
+﻿using Crestron.SimplSharpPro;
+using Crestron.SimplSharpPro.DM;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.RoutingData;
+using pkd_hardware_service.AudioDevices;
+using SimplSharpProDM;
 
+namespace pkd_hardware_service.AvSwitchDevices.DmMd8x1
+{
     /// <summary>
     /// Wrapper class for controlling a Crestron DM-MD-8x1 AV Switch.
     /// </summary>
-    public class DmMd8X1AvSwitch : BaseDevice, IAvSwitcher, IDisposable, IAudioControl
+    public class DmMd8X1AvSwitch : BaseDevice.BaseDevice, IAvSwitcher, IDisposable, IAudioControl
     {
         private const short VolMin = -800;
         private const short VolMax = 100;

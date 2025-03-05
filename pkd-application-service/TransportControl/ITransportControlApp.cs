@@ -1,8 +1,8 @@
-﻿namespace pkd_application_service.TransportControl
-{
-	using System.Collections.ObjectModel;
-	using Base;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.Base;
 
+namespace pkd_application_service.TransportControl
+{
 	/// <summary>
 	/// Common attributes and methods for controlling one or more transport devices.
 	/// </summary>

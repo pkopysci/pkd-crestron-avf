@@ -1,7 +1,5 @@
 ﻿namespace pkd_domain_service.Data.LightingData
 {
-	using System.Collections.Generic;
-	
 	public class LightingAttribute : BaseData
 	{
 		public string Label { get; set; } = string.Empty;

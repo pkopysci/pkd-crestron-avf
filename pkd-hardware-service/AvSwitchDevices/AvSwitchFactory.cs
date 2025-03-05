@@ -1,15 +1,14 @@
-﻿namespace pkd_hardware_service.AvSwitchDevices
-{
-	using Crestron.SimplSharpPro;
-	using pkd_common_utils.FileOps;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.RoutingData;
-	using AvIpMatrix;
-	using DmMd400;
-	using DmMd8x1;
-	using System.Collections.Generic;
+﻿using Crestron.SimplSharpPro;
+using pkd_common_utils.FileOps;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.RoutingData;
+using pkd_hardware_service.AvIpMatrix;
+using pkd_hardware_service.AvSwitchDevices.DmMd400;
+using pkd_hardware_service.AvSwitchDevices.DmMd8x1;
 
+namespace pkd_hardware_service.AvSwitchDevices
+{
 	/// <summary>
 	/// Factory class used to build a hardware control interface for all AV switching devices.
 	/// </summary>

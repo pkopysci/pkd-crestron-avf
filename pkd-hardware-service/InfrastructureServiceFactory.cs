@@ -1,9 +1,9 @@
-﻿namespace pkd_hardware_service
-{
-	using Crestron.SimplSharpPro;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service;
+﻿using Crestron.SimplSharpPro;
+using pkd_common_utils.Validation;
+using pkd_domain_service;
 
+namespace pkd_hardware_service
+{
 	/// <summary>
 	/// Helper class for creating the IInfrastructureService object that will control the actual hardware in the system.
 	/// </summary>
@@ -62,8 +62,11 @@
 			{
 				hwService.AddVideoWall(videoWall);
 			}
-			
-			// TODO: Cameras
+
+			foreach (var camera in domain.Cameras)
+			{
+				hwService.AddCamera(camera);
+			}
 
 			return hwService;
 		}

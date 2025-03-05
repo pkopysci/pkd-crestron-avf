@@ -1,8 +1,7 @@
-﻿namespace pkd_application_service.UserInterface
-{
-	using Base;
-	using System.Collections.Generic;
+﻿using pkd_application_service.Base;
 
+namespace pkd_application_service.UserInterface
+{
 	/// <summary>
 	/// Data object for sending UI menu items to subscribers.
 	/// </summary>

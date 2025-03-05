@@ -1,23 +1,23 @@
-﻿using pkd_domain_service.Data.VideoWallData;
+﻿using pkd_domain_service.Data.CameraData;
+using pkd_domain_service.Data.DisplayData;
+using pkd_domain_service.Data.DspData;
+using pkd_domain_service.Data.EndpointData;
+using pkd_domain_service.Data.LightingData;
+using pkd_domain_service.Data.RoutingData;
+using pkd_domain_service.Data.TransportDeviceData;
+using pkd_domain_service.Data.VideoWallData;
+using pkd_hardware_service.AudioDevices;
+using pkd_hardware_service.AvSwitchDevices;
+using pkd_hardware_service.BaseDevice;
+using pkd_hardware_service.CameraDevices;
+using pkd_hardware_service.DisplayDevices;
+using pkd_hardware_service.EndpointDevices;
+using pkd_hardware_service.LightingDevices;
+using pkd_hardware_service.TransportDevices;
 using pkd_hardware_service.VideoWallDevices;
 
 namespace pkd_hardware_service
 {
-	using pkd_domain_service.Data.DisplayData;
-	using pkd_domain_service.Data.DspData;
-	using pkd_domain_service.Data.EndpointData;
-	using pkd_domain_service.Data.LightingData;
-	using pkd_domain_service.Data.RoutingData;
-	using pkd_domain_service.Data.TransportDeviceData;
-	using AudioDevices;
-	using AvSwitchDevices;
-	using BaseDevice;
-	using DisplayDevices;
-	using EndpointDevices;
-	using LightingDevices;
-	using TransportDevices;
-	using System;
-
 	/// <summary>
 	/// Properties and methods for the Infrastructure service that provides hardware control.
 	/// </summary>
@@ -57,6 +57,11 @@ namespace pkd_hardware_service
 		/// Gets a collection of video wall controllers that are in the system configuration.
 		/// </summary>
 		DeviceContainer<IVideoWallDevice> VideoWallDevices { get; }
+		
+		/// <summary>
+		/// Gets a collection of controllable cameras in the system configuration.
+		/// </summary>
+		DeviceContainer<ICameraDevice> CameraDevices { get; }
 		
 		/// <summary>
 		/// Add a DSP control object to the current collection. Any DSP in the collection with
@@ -113,6 +118,12 @@ namespace pkd_hardware_service
 		/// </summary>
 		/// <param name="videoWall">The config data for the video wall device to add.</param>
 		void AddVideoWall(VideoWall videoWall);
+
+		/// <summary>
+		/// Add a camera controller to the current collection.
+		/// </summary>
+		/// <param name="cameraData">The config data for the camera device to add.</param>
+		void AddCamera(Camera cameraData);
 
 		/// <summary>
 		/// Initialize all hardware connections and connect to the devices for control.

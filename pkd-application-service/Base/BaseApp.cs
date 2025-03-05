@@ -1,12 +1,10 @@
-﻿namespace pkd_application_service.Base
-{
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data;
-	using pkd_hardware_service.BaseDevice;
-	using System;
-	using System.Collections.ObjectModel;
-	using System.Linq;
+﻿using System.Collections.ObjectModel;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data;
+using pkd_hardware_service.BaseDevice;
 
+namespace pkd_application_service.Base
+{
 	/// <summary>
 	/// Data container object that assists in storing a data type and referencing it by ID.
 	/// </summary>

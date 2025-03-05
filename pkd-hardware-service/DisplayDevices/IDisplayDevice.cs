@@ -1,9 +1,8 @@
-﻿namespace pkd_hardware_service.DisplayDevices
-{
-	using System;
-	using pkd_common_utils.GenericEventArgs;
-	using BaseDevice;
+﻿using pkd_common_utils.GenericEventArgs;
+using pkd_hardware_service.BaseDevice;
 
+namespace pkd_hardware_service.DisplayDevices
+{
 	/// <summary>
 	/// Common attributes and methods of all video display devices.
 	/// </summary>

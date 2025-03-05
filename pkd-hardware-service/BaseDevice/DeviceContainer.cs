@@ -1,12 +1,9 @@
-﻿namespace pkd_hardware_service.BaseDevice
-{
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Linq;
+﻿using System.Collections.ObjectModel;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
 
+namespace pkd_hardware_service.BaseDevice
+{
 	/// <summary>
 	/// Manager class for adding, removing, and finding a device of the given type.
 	/// </summary>

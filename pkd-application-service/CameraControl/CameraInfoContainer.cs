@@ -29,6 +29,16 @@ public class CameraInfoContainer : InfoContainer
     public bool SupportsSavingPresets { get; init; }
     
     /// <summary>
+    /// True = device implements zoom in/out controls, false = zoom not supported.
+    /// </summary>
+    public bool SupportsZoom { get; init; }
+    
+    /// <summary>
+    /// True = device implements pan/tilt controls, false = not supported.
+    /// </summary>
+    public bool SupportsPanTilt { get; init; }
+    
+    /// <summary>
     /// True = device power is on, false = device power is off.
     /// </summary>
     public bool PowerState { get; set; }

@@ -31,8 +31,7 @@ internal static class CameraDeviceFactory
             cameraData.Id,
             cameraData.Label,
             cameraData.Connection.Authentication.UserName,
-            cameraData.Connection.Authentication.Password,
-            cameraData.Tags);
+            cameraData.Connection.Authentication.Password);
 
         if (!string.IsNullOrEmpty(device.Manufacturer))
         {

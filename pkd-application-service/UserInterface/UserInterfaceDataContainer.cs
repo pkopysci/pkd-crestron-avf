@@ -55,11 +55,6 @@ namespace pkd_application_service.UserInterface
 		public string HelpContact { get; private set; }
 
 		/// <summary>
-		/// Gets the specific model of the UI, such as TSW-770, TSW-760, XPANEL, etc.
-		/// </summary>
-		public string Model { get; private set; }
-
-		/// <summary>
 		/// Gets the default activity that should be displayed on the UI during startup.
 		/// </summary>
 		public string DefaultActivity { get; private set; }

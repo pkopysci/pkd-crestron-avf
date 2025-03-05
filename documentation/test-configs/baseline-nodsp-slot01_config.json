@@ -317,7 +317,46 @@
       }
     ]
   },
-  "Cameras": [],
+  "Cameras": [
+    {
+      "Id": "cam01",
+      "Label": "PTZ Camera",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator 9001",
+      "ClassName": "CameraEmulator",
+      "Tags": [],
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "192.168.1.253",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        }
+      },
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1"
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2"
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3"
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4"
+        }
+      ]
+    }
+  ],
   "CableBoxes": [
     {
       "Id": "tv01",

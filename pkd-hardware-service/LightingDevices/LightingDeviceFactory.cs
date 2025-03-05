@@ -45,8 +45,17 @@
 				data.Connection.Authentication.Password,
 				data.Tags);
 
+			if (!string.IsNullOrEmpty(data.Manufacturer))
+			{
+				device.Manufacturer = data.Manufacturer;
+			}
+
+			if (!string.IsNullOrEmpty(data.Model))
+			{
+				device.Model = data.Model;
+			}
+			
 			return device;
 		}
 	}
-
 }

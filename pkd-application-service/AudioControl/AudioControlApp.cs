@@ -18,11 +18,11 @@ namespace pkd_application_service.AudioControl
     /// </summary>
     internal class AudioControlApp : IAudioControlApp, IAudioPresetApp, IDisposable
 	{
-		private readonly DeviceContainer<IAudioControl> dspDevices;
-		private readonly List<AudioChannelInfoContainer> inputChannels;
-		private readonly List<AudioChannelInfoContainer> outputChannels;
-		private readonly Dictionary<string, List<InfoContainer>> allPresets;
-		private bool disposed;
+		private readonly DeviceContainer<IAudioControl> _dspDevices;
+		private readonly List<AudioChannelInfoContainer> _inputChannels;
+		private readonly List<AudioChannelInfoContainer> _outputChannels;
+		private readonly Dictionary<string, List<InfoContainer>> _allPresets;
+		private bool _disposed;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AudioControlApp"/> class.
@@ -42,10 +42,10 @@ namespace pkd_application_service.AudioControl
 			ParameterValidator.ThrowIfNull(outputChannels, "Ctor", nameof(outputChannels));
 			ParameterValidator.ThrowIfNull(allPresets, "Ctor", nameof(allPresets));
 
-			this.dspDevices = dspDevices;
-			this.inputChannels = inputChannels;
-			this.outputChannels = outputChannels;
-			this.allPresets = allPresets;
+			_dspDevices = dspDevices;
+			_inputChannels = inputChannels;
+			_outputChannels = outputChannels;
+			_allPresets = allPresets;
 			SubscribeDevices();
 		}
 
@@ -78,22 +78,26 @@ namespace pkd_application_service.AudioControl
 		/// <inheritdoc/>
 		public ReadOnlyCollection<AudioChannelInfoContainer> GetAudioInputChannels()
 		{
-			return new ReadOnlyCollection<AudioChannelInfoContainer>(inputChannels);
+			return new ReadOnlyCollection<AudioChannelInfoContainer>(_inputChannels);
 		}
 
 		/// <inheritdoc/>
 		public ReadOnlyCollection<AudioChannelInfoContainer> GetAudioOutputChannels()
 		{
-			return new ReadOnlyCollection<AudioChannelInfoContainer>(outputChannels);
+			return new ReadOnlyCollection<AudioChannelInfoContainer>(_outputChannels);
 		}
 
 		/// <inheritdoc/>
 		public ReadOnlyCollection<InfoContainer> GetAllAudioDspDevices()
 		{
 			var deviceInfo = new List<InfoContainer>();
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
-				deviceInfo.Add(new InfoContainer(dsp.Id, dsp.Label, string.Empty, [], dsp.IsOnline));
+				deviceInfo.Add(new InfoContainer(dsp.Id, dsp.Label, string.Empty, [], dsp.IsOnline)
+				{
+					Manufacturer = dsp.Manufacturer,
+					Model = dsp.Model,
+				});
 			}
 
 			return new ReadOnlyCollection<InfoContainer>(deviceInfo);
@@ -102,7 +106,7 @@ namespace pkd_application_service.AudioControl
 		/// <inheritdoc/>
 		public bool QueryAudioDspConnectionStatus(string id)
 		{
-			var device = dspDevices.GetDevice(id);
+			var device = _dspDevices.GetDevice(id);
 			if (device == null)
 			{
 				Logger.Error("AudioControlApp.QueryAudioDspConnectionStatus({0}) - no device with that id.", id);
@@ -122,7 +126,7 @@ namespace pkd_application_service.AudioControl
 				return 0;
 			}
 
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioInputIds().Contains(id))
 				{
@@ -143,7 +147,7 @@ namespace pkd_application_service.AudioControl
 				return 0;
 			}
 
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioOutputIds().Contains(id))
 				{
@@ -165,7 +169,7 @@ namespace pkd_application_service.AudioControl
 			}
 
 			Logger.Debug("AudioControlApp.QueryAudioOutputMute({0})", id);
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioOutputIds().Contains(id))
 				{
@@ -186,7 +190,7 @@ namespace pkd_application_service.AudioControl
 				return string.Empty;
 			}
 
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioOutputIds().Contains(id) && dsp is IAudioRoutable routable)
 				{
@@ -207,7 +211,7 @@ namespace pkd_application_service.AudioControl
 				return false;
 			}
 
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioInputIds().Contains(id))
 				{
@@ -232,7 +236,7 @@ namespace pkd_application_service.AudioControl
 				return false;
 			}
 
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (dsp is not IAudioZoneEnabler) continue;
 				if ((dsp.GetAudioInputIds().Contains(channelId) || dsp.GetAudioOutputIds().Contains(channelId))
@@ -259,7 +263,7 @@ namespace pkd_application_service.AudioControl
 			Logger.Debug("ApplicationService.AudioControlApp.SetAudioInputLevel({0},{1}", id, level);
 
 			var found = false;
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (!dsp.GetAudioInputIds().Contains(id)) continue;
 				dsp.SetAudioInputLevel(id, level);
@@ -279,7 +283,7 @@ namespace pkd_application_service.AudioControl
 			ParameterValidator.ThrowIfNullOrEmpty(id, "SetAudioInputMute", "id");
 
 			bool found = false;
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioInputIds().Contains(id))
 				{
@@ -306,7 +310,7 @@ namespace pkd_application_service.AudioControl
 			}
 
 			bool found = false;
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioOutputIds().Contains(id))
 				{
@@ -328,7 +332,7 @@ namespace pkd_application_service.AudioControl
 			ParameterValidator.ThrowIfNullOrEmpty(id, "SetAudioOutputMute", "id");
 
 			var found = false;
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (!dsp.GetAudioOutputIds().Contains(id)) continue;
 				found = true;
@@ -350,7 +354,7 @@ namespace pkd_application_service.AudioControl
 				Logger.Error("AudioControlApp.SetAudioOutputRoute({0}, {1}) - srcId and destId cannot be null or empty.", srcId, destId);
 				return;
 			}
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (!dsp.GetAudioOutputIds().Contains(destId) || dsp is not IAudioRoutable routable) continue;
 				routable.RouteAudio(srcId, destId);
@@ -369,7 +373,7 @@ namespace pkd_application_service.AudioControl
 				return;
 			}
 
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (dsp is not IAudioZoneEnabler enabler) continue;
 				if (dsp.GetAudioInputIds().Contains(channelId) || dsp.GetAudioOutputIds().Contains(channelId))
@@ -382,7 +386,7 @@ namespace pkd_application_service.AudioControl
 		/// <inheritdoc/>
 		public ReadOnlyCollection<InfoContainer> QueryDspAudioPresets(string dspId)
 		{
-			return allPresets.TryGetValue(dspId, out var presets) ? 
+			return _allPresets.TryGetValue(dspId, out var presets) ? 
 				new ReadOnlyCollection<InfoContainer>(presets) :
 				new ReadOnlyCollection<InfoContainer>(new List<InfoContainer>());
 		}
@@ -390,7 +394,7 @@ namespace pkd_application_service.AudioControl
 		/// <inheritdoc/>
 		public void RecallAudioPreset(string dspId, string presetId)
 		{
-			var dsp = dspDevices.GetDevice(dspId);
+			var dsp = _dspDevices.GetDevice(dspId);
 			if (dsp == null)
 			{
 				Logger.Error("AudioControlApp.RecallAudioPreset({0}, {1}) - DSP not found.", dspId, presetId);
@@ -408,7 +412,7 @@ namespace pkd_application_service.AudioControl
 
 		private void SubscribeDevices()
 		{
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				dsp.ConnectionChanged += DspConnectionChangeHandler;
 				dsp.AudioInputLevelChanged += AudioInputLevelChangeHandler;
@@ -430,7 +434,7 @@ namespace pkd_application_service.AudioControl
 
 		private void UnsubscribeDevices()
 		{
-			foreach (var dsp in dspDevices.GetAllDevices())
+			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				dsp.ConnectionChanged -= DspConnectionChangeHandler;
 				dsp.AudioInputLevelChanged -= AudioInputLevelChangeHandler;
@@ -479,13 +483,13 @@ namespace pkd_application_service.AudioControl
 
 		private void Dispose(bool disposing)
 		{
-			if (disposed) return;
+			if (_disposed) return;
 			if (disposing)
 			{
 				UnsubscribeDevices();
 			}
 
-			disposed = true;
+			_disposed = true;
 		}
 
 		private void Notify(EventHandler<GenericSingleEventArgs<string>>? handler, string arg)

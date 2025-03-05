@@ -38,6 +38,16 @@
 		/// Gets the user-friendly label of this data item.
 		/// </summary>
 		public string Label { get; protected set; }
+		
+		/// <summary>
+		/// If relevant, this is the company that creates the represented device. Defaults to the empty string.
+		/// </summary>
+		public string Manufacturer { get; init; } = string.Empty;
+		
+		/// <summary>
+		/// If relevant, this is the device name as defined by the manufacturer. Defaults to the empty string.
+		/// </summary>
+		public string Model { get; init; } = string.Empty;
 
 		/// <summary>
 		/// Gets the Icon key for this data item.

@@ -54,7 +54,11 @@
 					[],
 					hardware.SupportsColorButtons,
 					hardware.SupportsDiscretePower,
-					favorites);
+					favorites)
+				{
+					Manufacturer = item.Manufacturer,
+					Model = item.Model,
+				};
 
 				boxes.Add(cableBox);
 			}

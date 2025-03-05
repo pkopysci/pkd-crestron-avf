@@ -82,6 +82,16 @@
 				displayData.Label,
 				displayData.Id);
 
+			if (!string.IsNullOrEmpty(displayData.Manufacturer))
+			{
+				ccd.Manufacturer = displayData.Manufacturer;
+			}
+
+			if (!string.IsNullOrEmpty(displayData.Model))
+			{
+				ccd.Model = displayData.Model;
+			}
+			
 			return ccd;
 		}
 
@@ -137,6 +147,16 @@
 					displayData.Connection.Port,
 					displayData.Label,
 					displayData.Id);
+
+				if (!string.IsNullOrEmpty(displayData.Manufacturer))
+				{
+					device.Manufacturer = displayData.Manufacturer;
+				}
+
+				if (!string.IsNullOrEmpty(displayData.Model))
+				{
+					device.Model = displayData.Model;
+				}
 			}
 			else
 			{

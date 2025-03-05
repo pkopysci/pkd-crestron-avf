@@ -22,6 +22,12 @@
 
 		/// <inheritdoc/>
 		public virtual bool IsInitialized { get; protected set; }
+		
+		/// <inheritdoc/>
+		public string Manufacturer { get; set; } = string.Empty;
+		
+		/// <inheritdoc/>
+		public string Model { get; set; } = string.Empty;
 
 		/// <inheritdoc/>
 		public virtual void Connect() { }

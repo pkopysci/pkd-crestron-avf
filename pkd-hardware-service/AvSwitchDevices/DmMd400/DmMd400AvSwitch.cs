@@ -18,11 +18,11 @@
 	{
 		private const int VolMax = 200;
 		private const int VolMin = -800;
-		private readonly HdMdNxMHdmiOutput audioOutput;
-		private readonly HdMd400CE md400;
-		private bool isDisposed;
-		private readonly List<string> inputIds;
-		private readonly List<string> outputIds;
+		private readonly HdMdNxMHdmiOutput _audioOutput;
+		private readonly HdMd400CE _md400;
+		private bool _isDisposed;
+		private readonly List<string> _inputIds;
+		private readonly List<string> _outputIds;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DmMd400AvSwitch"/> class.
@@ -34,16 +34,18 @@
 			ParameterValidator.ThrowIfNull(config, "CTor", nameof(config));
 			ParameterValidator.ThrowIfNull(parent, "CTor", nameof(parent));
 
-			inputIds = [];
-			outputIds = [];
+			_inputIds = [];
+			_outputIds = [];
 			Id = config.Id;
 			Label = config.Label;
 
-			md400 = new HdMd400CE((uint)config.Connection.Port, config.Connection.Host, parent);
-			audioOutput = (HdMdNxMHdmiOutput)md400.Outputs[1]!;
-			md400.OnlineStatusChange += Md400_OnlineStatusChange;
-			md400.DMOutputChange += Md400_DMOutputChange;
-			md400.DMSystemChange += Md400_DMSystemChange;
+			_md400 = new HdMd400CE((uint)config.Connection.Port, config.Connection.Host, parent);
+			_audioOutput = (HdMdNxMHdmiOutput)_md400.Outputs[1]!;
+			_md400.OnlineStatusChange += Md400_OnlineStatusChange;
+			_md400.DMOutputChange += Md400_DMOutputChange;
+			_md400.DMSystemChange += Md400_DMSystemChange;
+			Manufacturer = "Crestron";
+			Model = "HD-MD-400";
 		}
 
 		/// <summary>
@@ -78,27 +80,27 @@
 		/// <inheritdoc/>
 		public IEnumerable<string> GetAudioInputIds()
 		{
-			return inputIds;
+			return _inputIds;
 		}
 
 		/// <inheritdoc/>
 		public IEnumerable<string> GetAudioOutputIds()
 		{
-			return outputIds;
+			return _outputIds;
 		}
 
 		/// <inheritdoc/>
 		public void AddInputChannel(string id, string levelTag, string muteTag, int bankIndex, int levelMax, int levelMin, int routerIndex)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(id, "AddInputChannel", "id");
-			inputIds.Add(id);
+			_inputIds.Add(id);
 		}
 
 		/// <inheritdoc/>
 		public void AddOutputChannel(string id, string levelTag, string muteTag, string routerTag, int routerIndex, int bankIndex, int levelMax, int levelMin)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(id, "AddOutputChannel", "id");
-			outputIds.Add(id);
+			_outputIds.Add(id);
 		}
 
 		/// <summary>
@@ -116,33 +118,33 @@
 		/// <inheritdoc/>
 		public void ClearVideoRoute(uint output)
 		{
-			if (output > md400.NumberOfOutputs)
+			if (output > _md400.NumberOfOutputs)
 			{
 				Logger.Error(
-					$"Switch {Id} ClearVideoRoute({output}) - output argument out of bounds. Max out = {md400.NumberOfOutputs}.");
+					$"Switch {Id} ClearVideoRoute({output}) - output argument out of bounds. Max out = {_md400.NumberOfOutputs}.");
 
 				return;
 			}
 
-			md400.Outputs[output]!.VideoOut = null;
+			_md400.Outputs[output]!.VideoOut = null;
 		}
 
 		/// <inheritdoc/>
 		public override void Connect()
 		{
-			if (md400.Register() != eDeviceRegistrationUnRegistrationResponse.Success)
+			if (_md400.Register() != eDeviceRegistrationUnRegistrationResponse.Success)
 			{
-				Logger.Error($"Switch {Id} Connect() - failed to register device: {md400.RegistrationFailureReason}");
+				Logger.Error($"Switch {Id} Connect() - failed to register device: {_md400.RegistrationFailureReason}");
 			}
 		}
 
 		/// <inheritdoc/>
 		public override void Disconnect()
 		{
-			if (md400.UnRegister() != eDeviceRegistrationUnRegistrationResponse.Success)
+			if (_md400.UnRegister() != eDeviceRegistrationUnRegistrationResponse.Success)
 			{
 				Logger.Error(
-					$"Switch {Id} Disconnect() - failed to unregister device: {md400.UnRegistrationFailureReason}");
+					$"Switch {Id} Disconnect() - failed to unregister device: {_md400.UnRegistrationFailureReason}");
 			}
 		}
 
@@ -168,15 +170,15 @@
 				return;
 			}
 
-			if (source > md400.NumberOfInputs || output > md400.NumberOfOutputs)
+			if (source > _md400.NumberOfInputs || output > _md400.NumberOfOutputs)
 			{
 				Logger.Error(
-					$"Switch {Id} RouteVideo({source},{output}) - input or output argument out of bounds. Max in = {md400.NumberOfInputs}, max out = {md400.NumberOfOutputs}.");
+					$"Switch {Id} RouteVideo({source},{output}) - input or output argument out of bounds. Max in = {_md400.NumberOfInputs}, max out = {_md400.NumberOfOutputs}.");
 
 				return;
 			}
 
-			md400.Outputs[output]!.VideoOut = md400.Inputs[source];
+			_md400.Outputs[output]!.VideoOut = _md400.Inputs[source];
 		}
 
 		/// <inheritdoc/>
@@ -195,7 +197,7 @@
 
 			const int newRange = (VolMax - VolMin);
 			var scaledLevel = ((level * newRange) / 100) + VolMin;
-			audioOutput.AudioOutput.Volume.ShortValue = (short)scaledLevel;
+			_audioOutput.AudioOutput.Volume.ShortValue = (short)scaledLevel;
 		}
 
 		/// <inheritdoc/>
@@ -209,11 +211,11 @@
 
 			if (state)
 			{
-				audioOutput.AudioOutput.AudioMute();
+				_audioOutput.AudioOutput.AudioMute();
 			}
 			else
 			{
-				audioOutput.AudioOutput.AudioUnmute();
+				_audioOutput.AudioOutput.AudioUnmute();
 			}
 		}
 
@@ -244,7 +246,7 @@
 				return 0;
 			}
 
-			var level = (int)audioOutput.AudioOutput.VolumeFeedback.ShortValue;
+			var level = (int)_audioOutput.AudioOutput.VolumeFeedback.ShortValue;
 			const int oldRange = VolMax - VolMin;
 			var scaledLevel = (((level - VolMin) * 100) / oldRange);
 			return scaledLevel;
@@ -253,7 +255,7 @@
 		/// <inheritdoc/>
 		public bool GetAudioOutputMute(string id)
 		{
-			if (IsOnline) return audioOutput.AudioOutput.AudioMuteFeedback.BoolValue;
+			if (IsOnline) return _audioOutput.AudioOutput.AudioMuteFeedback.BoolValue;
 			Logger.Warn($"AvSwitch {Id} - AudioMute: Device offline, returning false.");
 			return false;
 		}
@@ -273,25 +275,25 @@
 				return 0;
 			}
 
-			if (output > md400.NumberOfOutputs)
+			if (output > _md400.NumberOfOutputs)
 			{
 				Logger.Warn($"switch ID {output} - {callerMethod}({output}): output index out of bounds.");
 
 				return 0;
 			}
 
-			return md400.Outputs[output]!.VideoOutFeedback!.Number;
+			return _md400.Outputs[output]!.VideoOutFeedback!.Number;
 		}
 
 		private void Dispose(bool disposing)
 		{
-			if (isDisposed) return;
+			if (_isDisposed) return;
 			if (disposing)
 			{
-				md400.Dispose();
+				_md400.Dispose();
 			}
 
-			isDisposed = true;
+			_isDisposed = true;
 		}
 
 		private void Md400_DMOutputChange(Switch? device, DMOutputEventArgs args)
@@ -313,7 +315,7 @@
 					var temp = AudioOutputMuteChanged;
 					if (temp != null)
 					{
-						string channelId = (outputIds.Count > 0) ? outputIds[0] : Id;
+						string channelId = (_outputIds.Count > 0) ? _outputIds[0] : Id;
 						temp.Invoke(this, new GenericDualEventArgs<string, string>(Id, channelId));
 					}
 					break;
@@ -322,7 +324,7 @@
 					var vTemp = AudioOutputLevelChanged;
 					if (vTemp != null)
 					{
-						string channelId = (outputIds.Count > 0) ? outputIds[0] : Id;
+						string channelId = (_outputIds.Count > 0) ? _outputIds[0] : Id;
 						vTemp.Invoke(this, new GenericDualEventArgs<string, string>(Id, channelId));
 					}
 					break;

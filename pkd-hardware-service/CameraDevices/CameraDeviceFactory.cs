@@ -16,7 +16,7 @@ internal static class CameraDeviceFactory
         ParameterValidator.ThrowIfNull(cameraData, "CreateCameraDevice", nameof(cameraData));
         ParameterValidator.ThrowIfNull(controlSystem, "CreateCameraDevice", nameof(controlSystem));
         ParameterValidator.ThrowIfNull(hwService, "CreateCameraDevice", nameof(hwService));
-
+        
         var dllPath = DirectoryHelper.NormalizePath(cameraData.Connection.Driver);
         var device = DriverLoader.LoadClassByInterface<ICameraDevice>(dllPath, cameraData.ClassName, "ICameraDevice");
 

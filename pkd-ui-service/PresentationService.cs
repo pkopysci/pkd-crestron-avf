@@ -393,6 +393,17 @@ namespace pkd_ui_service
 				if (ui is not ICameraUserInterface cameraUi) continue;
 				cameraUi.SetCameraConnectionStatus(args.Arg, newState);
 			}
+			
+			
+			if (newState)
+			{
+				_fusion?.ClearOfflineDevice(args.Arg);
+			}
+			else
+			{
+				var found = cameraApp.GetAllCameraDeviceInfo().First(x => x.Id.Equals(args.Arg));
+				_fusion?.AddOfflineDevice(args.Arg, found.Label );
+			}
 		}
 
 		private void CameraAppPowerChangeHandler(object? sender, GenericSingleEventArgs<string> args)

@@ -10,8 +10,8 @@
     "HelpContact": "555-555-5555",
     "SystemType": "baseline",
     "Logic": {
-      "AppServiceLibrary": "VideoWallAppService.dll",
-      "AppServiceClass": "VideoWallApplication"
+      "AppServiceLibrary": "CameraTestingAppService.dll",
+      "AppServiceClass": "CameraTestingApp"
     }
   },
   "UserInterfaces": [

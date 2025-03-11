@@ -68,6 +68,15 @@
             "Control": "video-wall",
             "SourceSelect": "",
             "Tags": []
+          },
+          {
+            "Id": "MENU06",
+            "Visible": true,
+            "Label": "Cameras",
+            "Icon": "camera",
+            "Control": "cameras",
+            "SourceSelect": "",
+            "Tags": []
           }
         ],
         "Tags": []

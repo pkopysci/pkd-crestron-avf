@@ -329,21 +329,21 @@
   "Cameras": [
     {
       "Id": "cam01",
-      "Label": "PTZ Camera",
-      "Manufacturer": "Emulation, Inc.",
-      "Model": "Camera Emulator 9001",
-      "ClassName": "CameraEmulator",
+      "Label": "Axis Camera",
+      "Manufacturer": "Axis",
+      "Model": "ME5525-E",
+      "ClassName": "AxisPtzCamera",
       "Tags": [],
       "Connection": {
         "Id": "camcon01",
         "Transport": "tcp",
-        "Driver": "CameraEmulation.dll",
-        "Host": "192.168.1.253",
+        "Driver": "AxisCameras.dll",
+        "Host": "10.16.6.169",
         "Port": 80,
         "Authentication": {
           "Id": "auth01",
-          "UserName": "",
-          "Password": ""
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
         }
       },
       "Presets": [

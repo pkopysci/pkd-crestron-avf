@@ -11,7 +11,7 @@ public struct CameraPreset
     public string Id { get; set; }
     
     /// <summary>
-    /// A human-friendly name of this preset.
+    /// camera-defined integer value
     /// </summary>
-    public string Label { get; set; }
+    public int Number { get; set; }
 }

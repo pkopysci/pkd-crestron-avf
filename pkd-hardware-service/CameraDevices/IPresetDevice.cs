@@ -16,6 +16,12 @@ public interface IPresetDevice
     ReadOnlyCollection<CameraPreset> QueryAllPresets();
 
     /// <summary>
+    /// Update the internally stored collection of presets.
+    /// </summary>
+    /// <param name="presets">The collection of preset data to store, typically created from a framework configuration file.</param>
+    void SetPresetData(List<CameraPreset> presets);
+    
+    /// <summary>
     /// Send a command to the device to recall the target preset state.
     /// </summary>
     /// <param name="id">The id of the preset to recall.</param>

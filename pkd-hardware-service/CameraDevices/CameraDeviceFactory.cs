@@ -3,6 +3,7 @@ using pkd_common_utils.FileOps;
 using pkd_common_utils.Logging;
 using pkd_common_utils.Validation;
 using pkd_domain_service.Data.CameraData;
+// ReSharper disable SuspiciousTypeConversion.Global
 
 namespace pkd_hardware_service.CameraDevices;
 
@@ -33,6 +34,16 @@ internal static class CameraDeviceFactory
             cameraData.Connection.Authentication.UserName,
             cameraData.Connection.Authentication.Password);
 
+        if (device is IPresetDevice presetCam)
+        {
+            List<CameraPreset> presets = [];
+            foreach (var preset in cameraData.Presets)
+            {
+                presets.Add(new CameraPreset() {Id = preset.Id, Number = preset.Number});
+            }
+            presetCam.SetPresetData(presets);
+        }
+        
         if (!string.IsNullOrEmpty(device.Manufacturer))
         {
             device.Manufacturer = cameraData.Manufacturer;

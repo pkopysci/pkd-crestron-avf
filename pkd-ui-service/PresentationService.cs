@@ -303,7 +303,8 @@ namespace pkd_ui_service
 				cameraUi.CameraPanTiltRequest += CameraUiPanTiltHandler;
 				cameraUi.CameraZoomRequest += CameraUiZoomHandler;
 				cameraUi.CameraPowerChangeRequest += CameraUiPowerHandler;
-				cameraUi.CameraPowerChangeRequest += CameraUiPowerHandler;
+				cameraUi.CameraPresetRecallRequest += CameraPresetRecallHandler;
+				cameraUi.CameraPresetSaveRequest += CameraPresetSaveHandler;
 			}
 		}
 
@@ -358,6 +359,8 @@ namespace pkd_ui_service
 					cameraUi.CameraPanTiltRequest -= CameraUiPanTiltHandler;
 					cameraUi.CameraZoomRequest -= CameraUiZoomHandler;
 					cameraUi.CameraPowerChangeRequest -= CameraUiPowerHandler;
+					cameraUi.CameraPresetRecallRequest -= CameraPresetRecallHandler;
+					cameraUi.CameraPresetSaveRequest -= CameraPresetSaveHandler;
 				}
 			}
 		}
@@ -834,6 +837,18 @@ namespace pkd_ui_service
 
 		#region Touchscreen Handlers
 
+		private void CameraPresetRecallHandler(object? sender, GenericDualEventArgs<string, string> args)
+		{
+			if (_appService is not ICameraControlApp cameraApp) return;
+			cameraApp.SendCameraPresetRecall(args.Arg1, args.Arg2);
+		}
+
+		private void CameraPresetSaveHandler(object? sender, GenericDualEventArgs<string, string> args)
+		{
+			if (_appService is not ICameraControlApp cameraApp) return;
+			cameraApp.SendCameraPresetSave(args.Arg1, args.Arg2);
+		}
+		
 		private void CameraUiPanTiltHandler(object? sender, GenericDualEventArgs<string, Vector2D> args)
 		{
 			if (_appService is not ICameraControlApp cameraApp) return;

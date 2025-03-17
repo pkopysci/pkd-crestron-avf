@@ -1,17 +1,15 @@
-﻿namespace pkd_hardware_service.DisplayDevices
-{
-	using Crestron.RAD.Common.Interfaces;
-	using Crestron.SimplSharp;
-	using Crestron.SimplSharpPro;
-	using pkd_common_utils.FileOps;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.DisplayData;
-	using pkd_domain_service.Data.DriverData;
-	using System;
-	using System.Collections.Generic;
-	using System.Globalization;
+﻿using System.Globalization;
+using Crestron.RAD.Common.Interfaces;
+using Crestron.SimplSharp;
+using Crestron.SimplSharpPro;
+using pkd_common_utils.FileOps;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.DisplayData;
+using pkd_domain_service.Data.DriverData;
 
+namespace pkd_hardware_service.DisplayDevices
+{
 	/// <summary>
 	/// Factory class for creating display control objects from configuration data.
 	/// </summary>

@@ -1,10 +1,9 @@
-﻿namespace pkd_application_service.UserInterface
-{
-	using Base;
-	using pkd_common_utils.Validation;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.Base;
+using pkd_common_utils.Validation;
 
+namespace pkd_application_service.UserInterface
+{
 	/// <summary>
 	/// Data object for sending information about an interface to subscribers.
 	/// </summary>
@@ -54,11 +53,6 @@
 		/// Gets the IT support phone number or other contact information to display on the UI.
 		/// </summary>
 		public string HelpContact { get; private set; }
-
-		/// <summary>
-		/// Gets the specific model of the UI, such as TSW-770, TSW-760, XPANEL, etc.
-		/// </summary>
-		public string Model { get; private set; }
 
 		/// <summary>
 		/// Gets the default activity that should be displayed on the UI during startup.

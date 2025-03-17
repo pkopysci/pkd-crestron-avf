@@ -1,7 +1,5 @@
 ﻿namespace pkd_application_service.SystemPower
 {
-	using System;
-
 	/// <summary>
 	/// Common properties and methods for AV System power state management.
 	/// </summary>

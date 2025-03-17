@@ -1,7 +1,5 @@
 ﻿namespace pkd_hardware_service.AudioDevices
 {
-	using System;
-
 	/// <summary>
 	/// Common properties and methods for controlling typical DSP devices.
 	/// </summary>

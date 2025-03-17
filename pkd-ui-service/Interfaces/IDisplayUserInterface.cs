@@ -1,10 +1,9 @@
-﻿namespace pkd_ui_service.Interfaces
-{
-	using pkd_application_service.DisplayControl;
-	using pkd_common_utils.GenericEventArgs;
-	using System;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.DisplayControl;
+using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_ui_service.Interfaces
+{
 	/// <summary>
 	/// Required methods, events, and properties for implementing a user interface that supports display control.
 	/// </summary>

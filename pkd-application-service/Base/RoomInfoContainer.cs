@@ -13,7 +13,7 @@
 		/// <param name="helpContact">The contact information to use when contacting tech support.</param>
 		/// <param name="systemType">The system behavior identifier that was set in the configuration file.</param>
 		public RoomInfoContainer(string id, string label, string helpContact, string systemType)
-			: base(id, label, InfoContainer.Empty.Icon, InfoContainer.Empty.Tags)
+			: base(id, label, Empty.Icon, Empty.Tags)
 		{
 			this.HelpContact = helpContact;
 			this.SystemType = systemType;

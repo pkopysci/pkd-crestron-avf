@@ -1,13 +1,11 @@
-﻿namespace pkd_application_service.SystemPower
-{
-	using Crestron.SimplSharp;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service;
-	using pkd_hardware_service;
-	using pkd_hardware_service.EndpointDevices;
-	using System;
-	using System.Linq;
+﻿using Crestron.SimplSharp;
+using pkd_common_utils.Validation;
+using pkd_domain_service;
+using pkd_hardware_service;
+using pkd_hardware_service.EndpointDevices;
 
+namespace pkd_application_service.SystemPower
+{
 	/// <summary>
 	/// System state/power management app.
 	/// </summary>

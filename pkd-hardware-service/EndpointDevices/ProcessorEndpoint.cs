@@ -1,20 +1,17 @@
-﻿namespace pkd_hardware_service.EndpointDevices
-{
-	using Crestron.SimplSharp;
-	using Crestron.SimplSharpPro;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.EndpointData;
-	using BaseDevice;
-	using System;
-	using System.Linq;
+﻿using Crestron.SimplSharp;
+using Crestron.SimplSharpPro;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.EndpointData;
 
+namespace pkd_hardware_service.EndpointDevices
+{
 	/// <summary>
 	/// Endpoint control wrapper for accessing relay, RS-232, and IR controls on a crestron control
 	/// processor.
 	/// </summary>
-	public class ProcessorEndpoint : BaseDevice, IEndpointDevice, IRelayDevice
+	public class ProcessorEndpoint : BaseDevice.BaseDevice, IEndpointDevice, IRelayDevice
 	{
 		private readonly CrestronControlSystem _processor;
 		private readonly Endpoint _data;

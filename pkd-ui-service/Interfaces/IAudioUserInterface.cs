@@ -1,11 +1,10 @@
-﻿namespace pkd_ui_service.Interfaces
-{
-	using pkd_application_service.AudioControl;
-	using pkd_application_service.Base;
-	using pkd_common_utils.GenericEventArgs;
-	using System;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.AudioControl;
+using pkd_application_service.Base;
+using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_ui_service.Interfaces
+{
 	/// <summary>
 	/// Required events, methods, and parameters for creating a user interface that supports audio controls.
 	/// </summary>

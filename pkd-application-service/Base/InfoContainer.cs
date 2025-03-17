@@ -1,7 +1,5 @@
 ﻿namespace pkd_application_service.Base
 {
-	using System.Collections.Generic;
-
 	/// <summary>
 	/// Base data container class containing common attributes for all device objects.
 	/// </summary>

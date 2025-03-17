@@ -1,21 +1,19 @@
-﻿namespace pkd_application_service;
-
-using AudioControl;
-using AvRouting;
-using Base;
-using DisplayControl;
-using EndpointControl;
-using LightingControl;
-using SystemPower;
-using TransportControl;
-using UserInterface;
+﻿using pkd_application_service.AudioControl;
+using pkd_application_service.AvRouting;
+using pkd_application_service.Base;
+using pkd_application_service.DisplayControl;
+using pkd_application_service.EndpointControl;
+using pkd_application_service.LightingControl;
+using pkd_application_service.SystemPower;
+using pkd_application_service.TransportControl;
+using pkd_application_service.UserInterface;
 using pkd_common_utils.FileOps;
 using pkd_common_utils.Logging;
 using pkd_common_utils.Validation;
 using pkd_domain_service;
 using pkd_hardware_service;
-using System;
-using System.Collections.Generic;
+
+namespace pkd_application_service;
 
 /// <summary>
 /// Helper class for creating an implementation of IApplicationService.

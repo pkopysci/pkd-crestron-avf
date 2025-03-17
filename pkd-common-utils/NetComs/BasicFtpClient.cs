@@ -1,12 +1,12 @@
-﻿namespace pkd_common_utils.NetComs
-{
-	using Crestron.SimplSharp.CrestronIO;
-	using Crestron.SimplSharp.Ssh;
-	using Logging;
-	using Validation;
-	using System;
-	using System.Collections.Generic;
+﻿using Crestron.SimplSharp.Ssh;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using FileMode = Crestron.SimplSharp.CrestronIO.FileMode;
+using FileStream = Crestron.SimplSharp.CrestronIO.FileStream;
+using IAsyncResult = Crestron.SimplSharp.CrestronIO.IAsyncResult;
 
+namespace pkd_common_utils.NetComs
+{
 	/// <summary>
 	/// Utility class for checking remote SFTP servers and downloading files. Uses either Username/password or SSH keys
 	/// for connection.
@@ -214,7 +214,7 @@
 			handler?.Invoke(this, EventArgs.Empty);
 		}
 
-		private void DownloadCallback(Crestron.SimplSharp.CrestronIO.IAsyncResult result)
+		private void DownloadCallback(IAsyncResult result)
 		{
 			Logger.Debug("BasicFtpClient.DownloadCallback() - result = {0}", result.IsCompleted);
 			client.EndDownloadFile(result);

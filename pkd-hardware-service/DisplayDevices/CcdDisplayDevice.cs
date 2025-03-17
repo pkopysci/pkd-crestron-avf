@@ -1,22 +1,19 @@
-﻿namespace pkd_hardware_service.DisplayDevices
-{
-	using Crestron.RAD.Common;
-	using Crestron.RAD.Common.Enums;
-	using Crestron.RAD.Common.Interfaces;
-	using Crestron.SimplSharp;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.DisplayData;
-	using BaseDevice;
-	using Routable;
-	using System;
-	using System.Collections.Generic;
+﻿using Crestron.RAD.Common;
+using Crestron.RAD.Common.Enums;
+using Crestron.RAD.Common.Interfaces;
+using Crestron.SimplSharp;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.DisplayData;
+using pkd_hardware_service.Routable;
 
+namespace pkd_hardware_service.DisplayDevices
+{
 	/// <summary>
 	/// Display control object that uses a Crestron certified driver for control.
 	/// </summary>
-	public class CcdDisplayDevice : BaseDevice, IDisplayDevice, IVideoRoutable, IDisposable
+	public class CcdDisplayDevice : BaseDevice.BaseDevice, IDisplayDevice, IVideoRoutable, IDisposable
 	{
 		private static readonly Dictionary<uint, VideoConnections> Inputs = new Dictionary<uint, VideoConnections>()
 		{

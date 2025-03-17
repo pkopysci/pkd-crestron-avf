@@ -1,8 +1,6 @@
 ﻿namespace pkd_common_utils.GenericEventArgs
 {
-	using System;
-
-    /// <summary>
+	/// <summary>
     /// Generic arguments package for sending information during application which
     /// requires 2 discrete bits of data.
     /// </summary>

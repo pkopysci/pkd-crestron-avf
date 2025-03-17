@@ -1,9 +1,8 @@
-﻿namespace pkd_application_service.CustomEvents
-{
-	using pkd_common_utils.GenericEventArgs;
-	using System;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_application_service.CustomEvents
+{
 	/// <summary>
 	/// Common properties and methods associated with a custom event application service.
 	/// </summary>

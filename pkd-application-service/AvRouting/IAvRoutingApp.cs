@@ -1,9 +1,8 @@
-﻿namespace pkd_application_service.AvRouting;
-
-using Base;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.Base;
 using pkd_common_utils.GenericEventArgs;
-using System;
-using System.Collections.ObjectModel;
+
+namespace pkd_application_service.AvRouting;
 
 /// <summary>
 /// Common properties and methods for Audio and video routing applications.

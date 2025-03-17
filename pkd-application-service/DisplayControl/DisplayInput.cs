@@ -1,7 +1,5 @@
 ﻿namespace pkd_application_service.DisplayControl
 {
-	using System.Collections.Generic;
-
 	/// <summary>
 	/// data object representing a single input on a display or projector device.
 	/// </summary>

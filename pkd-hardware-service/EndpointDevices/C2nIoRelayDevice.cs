@@ -1,19 +1,17 @@
-﻿namespace pkd_hardware_service.EndpointDevices
-{
-	using Crestron.SimplSharp;
-	using Crestron.SimplSharpPro;
-	using Crestron.SimplSharpPro.GeneralIO;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.EndpointData;
-	using BaseDevice;
-	using System;
+﻿using Crestron.SimplSharp;
+using Crestron.SimplSharpPro;
+using Crestron.SimplSharpPro.GeneralIO;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.EndpointData;
 
+namespace pkd_hardware_service.EndpointDevices
+{
 	/// <summary>
 	/// Crestron C2N-IO relay controller via Cresnet.
 	/// </summary>
-	public class C2NIoRelayDevice : BaseDevice, IEndpointDevice, IRelayDevice, IDisposable
+	public class C2NIoRelayDevice : BaseDevice.BaseDevice, IEndpointDevice, IRelayDevice, IDisposable
 	{
 		private readonly C2nIo _device;
 		private readonly CrestronControlSystem _processor;

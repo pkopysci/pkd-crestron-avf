@@ -1,10 +1,10 @@
-﻿namespace pkd_hardware_service.AudioDevices
-{
-	using Crestron.SimplSharpPro;
-	using pkd_common_utils.FileOps;
-	using pkd_common_utils.Logging;
-	using pkd_domain_service.Data.DspData;
+﻿using Crestron.SimplSharpPro;
+using pkd_common_utils.FileOps;
+using pkd_common_utils.Logging;
+using pkd_domain_service.Data.DspData;
 
+namespace pkd_hardware_service.AudioDevices
+{
 	internal static class AudioDeviceFactory
 	{
 		public static IDsp? CreateDspDevice(Dsp dspData, CrestronControlSystem parent, IInfrastructureService hwService)

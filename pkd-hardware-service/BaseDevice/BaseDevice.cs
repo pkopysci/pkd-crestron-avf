@@ -1,8 +1,7 @@
-﻿namespace pkd_hardware_service.BaseDevice
-{
-	using System;
-	using pkd_common_utils.GenericEventArgs;
+﻿using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_hardware_service.BaseDevice
+{
 	/// <summary>
 	/// Base class for representing hardware controls.
 	/// </summary>

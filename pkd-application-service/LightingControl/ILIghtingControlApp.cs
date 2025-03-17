@@ -1,9 +1,8 @@
-﻿namespace pkd_application_service.LightingControl
-{
-	using pkd_common_utils.GenericEventArgs;
-	using System;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_application_service.LightingControl
+{
 	/// <summary>
 	/// Required events, methods, and properties for implementing an application service that supports lighting controls.
 	/// </summary>

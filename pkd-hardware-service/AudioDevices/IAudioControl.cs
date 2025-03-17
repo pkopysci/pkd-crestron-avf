@@ -1,10 +1,8 @@
-﻿namespace pkd_hardware_service.AudioDevices
-{
-	using System;
-	using System.Collections.Generic;
-	using pkd_common_utils.GenericEventArgs;
-	using BaseDevice;
+﻿using pkd_common_utils.GenericEventArgs;
+using pkd_hardware_service.BaseDevice;
 
+namespace pkd_hardware_service.AudioDevices
+{
 	/// <summary>
 	/// Common properties and methods for basic audio level control.
 	/// </summary>

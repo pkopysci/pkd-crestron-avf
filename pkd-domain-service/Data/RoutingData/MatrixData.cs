@@ -1,7 +1,7 @@
-﻿namespace pkd_domain_service.Data.RoutingData
-{
-	using pkd_domain_service.Data.ConnectionData;
+﻿using pkd_domain_service.Data.ConnectionData;
 
+namespace pkd_domain_service.Data.RoutingData
+{
 	public class MatrixData : BaseData
 	{
 		public string Label { get; set; } = string.Empty;

@@ -1,8 +1,6 @@
 ﻿namespace pkd_common_utils.GenericEventArgs
 {
-	using System;
-
-    /// <summary>
+	/// <summary>
     /// Initializes a new instance of the <see cref="GenericTrippleEventArgs{T1, T2, T3}"/> class.
     /// </summary>
     /// <param name="arg1">the first data object supplied when the event was thrown.</param>

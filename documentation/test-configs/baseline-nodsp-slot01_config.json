@@ -10,8 +10,8 @@
     "HelpContact": "555-555-5555",
     "SystemType": "baseline",
     "Logic": {
-      "AppServiceLibrary": "VideoWallAppService.dll",
-      "AppServiceClass": "VideoWallApplication"
+      "AppServiceLibrary": "CameraTestingAppService.dll",
+      "AppServiceClass": "CameraTestingApp"
     }
   },
   "UserInterfaces": [
@@ -66,6 +66,15 @@
             "Label": "Video Wall",
             "Icon": "grid",
             "Control": "video-wall",
+            "SourceSelect": "",
+            "Tags": []
+          },
+          {
+            "Id": "MENU06",
+            "Visible": true,
+            "Label": "Cameras",
+            "Icon": "camera",
+            "Control": "cameras",
             "SourceSelect": "",
             "Tags": []
           }
@@ -317,7 +326,46 @@
       }
     ]
   },
-  "Cameras": [],
+  "Cameras": [
+    {
+      "Id": "cam01",
+      "Label": "Axis Camera",
+      "Manufacturer": "Axis",
+      "Model": "ME5525-E",
+      "ClassName": "AxisPtzCamera",
+      "Tags": [],
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "AxisCameras.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1"
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2"
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3"
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4"
+        }
+      ]
+    }
+  ],
   "CableBoxes": [
     {
       "Id": "tv01",

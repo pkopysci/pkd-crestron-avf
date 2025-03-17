@@ -1,10 +1,10 @@
-﻿namespace pkd_common_utils.FileOps
-{
-	using Crestron.SimplSharp;
-	using Crestron.SimplSharp.CrestronIO;
-	using Validation;
-	using System;
+﻿using Crestron.SimplSharp;
+using pkd_common_utils.Validation;
+using Directory = Crestron.SimplSharp.CrestronIO.Directory;
+using File = Crestron.SimplSharp.CrestronIO.File;
 
+namespace pkd_common_utils.FileOps
+{
 	/// <summary>
 	/// Provides methods for reading files into memory.
 	/// </summary>

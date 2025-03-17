@@ -1,16 +1,13 @@
-﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+﻿using Crestron.SimplSharpPro;
+using Crestron.SimplSharpPro.Fusion;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_ui_service.Fusion.DeviceUse;
+using pkd_ui_service.Fusion.ErrorManagement;
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace pkd_ui_service.Fusion
 {
-	using Crestron.SimplSharpPro;
-	using Crestron.SimplSharpPro.Fusion;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using DeviceUse;
-	using ErrorManagement;
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	
 	public class FusionInterface : IFusionInterface
 	{
 		private const string PcTag = "pc";

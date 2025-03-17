@@ -1,19 +1,18 @@
-﻿namespace pkd_application_service
-{
-	using AudioControl;
-	using AvRouting;
-	using Base;
-	using DisplayControl;
-	using EndpointControl;
-	using LightingControl;
-	using SystemPower;
-	using TransportControl;
-	using UserInterface;
-	using pkd_domain_service;
-	using pkd_hardware_service;
-	using System;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.AudioControl;
+using pkd_application_service.AvRouting;
+using pkd_application_service.Base;
+using pkd_application_service.DisplayControl;
+using pkd_application_service.EndpointControl;
+using pkd_application_service.LightingControl;
+using pkd_application_service.SystemPower;
+using pkd_application_service.TransportControl;
+using pkd_application_service.UserInterface;
+using pkd_domain_service;
+using pkd_hardware_service;
 
+namespace pkd_application_service
+{
 	/// <summary>
 	/// Application service common properties and methods.
 	/// </summary>

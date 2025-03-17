@@ -1,10 +1,9 @@
-﻿namespace pkd_common_utils.Logging
-{
-	using Crestron.SimplSharp;
-	using pkd_common_utils.Validation;
-	using System;
-	using System.Text;
+﻿using System.Text;
+using Crestron.SimplSharp;
+using pkd_common_utils.Validation;
 
+namespace pkd_common_utils.Logging
+{
 	/// <summary>
 	/// Logging system for writing messages to the control system error long and console output.
 	/// </summary>

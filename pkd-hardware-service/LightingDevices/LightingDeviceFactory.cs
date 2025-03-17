@@ -1,11 +1,11 @@
-﻿namespace pkd_hardware_service.LightingDevices
-{
-	using Crestron.SimplSharpPro;
-	using pkd_common_utils.FileOps;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.LightingData;
+﻿using Crestron.SimplSharpPro;
+using pkd_common_utils.FileOps;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.LightingData;
 
+namespace pkd_hardware_service.LightingDevices
+{
 	internal static class LightingDeviceFactory
 	{
 		public static ILightingDevice? CreateLightingDevice(

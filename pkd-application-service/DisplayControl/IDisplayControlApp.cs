@@ -1,9 +1,8 @@
-﻿namespace pkd_application_service.DisplayControl
-{
-	using pkd_common_utils.GenericEventArgs;
-	using System;
-	using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_application_service.DisplayControl
+{
 	/// <summary>
 	/// Common properties and methods for display control applications.
 	/// </summary>

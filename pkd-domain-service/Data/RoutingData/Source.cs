@@ -1,7 +1,5 @@
 ﻿namespace pkd_domain_service.Data.RoutingData
 {
-	using System.Collections.Generic;
-
 	public class Source : BaseData
 	{
 		public static readonly Source Empty = new()

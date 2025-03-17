@@ -1,7 +1,7 @@
-﻿namespace pkd_hardware_service.EndpointDevices
-{
-	using BaseDevice;
+﻿using pkd_hardware_service.BaseDevice;
 
+namespace pkd_hardware_service.EndpointDevices
+{
 	/// <summary>
 	/// Common properties and methods for all endpoint devices (such as DM-TX and RMC-100s).
 	/// </summary>

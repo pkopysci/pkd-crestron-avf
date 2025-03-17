@@ -1,11 +1,10 @@
-﻿namespace pkd_domain_service
-{
-	using System;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using Data;
-	using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data;
 
+namespace pkd_domain_service
+{
 	/// <summary>
 	/// Help class for building an IDomain hardware provider service.
 	/// </summary>

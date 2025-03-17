@@ -1,8 +1,7 @@
-﻿namespace pkd_application_service.EndpointControl
-{
-	using pkd_common_utils.GenericEventArgs;
-	using System;
+﻿using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_application_service.EndpointControl
+{
 	/// <summary>
 	/// Common properties and methods for endpoint control applications.
 	/// </summary>

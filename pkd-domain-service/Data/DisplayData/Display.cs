@@ -1,9 +1,8 @@
-﻿namespace pkd_domain_service.Data.DisplayData
-{
-	using System.Collections.Generic;
-	using ConnectionData;
-	using DriverData;
+﻿using pkd_domain_service.Data.ConnectionData;
+using pkd_domain_service.Data.DriverData;
 
+namespace pkd_domain_service.Data.DisplayData
+{
 	public class Display : BaseData
 	{
 		public string Label { get; set; } = string.Empty;

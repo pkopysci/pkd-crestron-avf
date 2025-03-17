@@ -1,8 +1,8 @@
 ﻿
+using Crestron.SimplSharpPro;
+
 namespace pkd_ui_service.Interfaces
 {
-	using Crestron.SimplSharpPro;
-
 	/// <summary>
 	/// Required events, methods, and properties for any Crestron-based interface, such as a TSW-xx70.
 	/// </summary>

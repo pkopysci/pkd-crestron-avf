@@ -1,8 +1,6 @@
 ﻿namespace pkd_common_utils.GenericEventArgs
 {
-	using System;
-
-    /// <summary>
+	/// <summary>
     /// Generic arguments package for sending information during application
     /// events.
     /// </summary>

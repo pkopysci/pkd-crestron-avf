@@ -1,8 +1,7 @@
-﻿namespace pkd_domain_service.Data.DspData
-{
-	using System.Collections.Generic;
-	using pkd_domain_service.Data.ConnectionData;
+﻿using pkd_domain_service.Data.ConnectionData;
 
+namespace pkd_domain_service.Data.DspData
+{
 	public class Dsp : BaseData
 	{
 		public int CoreId { get; set; }

@@ -1,9 +1,8 @@
+using pkd_common_utils.GenericEventArgs;
+using pkd_domain_service.Data.RoutingData;
 using pkd_hardware_service.BaseDevice;
 
 namespace pkd_hardware_service.VideoWallDevices;
-
-using pkd_common_utils.GenericEventArgs;
-using pkd_domain_service.Data.RoutingData;
 
 /// <summary>
 /// required events, properties, and methods for the framework to support a video wall controller.

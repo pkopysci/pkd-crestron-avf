@@ -1,35 +1,33 @@
 ﻿// ReSharper disable SuspiciousTypeConversion.Global
 
+using Crestron.SimplSharp;
+using Crestron.SimplSharpPro;
+using pkd_application_service;
+using pkd_application_service.CameraControl;
+using pkd_application_service.CustomEvents;
+using pkd_application_service.LightingControl;
 using pkd_application_service.VideoWallControl;
+using pkd_common_utils.DataObjects;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_ui_service.Fusion;
+using pkd_ui_service.Interfaces;
+using pkd_ui_service.Utility;
 
 namespace pkd_ui_service
 {
-	using Crestron.SimplSharp;
-	using Crestron.SimplSharpPro;
-	using pkd_application_service;
-	using pkd_application_service.CustomEvents;
-	using pkd_application_service.LightingControl;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using Fusion;
-	using Interfaces;
-	using Utility;
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-
 	/// <summary>
 	/// Root presentation implementation.
 	/// </summary>
 	public class PresentationService : IPresentationService, IDisposable
 	{
-		private readonly CrestronControlSystem control;
-		private readonly IApplicationService appService;
-		private readonly List<IUserInterface> uiConnections;
-		private IFusionInterface? fusion;
-		private CTimer? stateChangeTimer;
-		private bool disposed;
+		private readonly CrestronControlSystem _control;
+		private readonly IApplicationService _appService;
+		private readonly List<IUserInterface> _uiConnections;
+		private IFusionInterface? _fusion;
+		private CTimer? _stateChangeTimer;
+		private bool _disposed;
 #if DEBUG
 		private const int TransitionTime = 3000;
 #else
@@ -43,9 +41,9 @@ namespace pkd_ui_service
 			ParameterValidator.ThrowIfNull(appService, "Ctor", nameof(appService));
 			ParameterValidator.ThrowIfNull(control, "Ctor", nameof(control));
 
-			this.appService = appService;
-			this.control = control;
-			uiConnections = [];
+			_appService = appService;
+			_control = control;
+			_uiConnections = [];
 			BuildInterfaces();
 			SubscribeToAppService();
 		}
@@ -66,12 +64,12 @@ namespace pkd_ui_service
 		/// <inheritdoc/>
 		public void Initialize()
 		{
-			foreach (var uiDevice in uiConnections)
+			foreach (var uiDevice in _uiConnections)
 			{
 				uiDevice.Connect();
 			}
 
-			fusion?.Initialize();
+			_fusion?.Initialize();
 		}
 
 		/// <summary>
@@ -79,12 +77,12 @@ namespace pkd_ui_service
 		/// </summary>
 		protected void Dispose(bool disposing)
 		{
-			if (disposed) return;
+			if (_disposed) return;
 			if (disposing)
 			{
 				UnsubscribeFromAppService();
 				UnsubscribeFromInterfaces();
-				foreach (var uiConn in uiConnections)
+				foreach (var uiConn in _uiConnections)
 				{
 					if (uiConn is IDisposable disposableUiConn)
 					{
@@ -92,35 +90,35 @@ namespace pkd_ui_service
 					}
 				}
 
-				stateChangeTimer?.Dispose();
+				_stateChangeTimer?.Dispose();
 
-				if (fusion != null)
+				if (_fusion != null)
 				{
-					fusion.OnlineStatusChanged -= FusionConnectionHandler;
-					fusion.MicMuteChangeRequested -= FusionMicMuteHandler;
-					fusion.SystemStateChangeRequested -= FusionPowerHandler;
-					fusion.DisplayPowerChangeRequested -= FusionDisplayPowerHandler;
-					fusion.DisplayBlankChangeRequested -= FusionDisplayBlankHandler;
-					fusion.DisplayFreezeChangeRequested -= FusionDisplayFreezeHandler;
-					fusion.AudioMuteChangeRequested -= FusionAudioMuteHandler;
-					fusion.ProgramAudioChangeRequested -= FusionAudioLevelHandler;
-					fusion.SourceSelectRequested -= FusionRouteSourceHandler;
-					fusion.Dispose();
+					_fusion.OnlineStatusChanged -= FusionConnectionHandler;
+					_fusion.MicMuteChangeRequested -= FusionMicMuteHandler;
+					_fusion.SystemStateChangeRequested -= FusionPowerHandler;
+					_fusion.DisplayPowerChangeRequested -= FusionDisplayPowerHandler;
+					_fusion.DisplayBlankChangeRequested -= FusionDisplayBlankHandler;
+					_fusion.DisplayFreezeChangeRequested -= FusionDisplayFreezeHandler;
+					_fusion.AudioMuteChangeRequested -= FusionAudioMuteHandler;
+					_fusion.ProgramAudioChangeRequested -= FusionAudioLevelHandler;
+					_fusion.SourceSelectRequested -= FusionRouteSourceHandler;
+					_fusion.Dispose();
 				}
 			}
 
-			disposed = true;
+			_disposed = true;
 		}
 
 		private void BuildInterfaces()
 		{
-			foreach (var device in appService.GetAllUserInterfaces())
+			foreach (var device in _appService.GetAllUserInterfaces())
 			{
 				Logger.Info("PresentationService - Building interface {0} with IP-ID {1}", device.Id, device.IpId);
 				
-				var uiObj = PresentationServiceFactory.CreateUserInterface(control, device, appService);
+				var uiObj = PresentationServiceFactory.CreateUserInterface(_control, device, _appService);
 				if (uiObj == null) continue;
-				uiConnections.Add(uiObj);
+				_uiConnections.Add(uiObj);
 				if (!uiObj.IsInitialized)
 				{
 					uiObj.Initialize();
@@ -129,97 +127,109 @@ namespace pkd_ui_service
 				SubscribeToInterface(uiObj);
 			}
 
-			fusion = PresentationServiceFactory.CreateFusionService(appService, control);
-			fusion.OnlineStatusChanged += FusionConnectionHandler;
-			fusion.MicMuteChangeRequested += FusionMicMuteHandler;
-			fusion.SystemStateChangeRequested += FusionPowerHandler;
-			fusion.DisplayPowerChangeRequested += FusionDisplayPowerHandler;
-			fusion.DisplayBlankChangeRequested += FusionDisplayBlankHandler;
-			fusion.DisplayFreezeChangeRequested += FusionDisplayFreezeHandler;
-			fusion.AudioMuteChangeRequested += FusionAudioMuteHandler;
-			fusion.ProgramAudioChangeRequested += FusionAudioLevelHandler;
-			fusion.SourceSelectRequested += FusionRouteSourceHandler;
+			_fusion = PresentationServiceFactory.CreateFusionService(_appService, _control);
+			_fusion.OnlineStatusChanged += FusionConnectionHandler;
+			_fusion.MicMuteChangeRequested += FusionMicMuteHandler;
+			_fusion.SystemStateChangeRequested += FusionPowerHandler;
+			_fusion.DisplayPowerChangeRequested += FusionDisplayPowerHandler;
+			_fusion.DisplayBlankChangeRequested += FusionDisplayBlankHandler;
+			_fusion.DisplayFreezeChangeRequested += FusionDisplayFreezeHandler;
+			_fusion.AudioMuteChangeRequested += FusionAudioMuteHandler;
+			_fusion.ProgramAudioChangeRequested += FusionAudioLevelHandler;
+			_fusion.SourceSelectRequested += FusionRouteSourceHandler;
 		}
 
 		private void SubscribeToAppService()
 		{
-			appService.AudioDspConnectionStatusChanged += AppServiceDspConnectionHandler;
-			appService.AudioInputLevelChanged += AppServiceAudioInputLevelHandler;
-			appService.AudioInputMuteChanged += AppServiceAudioInputMuteHandler;
-			appService.AudioOutputLevelChanged += AppServiceAudioOutputLevelHandler;
-			appService.AudioOutputMuteChanged += AppServiceAudioOutputMuteHandler;
-			appService.AudioOutputRouteChanged += AppServiceAudioOutputRouteHandler;
-			appService.AudioZoneEnableChanged += AppServiceAudioZoneEnableHandler;
-			appService.DisplayBlankChange += AppServiceDisplayBlankHandler;
-			appService.DisplayFreezeChange += AppServiceDisplayFreezeHandler;
-			appService.DisplayConnectChange += AppServiceDisplayConnectionHandler;
-			appService.DisplayPowerChange += AppServiceDisplayPowerHandler;
-			appService.DisplayInputChanged += AppServiceDisplayInputChangedHandler;
-			appService.EndpointConnectionChanged += AppServiceEndpointConnectionHandler;
-			appService.EndpointRelayChanged += AppServiceEndpointChangedHandler;
-			appService.RouteChanged += AppServiceRouteHandler;
-			appService.RouterConnectChange += AppServiceRouterConnectionHandler;
-			appService.SystemStateChanged += AppServiceStateChangeHandler;
-			appService.GlobalVideoBlankChanged += AppServiceGlobalBlankHandler;
-			appService.GlobalVideoFreezeChanged += AppServiceGlobalFreezeHandler;
-			appService.LightingSceneChanged += AppServiceLightingSceneHandler;
-			appService.LightingLoadLevelChanged += AppServiceLightingLoadHandler;
-			appService.LightingControlConnectionChanged += AppServiceLightingConnectionHandler;
+			_appService.AudioDspConnectionStatusChanged += AppServiceDspConnectionHandler;
+			_appService.AudioInputLevelChanged += AppServiceAudioInputLevelHandler;
+			_appService.AudioInputMuteChanged += AppServiceAudioInputMuteHandler;
+			_appService.AudioOutputLevelChanged += AppServiceAudioOutputLevelHandler;
+			_appService.AudioOutputMuteChanged += AppServiceAudioOutputMuteHandler;
+			_appService.AudioOutputRouteChanged += AppServiceAudioOutputRouteHandler;
+			_appService.AudioZoneEnableChanged += AppServiceAudioZoneEnableHandler;
+			_appService.DisplayBlankChange += AppServiceDisplayBlankHandler;
+			_appService.DisplayFreezeChange += AppServiceDisplayFreezeHandler;
+			_appService.DisplayConnectChange += AppServiceDisplayConnectionHandler;
+			_appService.DisplayPowerChange += AppServiceDisplayPowerHandler;
+			_appService.DisplayInputChanged += AppServiceDisplayInputChangedHandler;
+			_appService.EndpointConnectionChanged += AppServiceEndpointConnectionHandler;
+			_appService.EndpointRelayChanged += AppServiceEndpointChangedHandler;
+			_appService.RouteChanged += AppServiceRouteHandler;
+			_appService.RouterConnectChange += AppServiceRouterConnectionHandler;
+			_appService.SystemStateChanged += AppServiceStateChangeHandler;
+			_appService.GlobalVideoBlankChanged += AppServiceGlobalBlankHandler;
+			_appService.GlobalVideoFreezeChanged += AppServiceGlobalFreezeHandler;
+			_appService.LightingSceneChanged += AppServiceLightingSceneHandler;
+			_appService.LightingLoadLevelChanged += AppServiceLightingLoadHandler;
+			_appService.LightingControlConnectionChanged += AppServiceLightingConnectionHandler;
 
-			if (appService is CustomEventAppService customEventService)
+			if (_appService is CustomEventAppService customEventService)
 			{
 				customEventService.CustomEventStateChanged += AppServiceCustomEventHandler;
 			}
 
-			if (appService is ITechAuthGroupAppService techService)
+			if (_appService is ITechAuthGroupAppService techService)
 			{
 				techService.NonTechLockoutStateChangeRequest += AppServiceTechLockoutHandler;
 			}
 
-			if (appService is IVideoWallApp videoWallApp)
+			if (_appService is IVideoWallApp videoWallApp)
 			{
 				videoWallApp.VideoWallLayoutChanged += VideoWallAppLayoutChangedHandler;
 				videoWallApp.VideoWallConnectionStatusChanged += VideoWallAppConnectionChangeHandler;
 				videoWallApp.VideoWallCellRouteChanged += VideoWallAppRouteHandler;
 			}
+
+			if (_appService is ICameraControlApp cameraApp)
+			{
+				cameraApp.CameraControlConnectionChanged += CameraAppConnectionChangeHandler;
+				cameraApp.CameraPowerStateChanged += CameraAppPowerChangeHandler;
+			}
 		}
 
 		private void UnsubscribeFromAppService()
 		{
-			appService.AudioDspConnectionStatusChanged -= AppServiceDspConnectionHandler;
-			appService.AudioInputLevelChanged -= AppServiceAudioInputLevelHandler;
-			appService.AudioInputMuteChanged -= AppServiceAudioInputMuteHandler;
-			appService.AudioOutputLevelChanged -= AppServiceAudioOutputLevelHandler;
-			appService.AudioOutputMuteChanged -= AppServiceAudioOutputMuteHandler;
-			appService.AudioOutputRouteChanged -= AppServiceAudioOutputRouteHandler;
-			appService.AudioZoneEnableChanged -= AppServiceAudioZoneEnableHandler;
-			appService.DisplayBlankChange -= AppServiceDisplayBlankHandler;
-			appService.DisplayFreezeChange -= AppServiceDisplayFreezeHandler;
-			appService.DisplayConnectChange -= AppServiceDisplayConnectionHandler;
-			appService.EndpointConnectionChanged -= AppServiceEndpointConnectionHandler;
-			appService.EndpointRelayChanged -= AppServiceEndpointChangedHandler;
-			appService.RouteChanged -= AppServiceRouteHandler;
-			appService.RouterConnectChange -= AppServiceRouterConnectionHandler;
-			appService.SystemStateChanged -= AppServiceStateChangeHandler;
-			appService.LightingSceneChanged -= AppServiceLightingSceneHandler;
-			appService.LightingLoadLevelChanged -= AppServiceLightingLoadHandler;
-			appService.LightingControlConnectionChanged -= AppServiceLightingConnectionHandler;
+			_appService.AudioDspConnectionStatusChanged -= AppServiceDspConnectionHandler;
+			_appService.AudioInputLevelChanged -= AppServiceAudioInputLevelHandler;
+			_appService.AudioInputMuteChanged -= AppServiceAudioInputMuteHandler;
+			_appService.AudioOutputLevelChanged -= AppServiceAudioOutputLevelHandler;
+			_appService.AudioOutputMuteChanged -= AppServiceAudioOutputMuteHandler;
+			_appService.AudioOutputRouteChanged -= AppServiceAudioOutputRouteHandler;
+			_appService.AudioZoneEnableChanged -= AppServiceAudioZoneEnableHandler;
+			_appService.DisplayBlankChange -= AppServiceDisplayBlankHandler;
+			_appService.DisplayFreezeChange -= AppServiceDisplayFreezeHandler;
+			_appService.DisplayConnectChange -= AppServiceDisplayConnectionHandler;
+			_appService.EndpointConnectionChanged -= AppServiceEndpointConnectionHandler;
+			_appService.EndpointRelayChanged -= AppServiceEndpointChangedHandler;
+			_appService.RouteChanged -= AppServiceRouteHandler;
+			_appService.RouterConnectChange -= AppServiceRouterConnectionHandler;
+			_appService.SystemStateChanged -= AppServiceStateChangeHandler;
+			_appService.LightingSceneChanged -= AppServiceLightingSceneHandler;
+			_appService.LightingLoadLevelChanged -= AppServiceLightingLoadHandler;
+			_appService.LightingControlConnectionChanged -= AppServiceLightingConnectionHandler;
 
-			if (appService is CustomEventAppService customEventService)
+			if (_appService is CustomEventAppService customEventService)
 			{
 				customEventService.CustomEventStateChanged -= AppServiceCustomEventHandler;
 			}
 
-			if (appService is ITechAuthGroupAppService securityService)
+			if (_appService is ITechAuthGroupAppService securityService)
 			{
 				securityService.NonTechLockoutStateChangeRequest -= AppServiceTechLockoutHandler;
 			}
 
-			if (appService is IVideoWallApp videoWallApp)
+			if (_appService is IVideoWallApp videoWallApp)
 			{
 				videoWallApp.VideoWallLayoutChanged -= VideoWallAppLayoutChangedHandler;
 				videoWallApp.VideoWallConnectionStatusChanged -= VideoWallAppConnectionChangeHandler;
 				videoWallApp.VideoWallCellRouteChanged -= VideoWallAppRouteHandler;
+			}
+			
+			if (_appService is ICameraControlApp cameraApp)
+			{
+				cameraApp.CameraControlConnectionChanged -= CameraAppConnectionChangeHandler;
+				cameraApp.CameraPowerStateChanged -= CameraAppPowerChangeHandler;
 			}
 		}
 
@@ -287,11 +297,19 @@ namespace pkd_ui_service
 				videoWallUi.VideoWallLayoutChangeRequest += VideoWallUiLayoutHandler;
 				videoWallUi.VideoWallRouteRequest += VideoWallRouteHandler;
 			}
+
+			if (ui is ICameraUserInterface cameraUi)
+			{
+				cameraUi.CameraPanTiltRequest += CameraUiPanTiltHandler;
+				cameraUi.CameraZoomRequest += CameraUiZoomHandler;
+				cameraUi.CameraPowerChangeRequest += CameraUiPowerHandler;
+				cameraUi.CameraPowerChangeRequest += CameraUiPowerHandler;
+			}
 		}
 
 		private void UnsubscribeFromInterfaces()
 		{
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				ui.OnlineStatusChanged -= UiConnectionHandler;
 				ui.SystemStateChangeRequest -= UiStatusChangeHandler;
@@ -334,12 +352,19 @@ namespace pkd_ui_service
 				{
 					eventUi.CustomEventChangeRequest -= EventUi_CustomEventStateChanged;
 				}
+				
+				if (ui is ICameraUserInterface cameraUi)
+				{
+					cameraUi.CameraPanTiltRequest -= CameraUiPanTiltHandler;
+					cameraUi.CameraZoomRequest -= CameraUiZoomHandler;
+					cameraUi.CameraPowerChangeRequest -= CameraUiPowerHandler;
+				}
 			}
 		}
 
 		private void StateChangeTimerCallback(object? obj)
 		{
-			foreach (var conn in uiConnections)
+			foreach (var conn in _uiConnections)
 			{
 				conn.HideSystemStateChanging();
 			}
@@ -347,23 +372,56 @@ namespace pkd_ui_service
 
 		private void TriggerStateChangeTimer()
 		{
-			if (stateChangeTimer != null)
+			if (_stateChangeTimer != null)
 			{
-				stateChangeTimer.Reset(TransitionTime);
+				_stateChangeTimer.Reset(TransitionTime);
 			}
 			else
 			{
-				stateChangeTimer = new CTimer(StateChangeTimerCallback, TransitionTime);
+				_stateChangeTimer = new CTimer(StateChangeTimerCallback, TransitionTime);
 			}
 		}
 
 		#region AppService Handlers
 
+		private void CameraAppConnectionChangeHandler(object? sender, GenericSingleEventArgs<string> args)
+		{
+			if (sender is not ICameraControlApp cameraApp) return;
+			var newState = cameraApp.QueryCameraConnectionStatus(args.Arg);
+			foreach (var ui in _uiConnections)
+			{
+				if (ui is not ICameraUserInterface cameraUi) continue;
+				cameraUi.SetCameraConnectionStatus(args.Arg, newState);
+			}
+			
+			
+			if (newState)
+			{
+				_fusion?.ClearOfflineDevice(args.Arg);
+			}
+			else
+			{
+				var found = cameraApp.GetAllCameraDeviceInfo().First(x => x.Id.Equals(args.Arg));
+				_fusion?.AddOfflineDevice(args.Arg, found.Label );
+			}
+		}
+
+		private void CameraAppPowerChangeHandler(object? sender, GenericSingleEventArgs<string> args)
+		{
+			if (sender is not ICameraControlApp cameraApp) return;
+			var newState = cameraApp.QueryCameraPowerStatus(args.Arg);
+			foreach (var ui in _uiConnections)
+			{
+				if (ui is not ICameraUserInterface cameraUi) continue;
+				cameraUi.SetCameraPowerState(args.Arg, newState);
+			}
+		}
+		
 		private void VideoWallAppLayoutChangedHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			if (sender is not IVideoWallApp videoWallApp) return;
 			var activeLayoutId = videoWallApp.QueryActiveVideoWallLayout(args.Arg);
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is not IVideoWallUserInterface videoWallUi) continue;
 				videoWallUi.UpdateActiveVideoWallLayout(args.Arg, activeLayoutId);
@@ -375,11 +433,11 @@ namespace pkd_ui_service
 			if (sender is not IVideoWallApp videoWallApp) return;
 			var onlineStatus = videoWallApp.QueryVideoWallConnectionStatus(args.Arg);
 			if (onlineStatus)
-				fusion?.ClearOfflineDevice(args.Arg);
+				_fusion?.ClearOfflineDevice(args.Arg);
 			else
-				fusion?.AddOfflineDevice(args.Arg, $"Video Wall Controller {args.Arg}");
+				_fusion?.AddOfflineDevice(args.Arg, $"Video Wall Controller {args.Arg}");
 			
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is not IVideoWallUserInterface videoWallUi) continue;
 				videoWallUi.UpdateVideoWallConnectionStatus(args.Arg, onlineStatus);
@@ -390,7 +448,7 @@ namespace pkd_ui_service
 		{
 			if (sender is not IVideoWallApp videoWallApp) return;
 			var newRoute = videoWallApp.QueryVideoWallCellSource(args.Arg1, args.Arg2);
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is not IVideoWallUserInterface videoWallUi) continue;
 				videoWallUi.UpdateCellRoutedSource(args.Arg1, args.Arg2, newRoute);
@@ -399,7 +457,7 @@ namespace pkd_ui_service
 		
 		private void AppServiceTechLockoutHandler(object? sender, GenericSingleEventArgs<bool> e)
 		{
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is not ISecurityUserInterface secureUi) continue;
 				if (e.Arg)
@@ -419,7 +477,7 @@ namespace pkd_ui_service
 			if (sender is not ILightingControlApp lightingService) return;
 
 			var loadLevel = lightingService.GetZoneLoad(e.Arg1, e.Arg2);
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is ILightingUserInterface lightingUi)
 				{
@@ -432,7 +490,7 @@ namespace pkd_ui_service
 		{
 			if (sender is not ILightingControlApp lightingService) return;
 			var scene = lightingService.GetActiveScene(e.Arg);
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is ILightingUserInterface lightingUi)
 				{
@@ -445,7 +503,7 @@ namespace pkd_ui_service
 		{
 			if (sender is not CustomEventAppService customAppService) return;
 			bool state = customAppService.QueryCustomEventState(e.Arg);
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is not ICustomEventUserInterface eventUi) continue;
 				eventUi.UpdateCustomEvent(e.Arg, state);
@@ -454,8 +512,8 @@ namespace pkd_ui_service
 
 		private void AppServiceDspConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
-			var isOnline = appService.QueryAudioDspConnectionStatus(args.Arg);
-			foreach (var ui in uiConnections)
+			var isOnline = _appService.QueryAudioDspConnectionStatus(args.Arg);
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IAudioUserInterface audioUi)
 				{
@@ -465,19 +523,19 @@ namespace pkd_ui_service
 			
 			if (isOnline)
 			{
-				fusion?.ClearOfflineDevice(args.Arg);
+				_fusion?.ClearOfflineDevice(args.Arg);
 			}
 			else
 			{
-				var found = appService.GetAllAudioDspDevices().First(x => x.Id.Equals(args.Arg, StringComparison.InvariantCulture));
-				fusion?.AddOfflineDevice(args.Arg, found.Label );
+				var found = _appService.GetAllAudioDspDevices().First(x => x.Id.Equals(args.Arg, StringComparison.InvariantCulture));
+				_fusion?.AddOfflineDevice(args.Arg, found.Label );
 			}
 		}
 
 		private void AppServiceAudioInputLevelHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
-			int level = appService.QueryAudioInputLevel(args.Arg);
-			foreach (var ui in uiConnections)
+			int level = _appService.QueryAudioInputLevel(args.Arg);
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IAudioUserInterface audioUi)
 				{
@@ -488,8 +546,8 @@ namespace pkd_ui_service
 
 		private void AppServiceAudioInputMuteHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
-			bool newState = appService.QueryAudioInputMute(args.Arg);
-			foreach (var ui in uiConnections)
+			bool newState = _appService.QueryAudioInputMute(args.Arg);
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IAudioUserInterface audioUi)
 				{
@@ -497,13 +555,13 @@ namespace pkd_ui_service
 				}
 			}
 
-			fusion?.UpdateMicMute(args.Arg, newState);
+			_fusion?.UpdateMicMute(args.Arg, newState);
 		}
 
 		private void AppServiceAudioOutputLevelHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
-			int level = appService.QueryAudioOutputLevel(args.Arg);
-			foreach (var ui in uiConnections)
+			int level = _appService.QueryAudioOutputLevel(args.Arg);
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IAudioUserInterface audioUi)
 				{
@@ -516,8 +574,8 @@ namespace pkd_ui_service
 
 		private void AppServiceAudioOutputMuteHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
-			bool newState = appService.QueryAudioOutputMute(args.Arg);
-			foreach (var ui in uiConnections)
+			bool newState = _appService.QueryAudioOutputMute(args.Arg);
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IAudioUserInterface audioUi)
 				{
@@ -530,8 +588,8 @@ namespace pkd_ui_service
 
 		private void AppServiceAudioOutputRouteHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
-			string sourceId = appService.QueryAudioOutputRoute(args.Arg);
-			foreach (var ui in uiConnections)
+			string sourceId = _appService.QueryAudioOutputRoute(args.Arg);
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IAudioUserInterface audioUi)
 				{
@@ -542,8 +600,8 @@ namespace pkd_ui_service
 
 		private void AppServiceAudioZoneEnableHandler(object? sender, GenericDualEventArgs<string, string> args)
 		{
-			bool newState = appService.QueryAudioZoneState(args.Arg1, args.Arg2);
-			foreach (var ui in uiConnections)
+			bool newState = _appService.QueryAudioZoneState(args.Arg1, args.Arg2);
+			foreach (var ui in _uiConnections)
 			{
 				var audioUi = (ui as IAudioUserInterface);
 				audioUi?.UpdateAudioZoneState(args.Arg1, args.Arg2, newState);
@@ -553,10 +611,10 @@ namespace pkd_ui_service
 		private void AppServiceDisplayConnectionHandler(object? sender, GenericDualEventArgs<string, bool> args)
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayConnectionHandler() - {0}, {1}", args.Arg1, args.Arg2);
-			var display = appService.GetAllDisplayInfo().FirstOrDefault(x => x.Id.Equals(args.Arg1, StringComparison.InvariantCulture));
+			var display = _appService.GetAllDisplayInfo().FirstOrDefault(x => x.Id.Equals(args.Arg1, StringComparison.InvariantCulture));
 			if (display == null) return;
 
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IDisplayUserInterface displayUi)
 				{
@@ -566,18 +624,18 @@ namespace pkd_ui_service
 			
 			if (args.Arg2)
 			{
-				fusion?.ClearOfflineDevice(args.Arg1);
+				_fusion?.ClearOfflineDevice(args.Arg1);
 			}
 			else
 			{
-				fusion?.AddOfflineDevice(args.Arg1, display.Label);
+				_fusion?.AddOfflineDevice(args.Arg1, display.Label);
 			}
 		}
 
 		private void AppServiceDisplayBlankHandler(object? sender, GenericDualEventArgs<string, bool> args)
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayBlankHandler() - {0}, {1}", args.Arg1, args.Arg2);
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IDisplayUserInterface displayUi)
 				{
@@ -589,7 +647,7 @@ namespace pkd_ui_service
 		private void AppServiceDisplayFreezeHandler(object? sender, GenericDualEventArgs<string, bool> args)
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayFreezeHandler() - {0}, {1}", args.Arg1, args.Arg2);
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IDisplayUserInterface displayUi)
 				{
@@ -601,7 +659,7 @@ namespace pkd_ui_service
 		private void AppServiceDisplayPowerHandler(object? sender, GenericDualEventArgs<string, bool> e)
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayPowerHandler() - {0}, {1}", e.Arg1, e.Arg2);
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IDisplayUserInterface displayUi)
 				{
@@ -612,11 +670,11 @@ namespace pkd_ui_service
 			UpdateFusionDisplayPowerFeedback();
 			if (e.Arg2)
 			{
-				fusion?.StartDisplayUse(e.Arg1);
+				_fusion?.StartDisplayUse(e.Arg1);
 			}
 			else
 			{
-				fusion?.StopDisplayUse(e.Arg1);
+				_fusion?.StopDisplayUse(e.Arg1);
 			}
 		}
 
@@ -624,9 +682,9 @@ namespace pkd_ui_service
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayInputChangedHandler({0})", e.Arg);
 
-			var isLectern = appService.DisplayInputLecternQuery(e.Arg);
-			var isStation = appService.DisplayInputStationQuery(e.Arg);
-			foreach (var ui in uiConnections)
+			var isLectern = _appService.DisplayInputLecternQuery(e.Arg);
+			var isStation = _appService.DisplayInputStationQuery(e.Arg);
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is not IDisplayUserInterface displayUi) continue;
 
@@ -647,13 +705,13 @@ namespace pkd_ui_service
 			
 			if (args.Arg2)
 			{
-				fusion?.ClearOfflineDevice(args.Arg1);
+				_fusion?.ClearOfflineDevice(args.Arg1);
 				RemoveErrorFromUi(args.Arg1);
 			}
 			else
 			{
 				var label = $"Endpoint {args.Arg1}";
-				fusion?.AddOfflineDevice(args.Arg1, label);
+				_fusion?.AddOfflineDevice(args.Arg1, label);
 				AddErrorToUi(args.Arg1, label);
 			}
 		}
@@ -665,8 +723,8 @@ namespace pkd_ui_service
 
 		private void AppServiceRouteHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
-			var currentSrc = appService.QueryCurrentRoute(args.Arg);
-			foreach (var conn in uiConnections)
+			var currentSrc = _appService.QueryCurrentRoute(args.Arg);
+			foreach (var conn in _uiConnections)
 			{
 				if (conn is IRoutingUserInterface routingUi)
 				{
@@ -681,8 +739,8 @@ namespace pkd_ui_service
 		{
 			Logger.Debug("PresentationService.AppServiceRouterConnectionHandler() - {0}", args.Arg);
 			
-			var isOnline = appService.QueryRouterConnectionStatus(args.Arg);
-			foreach (var ui in uiConnections)
+			var isOnline = _appService.QueryRouterConnectionStatus(args.Arg);
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IRoutingUserInterface routingUi)
 				{
@@ -692,19 +750,19 @@ namespace pkd_ui_service
 			
 			if (isOnline)
 			{
-				fusion?.ClearOfflineDevice(args.Arg);
+				_fusion?.ClearOfflineDevice(args.Arg);
 			}
 			else
 			{
 				var label = $"Router {args.Arg} is offline";
-				fusion?.AddOfflineDevice(args.Arg, label);
+				_fusion?.AddOfflineDevice(args.Arg, label);
 			}
 		}
 
 		private void AppServiceLightingConnectionHandler(object? sender, GenericDualEventArgs<string, bool> e)
 		{
 			Logger.Debug("PresentationService.AppServiceLightingConnectionHandler({0}, 1)", e.Arg1, e.Arg2);
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is ILightingUserInterface lightingUi)
 				{
@@ -714,48 +772,48 @@ namespace pkd_ui_service
 			
 			if (e.Arg2)
 			{
-				fusion?.ClearOfflineDevice(e.Arg1);
+				_fusion?.ClearOfflineDevice(e.Arg1);
 			}
 			else
 			{
 				var label = $"Lighting controller {e.Arg1}";
-				fusion?.AddOfflineDevice(e.Arg1, label);
+				_fusion?.AddOfflineDevice(e.Arg1, label);
 			}
 		}
 
 		private void AppServiceGlobalFreezeHandler(object? sender, EventArgs e)
 		{
-			bool freezeState = appService.QueryGlobalVideoFreeze();
-			foreach (var ui in uiConnections)
+			bool freezeState = _appService.QueryGlobalVideoFreeze();
+			foreach (var ui in _uiConnections)
 			{
 				ui.SetGlobalFreezeState(freezeState);
 			}
 
-			fusion?.UpdateDisplayFreeze(freezeState);
+			_fusion?.UpdateDisplayFreeze(freezeState);
 		}
 
 		private void AppServiceGlobalBlankHandler(object? sender, EventArgs e)
 		{
-			bool blankState = appService.QueryGlobalVideoBlank();
-			foreach (var ui in uiConnections)
+			bool blankState = _appService.QueryGlobalVideoBlank();
+			foreach (var ui in _uiConnections)
 			{
 				ui.SetGlobalBlankState(blankState);
 			}
 
-			fusion?.UpdateDisplayBlank(blankState);
+			_fusion?.UpdateDisplayBlank(blankState);
 		}
 
 		private void AppServiceStateChangeHandler(object? sender, EventArgs args)
 		{
-			bool state = appService.CurrentSystemState;
-			foreach (var conn in uiConnections)
+			bool state = _appService.CurrentSystemState;
+			foreach (var conn in _uiConnections)
 			{
 				conn.SetSystemState(state);
 				conn.ShowSystemStateChanging(state);
 			}
 
 			TriggerStateChangeTimer();
-			fusion?.UpdateSystemState(state);
+			_fusion?.UpdateSystemState(state);
 
 			// If system is powering off then stop recording usage, or start recording usage for the currently
 			// selected input when powered on.
@@ -765,9 +823,9 @@ namespace pkd_ui_service
 			}
 			else
 			{
-				foreach (var source in appService.GetAllAvSources())
+				foreach (var source in _appService.GetAllAvSources())
 				{
-					fusion?.StopDeviceUse(source.Id);
+					_fusion?.StopDeviceUse(source.Id);
 				}
 			}
 		}
@@ -776,9 +834,27 @@ namespace pkd_ui_service
 
 		#region Touchscreen Handlers
 
+		private void CameraUiPanTiltHandler(object? sender, GenericDualEventArgs<string, Vector2D> args)
+		{
+			if (_appService is not ICameraControlApp cameraApp) return;
+			cameraApp.SendCameraPanTilt(args.Arg1, args.Arg2);
+		}
+
+		private void CameraUiZoomHandler(object? sender, GenericDualEventArgs<string, int> args)
+		{
+			if (_appService is not ICameraControlApp cameraApp) return;
+			cameraApp.SendCameraZoom(args.Arg1, args.Arg2);
+		}
+
+		private void CameraUiPowerHandler(object? sender, GenericDualEventArgs<string, bool> args)
+		{
+			if (_appService is not ICameraControlApp cameraApp) return;
+			cameraApp.SendCameraPowerChange(args.Arg1, args.Arg2);
+		}
+		
 		private void VideoWallUiLayoutHandler(object? sender, GenericDualEventArgs<string, string> args)
 		{
-			if (appService is not IVideoWallApp videoWallApp) return;
+			if (_appService is not IVideoWallApp videoWallApp) return;
 			videoWallApp.SetActiveVideoWallLayout(args.Arg1, args.Arg2);
 		}
 
@@ -786,44 +862,44 @@ namespace pkd_ui_service
 		{
 			Logger.Debug($"PresentationService.VideoWallRouteHandler(${args.Arg1}, {args.Arg2}, {args.Arg3})");
 			
-			if (appService is not IVideoWallApp videoWallApp) return;
+			if (_appService is not IVideoWallApp videoWallApp) return;
 			videoWallApp.SetVideoWallCellRoute(args.Arg1, args.Arg2, args.Arg3);
 		}
 		
 		private void UiConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
-			var found = uiConnections.FirstOrDefault(x => x.Id.Equals(args.Arg, StringComparison.InvariantCulture));
+			var found = _uiConnections.FirstOrDefault(x => x.Id.Equals(args.Arg, StringComparison.InvariantCulture));
 			if (found == null) return;
 			
 			if (found is { IsOnline: false, IsXpanel: false })
 			{
-				fusion?.AddOfflineDevice(found.Id, $"UI {found.Id}");
+				_fusion?.AddOfflineDevice(found.Id, $"UI {found.Id}");
 			}
 			else
 			{
-				fusion?.ClearOfflineDevice(found.Id);
-				found.SetSystemState(appService.CurrentSystemState);
-				found.SetGlobalBlankState(appService.QueryGlobalVideoBlank());
-				found.SetGlobalFreezeState(appService.QueryGlobalVideoFreeze());
+				_fusion?.ClearOfflineDevice(found.Id);
+				found.SetSystemState(_appService.CurrentSystemState);
+				found.SetGlobalBlankState(_appService.QueryGlobalVideoBlank());
+				found.SetGlobalFreezeState(_appService.QueryGlobalVideoFreeze());
 
 				if (found is IAudioUserInterface audioUi)
 				{
-					foreach (var inChan in appService.GetAudioInputChannels())
+					foreach (var inChan in _appService.GetAudioInputChannels())
 					{
-						audioUi.UpdateAudioInputLevel(inChan.Id, appService.QueryAudioInputLevel(inChan.Id));
-						audioUi.UpdateAudioInputMute(inChan.Id, appService.QueryAudioInputMute(inChan.Id));
+						audioUi.UpdateAudioInputLevel(inChan.Id, _appService.QueryAudioInputLevel(inChan.Id));
+						audioUi.UpdateAudioInputMute(inChan.Id, _appService.QueryAudioInputMute(inChan.Id));
 					}
 
-					foreach (var outChan in appService.GetAudioOutputChannels())
+					foreach (var outChan in _appService.GetAudioOutputChannels())
 					{
-						audioUi.UpdateAudioOutputLevel(outChan.Id, appService.QueryAudioOutputLevel(outChan.Id));
-						audioUi.UpdateAudioOutputMute(outChan.Id, appService.QueryAudioOutputMute(outChan.Id));
+						audioUi.UpdateAudioOutputLevel(outChan.Id, _appService.QueryAudioOutputLevel(outChan.Id));
+						audioUi.UpdateAudioOutputMute(outChan.Id, _appService.QueryAudioOutputMute(outChan.Id));
 					}
 				}
 
 				if (found is ITransportControlUserInterface transportUi)
 				{
-					transportUi.SetCableBoxData(appService.GetAllCableBoxes());
+					transportUi.SetCableBoxData(_appService.GetAllCableBoxes());
 				}
 
 				if (found is ICustomEventUserInterface customEventUi)
@@ -833,14 +909,14 @@ namespace pkd_ui_service
 
 				if (found is ILightingUserInterface lightingUi)
 				{
-					lightingUi.SetLightingData(appService.GetAllLightingDeviceInfo());
+					lightingUi.SetLightingData(_appService.GetAllLightingDeviceInfo());
 				}
 			}
 		}
 
 		private void UpdateCustomEventUi(ICustomEventUserInterface ui)
 		{
-			if (appService is not CustomEventAppService eventServiceApp) return;
+			if (_appService is not CustomEventAppService eventServiceApp) return;
 			var events = eventServiceApp.QueryAllCustomEvents();
 			foreach (var evt in events)
 			{
@@ -852,11 +928,11 @@ namespace pkd_ui_service
 		{
 			if (args.Arg)
 			{
-				appService.SetActive();
+				_appService.SetActive();
 			}
 			else
 			{
-				appService.SetStandby();
+				_appService.SetStandby();
 			}
 		}
 
@@ -866,106 +942,106 @@ namespace pkd_ui_service
 			
 			if (args.Arg2.Equals("ALL", StringComparison.InvariantCulture))
 			{
-				appService.RouteToAll(args.Arg1);
+				_appService.RouteToAll(args.Arg1);
 			}
 			else
 			{
-				appService.MakeRoute(args.Arg1, args.Arg2);
+				_appService.MakeRoute(args.Arg1, args.Arg2);
 			}
 		}
 
 		private void UiDisplayPowerHandler(object? sender, GenericDualEventArgs<string, bool> e)
 		{
 			Logger.Debug("PresentationService.UiDisplayPowerHandler() - {0} - {1}", e.Arg1, e.Arg2);
-			appService.SetDisplayPower(e.Arg1, e.Arg2);
+			_appService.SetDisplayPower(e.Arg1, e.Arg2);
 		}
 
 		private void UiDisplayFreezeHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
-			bool currenState = appService.DisplayFreezeQuery(e.Arg);
-			appService.SetDisplayFreeze(e.Arg, !currenState);
+			bool currenState = _appService.DisplayFreezeQuery(e.Arg);
+			_appService.SetDisplayFreeze(e.Arg, !currenState);
 		}
 
 		private void UiDisplayBlankHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
-			bool currentState = appService.DisplayBlankQuery(e.Arg);
-			appService.SetDisplayBlank(e.Arg, !currentState);
+			bool currentState = _appService.DisplayBlankQuery(e.Arg);
+			_appService.SetDisplayBlank(e.Arg, !currentState);
 		}
 
 		private void UiGlobalBlankHandler(object? sender, EventArgs e)
 		{
 			Logger.Debug("PresentationService.UiGlobalBlankHandler()");
-			bool currentState = appService.QueryGlobalVideoBlank();
-			appService.SetGlobalVideoBlank(!currentState);
+			bool currentState = _appService.QueryGlobalVideoBlank();
+			_appService.SetGlobalVideoBlank(!currentState);
 		}
 
 		private void UiGlobalFreezeHandler(object? sender, EventArgs e)
 		{
 			Logger.Debug("PresentationService.UiGlobalFreezeHandler()");
-			bool currentState = appService.QueryGlobalVideoFreeze();
-			appService.SetGlobalVideoFreeze(!currentState);
+			bool currentState = _appService.QueryGlobalVideoFreeze();
+			_appService.SetGlobalVideoFreeze(!currentState);
 		}
 
 		private void UiDisplayScreenUpHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
-			appService.RaiseScreen(e.Arg);
+			_appService.RaiseScreen(e.Arg);
 		}
 
 		private void UiDisplayScreenDownHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
-			appService.LowerScreen(e.Arg);
+			_appService.LowerScreen(e.Arg);
 		}
 
 		private void UiAudioOutputMuteRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioOutputMuteRequest() - {0}", e.Arg);
-			bool current = appService.QueryAudioOutputMute(e.Arg);
-			appService.SetAudioOutputMute(e.Arg, !current);
+			bool current = _appService.QueryAudioOutputMute(e.Arg);
+			_appService.SetAudioOutputMute(e.Arg, !current);
 		}
 
 		private void UiAudioOutputLevelUpRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioOutputLevelUpRequest() - {0}", e.Arg);
-			var newLevel = appService.QueryAudioOutputLevel(e.Arg) + 3;
-			appService.SetAudioOutputLevel(e.Arg, newLevel < 100 ? newLevel : 100);
+			var newLevel = _appService.QueryAudioOutputLevel(e.Arg) + 3;
+			_appService.SetAudioOutputLevel(e.Arg, newLevel < 100 ? newLevel : 100);
 		}
 
 		private void UiAudioOutputLevelDownRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioOutputLevelDownRequest() - {0}", e.Arg);
-			var newLevel = appService.QueryAudioOutputLevel(e.Arg) - 3;
-			appService.SetAudioOutputLevel(e.Arg, newLevel > 0 ? newLevel : 0);
+			var newLevel = _appService.QueryAudioOutputLevel(e.Arg) - 3;
+			_appService.SetAudioOutputLevel(e.Arg, newLevel > 0 ? newLevel : 0);
 		}
 
 		private void UiAudioOutputRouteRequest(object? sender, GenericDualEventArgs<string, string> e)
 		{
-			appService.SetAudioOutputRoute(e.Arg1, e.Arg2);
+			_appService.SetAudioOutputRoute(e.Arg1, e.Arg2);
 		}
 
 		private void UiAudioInputMuteRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioInputMuteRequest() - {0}", e.Arg);
-			bool current = appService.QueryAudioInputMute(e.Arg);
-			appService.SetAudioInputMute(e.Arg, !current);
+			bool current = _appService.QueryAudioInputMute(e.Arg);
+			_appService.SetAudioInputMute(e.Arg, !current);
 		}
 
 		private void UiAudioInputLevelDownRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioInputLevelDownRequest() - {0}", e.Arg);
-			int newLevel = appService.QueryAudioInputLevel(e.Arg) - 3;
-			appService.SetAudioInputLevel(e.Arg, newLevel > 0 ? newLevel : 0);
+			int newLevel = _appService.QueryAudioInputLevel(e.Arg) - 3;
+			_appService.SetAudioInputLevel(e.Arg, newLevel > 0 ? newLevel : 0);
 		}
 
 		private void UiAudioInputLevelUpRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioInputLevelUpRequest() - {0}", e.Arg);
-			int newLevel = appService.QueryAudioInputLevel(e.Arg) + 3;
-			appService.SetAudioInputLevel(e.Arg, newLevel < 100 ? newLevel : 100);
+			int newLevel = _appService.QueryAudioInputLevel(e.Arg) + 3;
+			_appService.SetAudioInputLevel(e.Arg, newLevel < 100 ? newLevel : 100);
 		}
 
 		private void UiAudioZoneToggleHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
-			appService.ToggleAudioZoneState(e.Arg1, e.Arg2);
+			_appService.ToggleAudioZoneState(e.Arg1, e.Arg2);
 		}
 
 		private void DiscreteAudioOutputUiHandler(object? sender, GenericDualEventArgs<string, int> e)
@@ -980,7 +1056,7 @@ namespace pkd_ui_service
 				adjustedLevel = 100;
 			}
 
-			appService.SetAudioOutputLevel(e.Arg1, adjustedLevel);
+			_appService.SetAudioOutputLevel(e.Arg1, adjustedLevel);
 		}
 
 		private void DiscreteAudioInputUiHandler(object? sender, GenericDualEventArgs<string, int> e)
@@ -995,22 +1071,22 @@ namespace pkd_ui_service
 				adjustedLevel = 100;
 			}
 
-			appService.SetAudioInputLevel(e.Arg1, adjustedLevel);
+			_appService.SetAudioInputLevel(e.Arg1, adjustedLevel);
 		}
 
 		private void LightingUiLoadHandler(object? sender, GenericTrippleEventArgs<string, string, int> e)
 		{
-			appService.SetLightingLoad(e.Arg1, e.Arg2, e.Arg3);
+			_appService.SetLightingLoad(e.Arg1, e.Arg2, e.Arg3);
 		}
 
 		private void LightingUiSceneHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
-			appService.RecallLightingScene(e.Arg1, e.Arg2);
+			_appService.RecallLightingScene(e.Arg1, e.Arg2);
 		}
 
 		private void AddErrorToUi(string id, string label)
 		{
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IErrorInterface errorUi)
 				{
@@ -1021,7 +1097,7 @@ namespace pkd_ui_service
 
 		private void RemoveErrorFromUi(string id)
 		{
-			foreach (var ui in uiConnections)
+			foreach (var ui in _uiConnections)
 			{
 				if (ui is IErrorInterface errorUi)
 				{
@@ -1032,32 +1108,32 @@ namespace pkd_ui_service
 
 		private void UiSetStationLecternHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
-			appService.SetInputLectern(e.Arg);
+			_appService.SetInputLectern(e.Arg);
 		}
 
 		private void UiSetStationLocalHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
-			appService.SetInputStation(e.Arg);
+			_appService.SetInputStation(e.Arg);
 		}
 		
 		private void TransportUi_TransportDialRequest(object? sender, GenericDualEventArgs<string, string> e)
 		{
-			appService.TransportDial(e.Arg1, e.Arg2);
+			_appService.TransportDial(e.Arg1, e.Arg2);
 		}
 
 		private void TransportUi_TransportDialFavoriteRequest(object? sender, GenericDualEventArgs<string, string> e)
 		{
-			appService.TransportDialFavorite(e.Arg1, e.Arg2);
+			_appService.TransportDialFavorite(e.Arg1, e.Arg2);
 		}
 
 		private void TransportUi_TransportControlRequest(object? sender, GenericDualEventArgs<string, TransportTypes> e)
 		{
-			TransportUtilities.SendCommand(appService, e.Arg1, e.Arg2);
+			TransportUtilities.SendCommand(_appService, e.Arg1, e.Arg2);
 		}
 
 		private void EventUi_CustomEventStateChanged(object? sender, GenericDualEventArgs<string, bool> e)
 		{
-			if (appService is ICustomEventAppService eventApp)
+			if (_appService is ICustomEventAppService eventApp)
 			{
 				eventApp.ChangeCustomEventState(e.Arg1, e.Arg2);
 			}
@@ -1068,47 +1144,47 @@ namespace pkd_ui_service
 		private void FusionRouteSourceHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.FusionRouteSourceHandler()");
-			appService.RouteToAll(e.Arg);
+			_appService.RouteToAll(e.Arg);
 		}
 
 		private void FusionAudioLevelHandler(object? sender, GenericSingleEventArgs<uint> e)
 		{
 			Logger.Debug("PresentationService.FusionAudioLevelHandler()");
-			var pgmOut = appService.GetAudioOutputChannels().FirstOrDefault(x => x.Tags.Contains("pgm"));
+			var pgmOut = _appService.GetAudioOutputChannels().FirstOrDefault(x => x.Tags.Contains("pgm"));
 			if (pgmOut != null)
 			{
-				appService.SetAudioOutputLevel(pgmOut.Id, (int)e.Arg);
+				_appService.SetAudioOutputLevel(pgmOut.Id, (int)e.Arg);
 			}
 		}
 
 		private void FusionAudioMuteHandler(object? sender, EventArgs e)
 		{
 			Logger.Debug("PresentationService.FusionAudioMuteHandler()");
-			var pgmOut = appService.GetAudioOutputChannels().FirstOrDefault(x => x.Tags.Contains("pgm"));
+			var pgmOut = _appService.GetAudioOutputChannels().FirstOrDefault(x => x.Tags.Contains("pgm"));
 			if (pgmOut != null)
 			{
-				appService.SetAudioOutputMute(pgmOut.Id, !appService.QueryAudioOutputMute(pgmOut.Id));
+				_appService.SetAudioOutputMute(pgmOut.Id, !_appService.QueryAudioOutputMute(pgmOut.Id));
 			}
 		}
 
 		private void FusionDisplayFreezeHandler(object? sender, EventArgs e)
 		{
 			Logger.Debug("PresentationService.FusionDisplayFreezeHandler()");
-			appService.SetGlobalVideoFreeze(!appService.QueryGlobalVideoFreeze());
+			_appService.SetGlobalVideoFreeze(!_appService.QueryGlobalVideoFreeze());
 		}
 
 		private void FusionDisplayBlankHandler(object? sender, EventArgs e)
 		{
 			Logger.Debug("PresentationService.FusionDisplayBlankHandler()");
-			appService.SetGlobalVideoBlank(!appService.QueryGlobalVideoFreeze());
+			_appService.SetGlobalVideoBlank(!_appService.QueryGlobalVideoFreeze());
 		}
 
 		private void FusionDisplayPowerHandler(object? sender, GenericSingleEventArgs<bool> e)
 		{
 			Logger.Debug("PresentationService.FusionDisplayPowerHandler()");
-			foreach (var display in appService.GetAllDisplayInfo())
+			foreach (var display in _appService.GetAllDisplayInfo())
 			{
-				appService.SetDisplayPower(display.Id, e.Arg);
+				_appService.SetDisplayPower(display.Id, e.Arg);
 			}
 		}
 
@@ -1117,19 +1193,19 @@ namespace pkd_ui_service
 			Logger.Debug("PresentationService.FusionPowerHandler()");
 			if (e.Arg)
 			{
-				appService.SetActive();
+				_appService.SetActive();
 			}
 			else
 			{
-				appService.SetStandby();
+				_appService.SetStandby();
 			}
 		}
 
 		private void FusionMicMuteHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.FusionMicMuteHandler()");
-			bool currentState = appService.QueryAudioInputMute(e.Arg);
-			appService.SetAudioInputMute(e.Arg, !currentState);
+			bool currentState = _appService.QueryAudioInputMute(e.Arg);
+			_appService.SetAudioInputMute(e.Arg, !currentState);
 		}
 
 		private void FusionConnectionHandler(object? sender, EventArgs e)
@@ -1141,9 +1217,9 @@ namespace pkd_ui_service
 		private void UpdateFusionDisplayPowerFeedback()
 		{
 			bool aDisplayOn = false;
-			foreach (var display in appService.GetAllDisplayInfo())
+			foreach (var display in _appService.GetAllDisplayInfo())
 			{
-				bool power = appService.DisplayPowerQuery(display.Id);
+				bool power = _appService.DisplayPowerQuery(display.Id);
 
 				if (power)
 				{
@@ -1152,33 +1228,33 @@ namespace pkd_ui_service
 				}
 			}
 
-			fusion?.UpdateDisplayPower(aDisplayOn);
+			_fusion?.UpdateDisplayPower(aDisplayOn);
 		}
 
 		private void UpdateFusionAudioFeedback()
 		{
-			var pgmAudio = appService.GetAudioOutputChannels().FirstOrDefault(x => x.Tags.Contains("pgm"));
+			var pgmAudio = _appService.GetAudioOutputChannels().FirstOrDefault(x => x.Tags.Contains("pgm"));
 			if (pgmAudio == null) return;
-			fusion?.UpdateProgramAudioLevel((uint)appService.QueryAudioOutputLevel(pgmAudio.Id));
-			fusion?.UpdateProgramAudioMute(appService.QueryAudioOutputMute(pgmAudio.Id));
+			_fusion?.UpdateProgramAudioLevel((uint)_appService.QueryAudioOutputLevel(pgmAudio.Id));
+			_fusion?.UpdateProgramAudioMute(_appService.QueryAudioOutputMute(pgmAudio.Id));
 		}
 
 		private void UpdateFusionRoutingFeedback()
 		{
-			var avDestinations = appService.GetAllAvDestinations();
+			var avDestinations = _appService.GetAllAvDestinations();
 			if (avDestinations.Count > 0)
 			{
-				var currentRoute = appService.QueryCurrentRoute(avDestinations[0].Id);
-				fusion?.UpdateSelectedSource(currentRoute.Id);
-				foreach (var source in appService.GetAllAvSources())
+				var currentRoute = _appService.QueryCurrentRoute(avDestinations[0].Id);
+				_fusion?.UpdateSelectedSource(currentRoute.Id);
+				foreach (var source in _appService.GetAllAvSources())
 				{
 					if (source.Id.Equals(currentRoute.Id, StringComparison.InvariantCulture))
 					{
-						fusion?.StartDeviceUse(source.Id);
+						_fusion?.StartDeviceUse(source.Id);
 					}
 					else
 					{
-						fusion?.StopDeviceUse(source.Id);
+						_fusion?.StopDeviceUse(source.Id);
 					}
 				}
 			}
@@ -1186,12 +1262,12 @@ namespace pkd_ui_service
 
 		private void UpdateFusionFeedback()
 		{
-			fusion?.UpdateSystemState(appService.CurrentSystemState);
+			_fusion?.UpdateSystemState(_appService.CurrentSystemState);
 			UpdateFusionDisplayPowerFeedback();
 			UpdateFusionAudioFeedback();
 			UpdateFusionRoutingFeedback();
-			fusion?.UpdateDisplayFreeze(appService.QueryGlobalVideoFreeze());
-			fusion?.UpdateDisplayBlank(appService.QueryGlobalVideoBlank());
+			_fusion?.UpdateDisplayFreeze(_appService.QueryGlobalVideoFreeze());
+			_fusion?.UpdateDisplayBlank(_appService.QueryGlobalVideoBlank());
 		}
 		#endregion
 	}

@@ -1,7 +1,5 @@
 ﻿namespace pkd_domain_service.Data.UserInterfaceData
 {
-	using System.Collections.Generic;
-
 	/// <summary>
 	/// Configuration data for a single UI menu control.
 	/// </summary>

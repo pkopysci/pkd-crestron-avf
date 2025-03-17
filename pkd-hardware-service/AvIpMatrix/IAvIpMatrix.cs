@@ -1,10 +1,8 @@
-﻿namespace pkd_hardware_service.AvIpMatrix
-{
-	using System;
-	using Crestron.SimplSharpPro;
-	using System.Collections.Generic;
-	using pkd_common_utils.GenericEventArgs;
+﻿using Crestron.SimplSharpPro;
+using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_hardware_service.AvIpMatrix
+{
 	/// <summary>
 	/// Required events, methods, and properties for implementing an AV over IP device control.
 	/// </summary>

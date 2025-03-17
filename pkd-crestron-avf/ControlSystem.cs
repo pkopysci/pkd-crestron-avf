@@ -1,15 +1,14 @@
-﻿namespace pkd_crestron_avf
-{
-	using Crestron.SimplSharp;
-	using Crestron.SimplSharpPro;
-	using Crestron.SimplSharpPro.CrestronThread;
-	using pkd_application_service;
-	using pkd_common_utils.Logging;
-	using pkd_config_service;
-	using pkd_hardware_service;
-	using pkd_ui_service;
-	using System;
+﻿using Crestron.SimplSharp;
+using Crestron.SimplSharpPro;
+using pkd_application_service;
+using pkd_common_utils.Logging;
+using pkd_config_service;
+using pkd_hardware_service;
+using pkd_ui_service;
+using Thread = Crestron.SimplSharpPro.CrestronThread.Thread;
 
+namespace pkd_crestron_avf
+{
 	public class ControlSystem : CrestronControlSystem
 	{
 		private Thread? startupThread;

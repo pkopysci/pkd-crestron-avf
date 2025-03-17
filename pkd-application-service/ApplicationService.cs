@@ -1,27 +1,25 @@
 ﻿// ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable SuspiciousTypeConversion.Global
+
+using System.Collections.ObjectModel;
+using pkd_application_service.AudioControl;
+using pkd_application_service.AvRouting;
+using pkd_application_service.Base;
+using pkd_application_service.DisplayControl;
+using pkd_application_service.EndpointControl;
+using pkd_application_service.LightingControl;
+using pkd_application_service.SystemPower;
+using pkd_application_service.TransportControl;
+using pkd_application_service.UserInterface;
+using pkd_common_utils.GenericEventArgs;
+using pkd_common_utils.Logging;
+using pkd_domain_service;
+using pkd_hardware_service;
+using pkd_hardware_service.DisplayDevices;
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 namespace pkd_application_service
 {
-	using AudioControl;
-	using AvRouting;
-	using Base;
-	using DisplayControl;
-	using EndpointControl;
-	using LightingControl;
-	using SystemPower;
-	using TransportControl;
-	using UserInterface;
-	using pkd_common_utils.GenericEventArgs;
-	using pkd_common_utils.Logging;
-	using pkd_domain_service;
-	using pkd_hardware_service;
-	using pkd_hardware_service.DisplayDevices;
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Linq;
-
 	/// <summary>
 	/// Class for controlling interactions between the external control interfaces and the hardware service.
 	/// A plugin can use this class to override functionality for a custom application service without needing to completely

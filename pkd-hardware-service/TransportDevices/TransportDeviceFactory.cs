@@ -1,12 +1,11 @@
-﻿namespace pkd_hardware_service.TransportDevices
-{
-	using Crestron.SimplSharpPro;
-	using pkd_common_utils.FileOps;
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using pkd_domain_service.Data.TransportDeviceData;
-	using System;
+﻿using Crestron.SimplSharpPro;
+using pkd_common_utils.FileOps;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data.TransportDeviceData;
 
+namespace pkd_hardware_service.TransportDevices
+{
 	internal static class TransportDeviceFactory
 	{
 		public static ITransportDevice? CreateCableBox(

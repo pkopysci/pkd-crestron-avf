@@ -1,8 +1,7 @@
-﻿namespace pkd_ui_service.Interfaces
-{
-	using pkd_common_utils.GenericEventArgs;
-	using System;
+﻿using pkd_common_utils.GenericEventArgs;
 
+namespace pkd_ui_service.Interfaces
+{
 	/// <summary>
 	/// required events, methods, and properties for implementing a user interface that supports custom events.
 	/// </summary>

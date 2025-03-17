@@ -1,7 +1,5 @@
 ﻿namespace pkd_domain_service.Data.UserInterfaceData
 {
-	using System.Collections.Generic;
-
 	/// <summary>
 	/// Configuration data for a single user interface.
 	/// </summary>
@@ -12,11 +10,6 @@
 		/// of a hex value.
 		/// </summary>
 		public int IpId { get; set; }
-
-		/// <summary>
-		/// Gets or sets the model of the touchsceen (I.E. tsw760, tsw770, etc.).
-		/// </summary>
-		public string Model { get; set; } = string.Empty;
 
 		/// <summary>
 		/// The smart graphics data library needed if the UI is a VTPro-e based project.

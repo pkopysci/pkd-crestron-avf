@@ -1,24 +1,21 @@
-﻿using pkd_domain_service.Data.VideoWallData;
+﻿using System.Collections.ObjectModel;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
+using pkd_domain_service.Data;
+using pkd_domain_service.Data.CameraData;
+using pkd_domain_service.Data.DisplayData;
+using pkd_domain_service.Data.DspData;
+using pkd_domain_service.Data.EndpointData;
+using pkd_domain_service.Data.FusionData;
+using pkd_domain_service.Data.LightingData;
+using pkd_domain_service.Data.RoomInfoData;
+using pkd_domain_service.Data.RoutingData;
+using pkd_domain_service.Data.TransportDeviceData;
+using pkd_domain_service.Data.UserInterfaceData;
+using pkd_domain_service.Data.VideoWallData;
 
 namespace pkd_domain_service
 {
-	using pkd_common_utils.Logging;
-	using pkd_common_utils.Validation;
-	using Data;
-	using Data.CameraData;
-	using Data.DisplayData;
-	using Data.DspData;
-	using Data.EndpointData;
-	using Data.FusionData;
-	using Data.LightingData;
-	using Data.RoomInfoData;
-	using Data.RoutingData;
-	using Data.TransportDeviceData;
-	using Data.UserInterfaceData;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-
-
 	/// <summary>
 	/// Implementation of the Domain hardware provider service.
 	/// </summary>

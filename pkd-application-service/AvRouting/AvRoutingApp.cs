@@ -1,7 +1,6 @@
-﻿namespace pkd_application_service.AvRouting;
-
-using Pathfinder;
-using Base;
+﻿using System.Collections.ObjectModel;
+using pkd_application_service.AvRouting.Pathfinder;
+using pkd_application_service.Base;
 using pkd_common_utils.GenericEventArgs;
 using pkd_common_utils.Logging;
 using pkd_common_utils.Validation;
@@ -10,10 +9,8 @@ using pkd_domain_service.Data.RoutingData;
 using pkd_hardware_service.AvSwitchDevices;
 using pkd_hardware_service.BaseDevice;
 using pkd_hardware_service.Routable;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+
+namespace pkd_application_service.AvRouting;
 
 internal class AvRoutingApp : IAvRoutingApp, IDisposable
 {

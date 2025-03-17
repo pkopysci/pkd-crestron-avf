@@ -1,15 +1,13 @@
-﻿namespace pkd_common_utils.FileOps
-{
-	using Crestron.RAD.Common.Enums;
-	using Crestron.RAD.Common.Interfaces;
-	using Logging;
-	using Validation;
-	using System;
-	using System.Globalization;
-	using System.Linq;
-    using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
+using Crestron.RAD.Common.Enums;
+using Crestron.RAD.Common.Interfaces;
+using pkd_common_utils.Logging;
+using pkd_common_utils.Validation;
 
-    /// <summary>
+namespace pkd_common_utils.FileOps
+{
+	/// <summary>
     /// Helper class used to load a Crestron Certified Driver from a DLL using reflection.
     /// </summary>
     public class DriverLoader

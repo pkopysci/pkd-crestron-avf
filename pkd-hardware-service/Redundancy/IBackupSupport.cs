@@ -12,6 +12,11 @@ public interface IRedundancySupport
     /// </summary>
     /// <remarks>Arg package is a unique ID of the implementing object.</remarks>
     public event EventHandler<GenericSingleEventArgs<string>> RedundancyStateChanged;
+
+    /// <summary>
+    /// Trigger whenever the backup/redundant device loses or establishes a connection.
+    /// </summary>
+    public event EventHandler<GenericSingleEventArgs<string>> BackupDeviceConnectionChanged;
     
     /// <summary>
     /// True = the main/primary connection in use, false otherwise.

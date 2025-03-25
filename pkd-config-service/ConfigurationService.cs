@@ -23,6 +23,7 @@ namespace pkd_config_service
 		private readonly Queue<DependencyData> missingDependencies = new Queue<DependencyData>();
 		private readonly CrestronControlSystem parent = parent;
 		private bool disposed;
+		private bool errorDownloading;
 		private BasicFtpClient? client;
 
 		/// <inheritdoc />
@@ -157,6 +158,12 @@ namespace pkd_config_service
 			{
 				CleanupClient();
 				Logger.Info("All dependencies downloaded. Restarting program...");
+				if (errorDownloading)
+				{
+					Logger.Error($"ConfigurationService - Failed to download all dependencies. See error logs for details.");
+					return;
+				}
+				
 				CrestronConsole.SendControlSystemCommand("progreset -p:" + programSlot, out _);
 			}
 			else
@@ -169,7 +176,7 @@ namespace pkd_config_service
 		private void ClientErrorHandler(object? sender, EventArgs e)
 		{
 			Logger.Error($"Failed to download a dependency: {client?.LastErrorMessage}");
-
+			errorDownloading = true;
             if (missingDependencies.Count == 0)
 			{
 				CleanupClient();
@@ -185,7 +192,7 @@ namespace pkd_config_service
 		{
 			var data = new DependencyData()
 			{
-				Local = DirectoryHelper.NormalizePath(Root + "/" + fileName),
+				Local = DirectoryHelper.NormalizePath(Root + fileName),
 				Remote = Root + remoteSubDir + "/" + fileName
 			};
 
@@ -454,5 +461,4 @@ namespace pkd_config_service
 			handler?.Invoke(this, EventArgs.Empty);
 		}
 	}
-
 }

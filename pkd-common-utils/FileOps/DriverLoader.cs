@@ -10,7 +10,7 @@ namespace pkd_common_utils.FileOps
 	/// <summary>
     /// Helper class used to load a Crestron Certified Driver from a DLL using reflection.
     /// </summary>
-    public class DriverLoader
+    public static class DriverLoader
 	{
 
 		/// <summary>
@@ -30,10 +30,7 @@ namespace pkd_common_utils.FileOps
 
 			try
 			{
-				var dllPath = DirectoryHelper.NormalizePath(string.Format(
-					"{0}\\{1}",
-					DirectoryHelper.GetUserFolder(),
-					assemblyName));
+				var dllPath = DirectoryHelper.NormalizePath($@"{DirectoryHelper.GetUserFolder()}\4s-plugins\{assemblyName}");
 
 				Logger.Debug($"DriverLoader.LoadDriverInstance() - Attempting to load driver from location {dllPath}...");
 
@@ -67,16 +64,13 @@ namespace pkd_common_utils.FileOps
 		/// <exception cref="Exception">Will propagate exceptions from System.Reflection.</exception>
 		public static T? LoadClassByInterface<T>(string assemblyName, string className, string interfaceName)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(assemblyName, "LoadClassByInterface", "assemblyName");
-			ParameterValidator.ThrowIfNullOrEmpty(interfaceName, "LoadClassByInterface", "interfaceName");
+			ParameterValidator.ThrowIfNullOrEmpty(assemblyName, "LoadClassByInterface", nameof(assemblyName));
+			ParameterValidator.ThrowIfNullOrEmpty(interfaceName, "LoadClassByInterface", nameof(interfaceName));
 
 			T? device = default;
 			try
 			{
-				var dllPath = DirectoryHelper.NormalizePath(string.Format(
-					"{0}\\{1}",
-					DirectoryHelper.GetUserFolder(),
-					assemblyName));
+				var dllPath = DirectoryHelper.NormalizePath($@"{DirectoryHelper.GetUserFolder()}\4s-plugins\{assemblyName}");
 
 				Logger.Debug("Attempting to load driver from file {0}...", dllPath);
 				var dll = Assembly.LoadFrom(dllPath);

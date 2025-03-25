@@ -24,13 +24,13 @@ namespace pkd_common_utils.FileOps
 		/// <exception cref="Exception">Will propagate exceptions from System.Reflection.</exception>
 		public static T? LoadDriverInstance<T>(string assemblyName, string interfaceName, string transportName)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(assemblyName, "LoadDriverInstance", "assemblyName");
-			ParameterValidator.ThrowIfNullOrEmpty(interfaceName, "LoadDriverInstance", "interfaceName");
-			ParameterValidator.ThrowIfNullOrEmpty(transportName, "LoadDriverInstance", "transportName");
+			ParameterValidator.ThrowIfNullOrEmpty(assemblyName, "LoadDriverInstance", nameof(assemblyName));
+			ParameterValidator.ThrowIfNullOrEmpty(interfaceName, "LoadDriverInstance", nameof(interfaceName));
+			ParameterValidator.ThrowIfNullOrEmpty(transportName, "LoadDriverInstance", nameof(transportName));
 
 			try
 			{
-				var dllPath = DirectoryHelper.NormalizePath($@"{DirectoryHelper.GetUserFolder()}\4s-plugins\{assemblyName}");
+				var dllPath = DirectoryHelper.NormalizePath($@"{DirectoryHelper.GetUserFolder()}\net8-plugins\{assemblyName}");
 
 				Logger.Debug($"DriverLoader.LoadDriverInstance() - Attempting to load driver from location {dllPath}...");
 
@@ -70,7 +70,7 @@ namespace pkd_common_utils.FileOps
 			T? device = default;
 			try
 			{
-				var dllPath = DirectoryHelper.NormalizePath($@"{DirectoryHelper.GetUserFolder()}\4s-plugins\{assemblyName}");
+				var dllPath = DirectoryHelper.NormalizePath($@"{DirectoryHelper.GetUserFolder()}\net8-plugins\{assemblyName}");
 
 				Logger.Debug("Attempting to load driver from file {0}...", dllPath);
 				var dll = Assembly.LoadFrom(dllPath);

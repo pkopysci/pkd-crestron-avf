@@ -47,7 +47,7 @@ namespace pkd_ui_service.Fusion.ErrorManagement
 		public void ClearOfflineDevice(string devId)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(devId, "FusionErrorManager.ClearOfflineDevice", "devId");
-			Logger.Error("Device Error EID: {0} - cleared", devId);
+			Logger.Debug("Device Error EID: {0} - cleared", devId);
 			offlineQueue = new Queue<FusionDeviceData>(offlineQueue.Where(x => !x.Id.Equals(devId, StringComparison.InvariantCulture)));
 			if (currentNotice != null && currentNotice.Id.Equals(devId, StringComparison.InvariantCulture))
 			{

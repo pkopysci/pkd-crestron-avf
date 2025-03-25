@@ -66,7 +66,7 @@ namespace pkd_crestron_avf
 		private object Startup(object userObj)
 		{
 			Logger.Info("GCU Main - Startup()");
-			configService = new ConfigurationService(this.ProgramNumber, this);
+			configService = new ConfigurationService(ProgramNumber);
 			configService.ConfigLoadComplete += ConfigLoadCompleteHandler;
 			configService.ConfigLoadFailed += ConfigLoadFailedHandler;
 			try
@@ -103,12 +103,12 @@ namespace pkd_crestron_avf
 			presentationService.Initialize();
 			infrastructureService.ConnectAllDevices();
 
-			Logger.Info("GCU Main - startup Complete.");
+			Logger.Info("startup Complete.");
 		}
 
 		private void ConfigLoadFailedHandler(object? sender, EventArgs args)
 		{
-			Logger.Error("Main - startup Failed.");
+			Logger.Error("startup Failed.");
 		}
 
 		private void ControllerProgramEventHandler(eProgramStatusEventType programStatusEventType)

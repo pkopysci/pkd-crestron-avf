@@ -133,7 +133,7 @@ namespace pkd_common_utils.Logging
 		/// <param name="message">The custom message to include with the exception log.</param>
 		public static void Error(Exception e, string message)
 		{
-			var line = $"|{_programId}| {message} - {e}";
+			var line = $"|{_programId}| {message} - {e.Message}:{e.StackTrace?.Replace("\n","\n\r")}";
 
 			ErrorLog.Error(line);
 			CrestronConsole.PrintLine($"|{_programId}| {message} - {e.Message} - See error log for stack trace.");
@@ -160,7 +160,7 @@ namespace pkd_common_utils.Logging
 				.Append(" - ")
 				.Append(e.Message)
 				.Append(" || ")
-				.Append(e.StackTrace);
+				.Append(e.StackTrace?.Replace("\n","\n\r"));
 
 			var line = builder.ToString();
 			ErrorLog.Error(line);

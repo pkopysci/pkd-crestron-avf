@@ -1,11 +1,6 @@
-﻿using Crestron.SimplSharp;
-using Crestron.SimplSharp.Ssh;
-using Crestron.SimplSharp.Ssh.Common;
 using pkd_common_utils.Logging;
 using pkd_common_utils.Validation;
-using FileMode = Crestron.SimplSharp.CrestronIO.FileMode;
-using FileStream = Crestron.SimplSharp.CrestronIO.FileStream;
-using IAsyncResult = Crestron.SimplSharp.CrestronIO.IAsyncResult;
+using Renci.SshNet;
 
 namespace pkd_common_utils.NetComs
 {

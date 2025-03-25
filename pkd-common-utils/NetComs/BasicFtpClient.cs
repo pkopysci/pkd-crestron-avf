@@ -1,3 +1,4 @@
+using Crestron.SimplSharp;
 using pkd_common_utils.Logging;
 using pkd_common_utils.Validation;
 using Renci.SshNet;
@@ -97,9 +98,10 @@ namespace pkd_common_utils.NetComs
 			{
 				client.Connect();
 			}
-			catch (SshConnectionException e)
+			catch (Exception e)
 			{
-				CrestronConsole.PrintLine($"{e}");
+				Logger.Error(e,  "BasicFtpClient.Connect() failed");
+				Notify(ErrorOccurred);
 			}
 		}
 

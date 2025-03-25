@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using Crestron.SimplSharp;
-using Crestron.SimplSharpPro;
 using pkd_common_utils.FileOps;
 using pkd_common_utils.Logging;
 using pkd_common_utils.NetComs;
@@ -16,13 +15,12 @@ namespace pkd_config_service
     /// Initializes a new instance of the <see cref="ConfigurationService"/> class.
     /// </remarks>
     /// <param name="programSlot">The program slot number to search for when loading configuration.</param>
-    /// <param name="parent">The root control system entry point object.</param>
-    public sealed class ConfigurationService(uint programSlot, CrestronControlSystem parent) : IDisposable
+    public sealed class ConfigurationService(uint programSlot) : IDisposable
 	{
-		private const string Root = "/user/4s-plugins/";
-		private readonly Queue<DependencyData> missingDependencies = new Queue<DependencyData>();
-		private readonly CrestronControlSystem parent = parent;
+		private const string Root = "/user/net8-plugins/";
+		private readonly Queue<DependencyData> missingDependencies = [];
 		private bool disposed;
+		private bool errorDownloading;
 		private BasicFtpClient? client;
 
 		/// <inheritdoc />
@@ -157,6 +155,12 @@ namespace pkd_config_service
 			{
 				CleanupClient();
 				Logger.Info("All dependencies downloaded. Restarting program...");
+				if (errorDownloading)
+				{
+					Logger.Error($"ConfigurationService - Failed to download all dependencies. See error logs for details.");
+					return;
+				}
+				
 				CrestronConsole.SendControlSystemCommand("progreset -p:" + programSlot, out _);
 			}
 			else
@@ -169,7 +173,7 @@ namespace pkd_config_service
 		private void ClientErrorHandler(object? sender, EventArgs e)
 		{
 			Logger.Error($"Failed to download a dependency: {client?.LastErrorMessage}");
-
+			errorDownloading = true;
             if (missingDependencies.Count == 0)
 			{
 				CleanupClient();
@@ -185,7 +189,7 @@ namespace pkd_config_service
 		{
 			var data = new DependencyData()
 			{
-				Local = DirectoryHelper.NormalizePath(Root + "/" + fileName),
+				Local = DirectoryHelper.NormalizePath(Root + fileName),
 				Remote = Root + remoteSubDir + "/" + fileName
 			};
 
@@ -341,6 +345,44 @@ namespace pkd_config_service
 			}
 		}
 
+		private void CheckVideoWalls(string[] allFiles)
+		{
+			if (Domain == null)
+			{
+				Logger.Error("ConfigurationService.CheckVideoWalls() - Domain data not populated.");
+				return;
+			}
+
+			foreach (var vidwall in Domain.VideoWalls)
+			{
+				if (string.IsNullOrEmpty(vidwall.Connection.Driver))
+				{
+					continue;
+				}
+				
+				CheckDependency(vidwall.Connection.Driver, "videowalls", allFiles);
+			}
+		}
+
+		private void CheckCameras(string[] allFiles)
+		{
+			if (Domain == null)
+			{
+				Logger.Error("ConfigurationService.CheckCameras() - Domain data not populated.");
+				return;
+			}
+
+			foreach (var camera in Domain.Cameras)
+			{
+				if (string.IsNullOrEmpty(camera.Connection.Driver))
+				{
+					continue;
+				}
+				
+				CheckDependency(camera.Connection.Driver, "cameras", allFiles);
+			}
+		}
+		
 		private bool TryFindMissingDependencies()
 		{
             if (Domain == null)
@@ -371,6 +413,8 @@ namespace pkd_config_service
 				CheckDspLibrary(allFiles);
 				CheckCableBoxLibrary(allFiles);
 				CheckLightingLibrary(allFiles);
+				CheckVideoWalls(allFiles);
+				CheckCameras(allFiles);
 				return true;
 			}
 			catch (Exception ex)
@@ -454,5 +498,4 @@ namespace pkd_config_service
 			handler?.Invoke(this, EventArgs.Empty);
 		}
 	}
-
 }

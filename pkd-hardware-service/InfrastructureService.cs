@@ -125,7 +125,7 @@ namespace pkd_hardware_service
 				}
 
 				// If display is also an audio control, add it to the collection of dsp devices.
-				if (device is IDsp dspDisplay)
+				if (device is IAudioControl dspDisplay)
 				{
 					Dsps.AddDevice(display.Id, dspDisplay);
 				}

@@ -118,24 +118,37 @@ namespace pkd_config_service
 			client = null;
 		}
 
-		private void CreateClient()
+		private bool CreateClient()
 		{
 			if (Domain == null)
 			{
 				Logger.Error("ConfigurationService.CreateClient() - Domain object not populated.");
-				return;
+				return false;
 			}
 
-			var keyPath = DirectoryHelper.NormalizePath(DirectoryHelper.GetUserFolder() + "/" + Domain.ServerInfo.Key);
-			var key = new PrivateKeyFile(keyPath);
-			client = new BasicFtpClient(
-				Domain.ServerInfo.Host,
-				Domain.ServerInfo.User,
-				key);
+			try
+			{
+				var keyPath = DirectoryHelper.NormalizePath(DirectoryHelper.GetUserFolder() + "/" + Domain.ServerInfo.Key);
+				var key = new PrivateKeyFile(keyPath);
+				
+				Logger.Debug($"CreateClient() : Creating key file {keyPath} for {Domain.ServerInfo.Host}");
+				
+				client = new BasicFtpClient(
+					Domain.ServerInfo.Host,
+					Domain.ServerInfo.User,
+					key);
 
-			client.DownloadComplete += ClientDownloadCompleteHandler;
-			client.ErrorOccurred += ClientErrorHandler;
-			client.Connect();
+				client.DownloadComplete += ClientDownloadCompleteHandler;
+				client.ErrorOccurred += ClientErrorHandler;
+				client.Connect();
+				return true;
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, "ConfigurationService.CreateClient() failed to connect to server.");
+				Notify(ConfigLoadFailed);
+				return false;
+			}
 		}
 
 		private void ClientDownloadCompleteHandler(object? sender, EventArgs e)
@@ -172,7 +185,7 @@ namespace pkd_config_service
 		{
 			var data = new DependencyData()
 			{
-				Local = DirectoryHelper.NormalizePath(DirectoryHelper.GetUserFolder() + "/" + fileName),
+				Local = DirectoryHelper.NormalizePath(Root + "/" + fileName),
 				Remote = Root + remoteSubDir + "/" + fileName
 			};
 
@@ -339,8 +352,15 @@ namespace pkd_config_service
             Logger.Info("Checking for missing dependencies...");
 			try
 			{
-				// Format: /user/[filename].[extension]
-				var allFiles = Directory.GetFiles(DirectoryHelper.GetUserFolder())
+				// if root directory does not exist, create that directory.
+				var normalizedRoot = DirectoryHelper.NormalizePath(Root);
+				if (!Directory.Exists(normalizedRoot))
+				{
+					Directory.CreateDirectory(normalizedRoot);
+				}
+				
+				// Format: /user/4s-plugins/[filename].[extension]
+				var allFiles = Directory.GetFiles(normalizedRoot)
 					.Where(file => !file.EndsWith("_config.json") && !file.Equals(Domain.ServerInfo.Key))
 					.ToArray();
 
@@ -369,8 +389,7 @@ namespace pkd_config_service
 					var builder = new StringBuilder();
 					using (StreamReader reader = new(configPath))
 					{
-						string? line;
-						while ((line = reader.ReadLine()) != null)
+						while (reader.ReadLine() is { } line)
 						{
 							builder.Append(line);
 						}
@@ -410,7 +429,7 @@ namespace pkd_config_service
 			}
 
 			Logger.Info("Downloading missing dependencies...");
-			CreateClient();
+			if (!CreateClient()) return;
 			var dependency = missingDependencies.Dequeue();
 			client?.DownloadFile(dependency.Remote, dependency.Local);
 		}

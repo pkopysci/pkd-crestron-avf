@@ -1,4 +1,6 @@
-﻿using Crestron.SimplSharp.Ssh;
+﻿using Crestron.SimplSharp;
+using Crestron.SimplSharp.Ssh;
+using Crestron.SimplSharp.Ssh.Common;
 using pkd_common_utils.Logging;
 using pkd_common_utils.Validation;
 using FileMode = Crestron.SimplSharp.CrestronIO.FileMode;
@@ -96,7 +98,14 @@ namespace pkd_common_utils.NetComs
 		{
 			if (client.IsConnected) return;
 			Logger.Debug("BasicFtpClient.Connect()");
-			client.Connect();
+			try
+			{
+				client.Connect();
+			}
+			catch (SshConnectionException e)
+			{
+				CrestronConsole.PrintLine($"{e}");
+			}
 		}
 
 		/// <summary>

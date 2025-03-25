@@ -1,6 +1,6 @@
 {
   "ServerInfo": {
-    "Host": "192.168.1.251",
+    "Host": "10.8.113.152",
     "User": "svc_crestron",
     "Key": "sftp-crestron"
   },
@@ -264,10 +264,46 @@
     "Destinations": [
       {
         "Id": "DEST01",
-        "Label": "Projector",
+        "Label": "window 1",
         "Icon": "tv",
         "Matrix": "rtr01",
         "Output": 1,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST02",
+        "Label": "window 2",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 2,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST03",
+        "Label": "window 3",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 3,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST04",
+        "Label": "window 4",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 4,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST05",
+        "Label": "UI Preview",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 17,
         "RoutingGroup": 0,
         "Tags": []
       }
@@ -275,16 +311,16 @@
     "MatrixData": [
       {
         "Id": "rtr01",
-        "Label": "AVR Emulator",
-        "ClassName": "AvSwitchEmulator",
-        "Inputs": 5,
-        "Outputs": 1,
+        "Label": "Carbonite Ultra",
+        "ClassName": "BasicCarboniteUltra",
+        "Inputs": 24,
+        "Outputs": 24,
         "Connection": {
           "Id": "con01",
           "Transport": "tcp",
-          "Driver": "AvSwitchEmulator.dll",
-          "Host": "192.168.1.39",
-          "Port": 5000,
+          "Driver": "CarboniteAvrs.dll",
+          "Host": "10.16.6.168",
+          "Port": 7788,
           "Authentication": {
             "Id": "auth01",
             "UserName": "",

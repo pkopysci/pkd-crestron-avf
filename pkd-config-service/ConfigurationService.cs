@@ -1,11 +1,11 @@
 ﻿using System.Text;
 using Crestron.SimplSharp;
-using Crestron.SimplSharp.Ssh;
 using Crestron.SimplSharpPro;
 using pkd_common_utils.FileOps;
 using pkd_common_utils.Logging;
 using pkd_common_utils.NetComs;
 using pkd_domain_service;
+using Renci.SshNet;
 
 namespace pkd_config_service
 {

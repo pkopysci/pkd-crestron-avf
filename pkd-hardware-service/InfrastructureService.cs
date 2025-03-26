@@ -178,7 +178,8 @@ namespace pkd_hardware_service
 						channel.BankIndex,
 						channel.LevelMax,
 						channel.LevelMin,
-						channel.RouterIndex);
+						channel.RouterIndex,
+						channel.Tags);
 				}
 				else if (channel.Tags.Contains("output"))
 				{
@@ -190,7 +191,8 @@ namespace pkd_hardware_service
 						channel.RouterIndex,
 						channel.BankIndex,
 						channel.LevelMax,
-						channel.LevelMin);
+						channel.LevelMin,
+						channel.Tags);
 				}
 				else
 				{

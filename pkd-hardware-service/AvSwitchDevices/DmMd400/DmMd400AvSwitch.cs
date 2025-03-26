@@ -87,14 +87,14 @@ namespace pkd_hardware_service.AvSwitchDevices.DmMd400
 		}
 
 		/// <inheritdoc/>
-		public void AddInputChannel(string id, string levelTag, string muteTag, int bankIndex, int levelMax, int levelMin, int routerIndex)
+		public void AddInputChannel(string id, string levelTag, string muteTag, int bankIndex, int levelMax, int levelMin, int routerIndex, List<string> _)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(id, "AddInputChannel", "id");
 			_inputIds.Add(id);
 		}
 
 		/// <inheritdoc/>
-		public void AddOutputChannel(string id, string levelTag, string muteTag, string routerTag, int routerIndex, int bankIndex, int levelMax, int levelMin)
+		public void AddOutputChannel(string id, string levelTag, string muteTag, string routerTag, int routerIndex, int bankIndex, int levelMax, int levelMin, List<string> _)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(id, "AddOutputChannel", "id");
 			_outputIds.Add(id);

@@ -108,7 +108,7 @@ namespace pkd_hardware_service.AudioDevices
 		/// <summary>
 		/// Attempts to recall the target preset on the device.
 		/// </summary>
-		/// <param name="id">The uniue ID of the preset to recall, as defined in the system configuration.</param>
+		/// <param name="id">The unique ID of the preset to recall, as defined in the system configuration.</param>
 		void RecallAudioPreset(string id);
 
 		/// <summary>
@@ -116,26 +116,28 @@ namespace pkd_hardware_service.AudioDevices
 		/// methods for that channel.
 		/// </summary>
 		/// <param name="id">The unique ID of the channel as defined in the configuration.</param>
-		/// <param name="levelTag">The instanace tag or named control associated with changing the gain.</param>
+		/// <param name="levelTag">The instance tag or named control associated with changing the gain.</param>
 		/// <param name="muteTag">The instance tag or named control associated with the mute state.</param>
 		/// <param name="bankIndex">The input number or position in a channel bank used for control.</param>
 		/// <param name="levelMax">The maximum value expected by the hardware for the audio channel. This is in the range defined by the device and not necessarily 0-100.</param>
-		/// <param name="levelMin">The minumum value expected by the hardware for the aduio channel. This is in the range defined by the device and not necessarily 0-100.</param>
+		/// <param name="levelMin">The minimum value expected by the hardware for the audio channel. This is in the range defined by the device and not necessarily 0-100.</param>
 		/// <param name="routerIndex">The input index for this channel if routing is supported by the control. Can be 0 if unused.</param>
-		void AddInputChannel(string id, string levelTag, string muteTag, int bankIndex, int levelMax, int levelMin, int routerIndex);
+		/// <param name="tags">A collection of keywords used for plugin-specific or custom ui behavior.</param>
+		void AddInputChannel(string id, string levelTag, string muteTag, int bankIndex, int levelMax, int levelMin, int routerIndex, List<string> tags);
 
 		/// <summary>
 		/// Add an output to the DSP. The DSP implementation will then update its control
 		/// methods for that channel.
 		/// </summary>
 		/// <param name="id">The unique ID of the channel as defined in the configuration.</param>
-		/// <param name="levelTag">The instanace tag or named control associated with changing the gain.</param>
+		/// <param name="levelTag">The instance tag or named control associated with changing the gain.</param>
 		/// <param name="muteTag">The instance tag or named control associated with the mute state.</param>
 		/// <param name="routerTag">The instance tag or named control associated with a router block.</param>
 		/// <param name="routerIndex">The output index of the router associated with this channel. Can be 0 if not routable.</param>
 		/// <param name="bankIndex">The output number or position in a channel bank used for control.</param>
 		/// <param name="levelMax">The maximum value expected by the hardware for the audio channel. This is in the range defined by the device and not necessarily 0-100.</param>
-		/// <param name="levelMin">The minumum value expected by the hardware for the aduio channel. This is in the range defined by the device and not necessarily 0-100.</param>
+		/// <param name="levelMin">The minimum value expected by the hardware for the audio channel. This is in the range defined by the device and not necessarily 0-100.</param>
+		/// <param name="tags">A collection of keywords used for plugin-specific or custom ui behavior.</param>
 		void AddOutputChannel(
 			string id,
 			string levelTag,
@@ -144,13 +146,14 @@ namespace pkd_hardware_service.AudioDevices
 			int routerIndex,
 			int bankIndex,
 			int levelMax,
-			int levelMin);
+			int levelMin,
+			List<string> tags);
 
 		/// <summary>
 		/// Add a preset recall to the DSP. The DSP implementation will update its control methods for that
 		/// preset or snapshot.
 		/// </summary>
-		/// <param name="id">The unique ID of the preset. This can either be a snaphot bank name or tag ID.</param>
+		/// <param name="id">The unique ID of the preset. This can either be a snapshot bank name or tag ID.</param>
 		/// <param name="index">The index or preset number to recall.</param>
 		void AddPreset(string id, int index);
 	}

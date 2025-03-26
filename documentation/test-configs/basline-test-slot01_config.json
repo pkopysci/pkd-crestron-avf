@@ -1,6 +1,6 @@
 {
   "ServerInfo": {
-    "Host": "192.168.1.251",
+    "Host": "10.8.113.152",
     "User": "svc_crestron",
     "Key": "sftp-crestron"
   },
@@ -86,6 +86,8 @@
     {
       "Id": "disp01",
       "Label": "Projector 1",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Display Emulator",
       "Icon": "",
       "Tags": [],
       "HasScreen": true,
@@ -131,6 +133,8 @@
       "Id": "disp02",
       "Label": "Display 1",
       "Icon": "",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Display Emulator",
       "Tags": ["station"],
       "HasScreen": false,
       "RelayController": "",
@@ -177,6 +181,8 @@
       "Id": "disp03",
       "Label": "Display 2",
       "Icon": "",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Display Emulator",
       "Tags": ["station"],
       "HasScreen": false,
       "RelayController": "",

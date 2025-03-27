@@ -307,7 +307,7 @@ namespace pkd_application_service.AudioControl
 				return;
 			}
 
-			bool found = false;
+			var found = false;
 			foreach (var dsp in _dspDevices.GetAllDevices())
 			{
 				if (dsp.GetAudioOutputIds().Contains(id))
@@ -327,8 +327,10 @@ namespace pkd_application_service.AudioControl
 		/// <inheritdoc/>
 		public void SetAudioOutputMute(string id, bool mute)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "SetAudioOutputMute", "id");
+			ParameterValidator.ThrowIfNullOrEmpty(id, "SetAudioOutputMute", nameof(id));
 
+			Logger.Debug($"AudioControlApp.SetAudioOutputMute({id}, {mute}");
+			
 			var found = false;
 			foreach (var dsp in _dspDevices.GetAllDevices())
 			{

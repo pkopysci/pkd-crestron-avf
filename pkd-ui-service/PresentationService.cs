@@ -1010,8 +1010,15 @@ namespace pkd_ui_service
 		private void UiAudioOutputMuteRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioOutputMuteRequest() - {0}", e.Arg);
-			bool current = _appService.QueryAudioOutputMute(e.Arg);
-			_appService.SetAudioOutputMute(e.Arg, !current);
+			try
+			{
+				var current = _appService.QueryAudioOutputMute(e.Arg);
+				_appService.SetAudioOutputMute(e.Arg, !current);
+			}
+			catch (Exception ex)
+			{
+				Logger.Error(ex, "PresentationService.UiAudioOutputMuteRequest()");
+			}
 		}
 
 		private void UiAudioOutputLevelUpRequest(object? sender, GenericSingleEventArgs<string> e)

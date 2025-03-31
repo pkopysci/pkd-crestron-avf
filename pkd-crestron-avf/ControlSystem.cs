@@ -11,12 +11,12 @@ namespace pkd_crestron_avf
 {
 	public class ControlSystem : CrestronControlSystem
 	{
-		private Thread? startupThread;
-		private ConfigurationService? configService;
+		private Thread? _startupThread;
+		private ConfigurationService? _configService;
 
-		private IInfrastructureService? infrastructureService;
-		private IApplicationService? applicationService;
-		private IPresentationService? presentationService;
+		private IInfrastructureService? _infrastructureService;
+		private IApplicationService? _applicationService;
+		private IPresentationService? _presentationService;
 		
 		public ControlSystem()
 		{
@@ -43,7 +43,7 @@ namespace pkd_crestron_avf
 			{
 				Logger.SetProgramId($"PGM {ProgramNumber}");
 				Logger.Info("GCU Main - Initializing System...");
-				startupThread = new Thread(Startup, new object());
+				_startupThread = new Thread(Startup, new object());
 			}
 			catch (Exception e)
 			{
@@ -66,12 +66,12 @@ namespace pkd_crestron_avf
 		private object Startup(object userObj)
 		{
 			Logger.Info("GCU Main - Startup()");
-			configService = new ConfigurationService(ProgramNumber);
-			configService.ConfigLoadComplete += ConfigLoadCompleteHandler;
-			configService.ConfigLoadFailed += ConfigLoadFailedHandler;
+			_configService = new ConfigurationService(ProgramNumber);
+			_configService.ConfigLoadComplete += ConfigLoadCompleteHandler;
+			_configService.ConfigLoadFailed += ConfigLoadFailedHandler;
 			try
 			{
-				configService.LoadConfig();
+				_configService.LoadConfig();
 			}
 			catch (Exception e)
 			{
@@ -83,25 +83,25 @@ namespace pkd_crestron_avf
 
 		private void ConfigLoadCompleteHandler(object? sender, EventArgs args)
 		{
-			var domainService = configService?.Domain;
+			var domainService = _configService?.Domain;
 			if (domainService == null)
 			{
 				Logger.Error("ControlSystem.ConfigLoadCompleteHandler: failed to get domain service from config.");
 				return;
 			}
 			
-			infrastructureService = InfrastructureServiceFactory.CreateInfrastructureService(domainService, this);
-			applicationService = ApplicationControlFactory.CreateAppService(infrastructureService, domainService);
-			if (applicationService == null)
+			_infrastructureService = InfrastructureServiceFactory.CreateInfrastructureService(domainService, this);
+			_applicationService = ApplicationControlFactory.CreateAppService(_infrastructureService, domainService);
+			if (_applicationService == null)
 			{
 				Logger.Error("ControlSystem.ConfigLoadCompleteHandler: failed to create application service.");
 				return;
 			}
 			
-			applicationService.SetAutoShutdownTime(23, 0);
-			presentationService = PresentationServiceFactory.CreatePresentationService(applicationService, this);
-			presentationService.Initialize();
-			infrastructureService.ConnectAllDevices();
+			_applicationService.SetAutoShutdownTime(23, 0);
+			_presentationService = PresentationServiceFactory.CreatePresentationService(_applicationService, this);
+			_presentationService.Initialize();
+			_infrastructureService.ConnectAllDevices();
 
 			Logger.Info("startup Complete.");
 		}
@@ -122,9 +122,9 @@ namespace pkd_crestron_avf
 					//The program has been resumed. Resume all the user threads/timers as needed.
 					break;
 				case (eProgramStatusEventType.Stopping):
-					(presentationService as IDisposable)?.Dispose();
-					(applicationService as IDisposable)?.Dispose();
-					configService?.Dispose();
+					(_presentationService as IDisposable)?.Dispose();
+					(_applicationService as IDisposable)?.Dispose();
+					_configService?.Dispose();
 					break;
 			}
 		}

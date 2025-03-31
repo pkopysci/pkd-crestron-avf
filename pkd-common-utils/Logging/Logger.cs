@@ -9,7 +9,7 @@ namespace pkd_common_utils.Logging
 	/// </summary>
 	public static class Logger
 	{
-		private static bool _debugEnabled = false;
+		private static bool _debugEnabled;
 		private static string _programId = "NO ID";
 
 		/// <summary>
@@ -57,7 +57,7 @@ namespace pkd_common_utils.Logging
 				_programId,
 				message);
 
-			CrestronConsole.PrintLine(line);
+			Console.WriteLine(line);
 		}
 
 		/// <summary>
@@ -74,12 +74,12 @@ namespace pkd_common_utils.Logging
 			}
 
 			StringBuilder builder = new StringBuilder();
-			builder.Append("|")
+			builder.Append('|')
 				.Append(_programId)
 				.Append("| ")
 				.Append(string.Format(message, args));
 
-			CrestronConsole.PrintLine(builder.ToString());
+			Console.WriteLine(builder.ToString());
 			builder.Remove(0, builder.Length);
 		}
 
@@ -100,7 +100,7 @@ namespace pkd_common_utils.Logging
 				message);
 
 			ErrorLog.Error(line);
-			CrestronConsole.PrintLine(line);
+			Console.WriteLine(line);
 		}
 
 		/// <summary>
@@ -115,15 +115,15 @@ namespace pkd_common_utils.Logging
 				return;
 			}
 
-			StringBuilder builder = new StringBuilder();
-			builder.Append("|")
+			var builder = new StringBuilder();
+			builder.Append('|')
 				.Append(_programId)
 				.Append("| ")
 				.Append(string.Format(message, args));
 
-			string line = builder.ToString();
+			var line = builder.ToString();
 			ErrorLog.Error(line);
-			CrestronConsole.PrintLine(line);
+			Console.WriteLine(line);
 		}
 
 		/// <summary>
@@ -136,7 +136,7 @@ namespace pkd_common_utils.Logging
 			var line = $"|{_programId}| {message} - {e.Message}:{e.StackTrace?.Replace("\n","\n\r")}";
 
 			ErrorLog.Error(line);
-			CrestronConsole.PrintLine($"|{_programId}| {message} - {e.Message} - See error log for stack trace.");
+			Console.WriteLine($"|{_programId}| {message} - {e.Message} - See error log for stack trace.");
 		}
 
 		/// <summary>
@@ -153,7 +153,7 @@ namespace pkd_common_utils.Logging
 			}
 
 			var builder = new StringBuilder();
-			builder.Append("|")
+			builder.Append('|')
 				.Append(_programId)
 				.Append("| ")
 				.Append(string.Format(message, args))
@@ -164,7 +164,7 @@ namespace pkd_common_utils.Logging
 
 			var line = builder.ToString();
 			ErrorLog.Error(line);
-			CrestronConsole.PrintLine($"|{_programId}| {message} - {e.Message} - See error log for stack trace.");
+			Console.WriteLine($"|{_programId}| {message} - {e.Message} - See error log for stack trace.");
 		}
 
 		/// <summary>
@@ -181,7 +181,7 @@ namespace pkd_common_utils.Logging
 			var line = $"|{_programId}| {message}";
 
 			ErrorLog.Warn(line);
-			CrestronConsole.PrintLine(line);
+			Console.WriteLine(line);
 		}
 
 		/// <summary>
@@ -204,7 +204,7 @@ namespace pkd_common_utils.Logging
 
 			var line = builder.ToString();
 			ErrorLog.Warn(line);
-			CrestronConsole.PrintLine(line);
+			Console.WriteLine(line);
 		}
 
 		/// <summary>
@@ -219,7 +219,7 @@ namespace pkd_common_utils.Logging
 			builder.Append("| ").Append(_programId).Append(" DEBUG LOG | ")
 				.Append(string.Format(message, args));
 			
-			CrestronConsole.PrintLine(builder.ToString());
+			Console.WriteLine(builder.ToString());
 #else
 
 
@@ -232,7 +232,7 @@ namespace pkd_common_utils.Logging
             builder.Append("| ").Append(_programId).Append(" DEBUG LOG | ")
                 .Append(string.Format(message, args));
 
-            CrestronConsole.PrintLine(builder.ToString());
+            Console.WriteLine(builder.ToString());
 #endif
 		}
 
@@ -243,14 +243,14 @@ namespace pkd_common_utils.Logging
 		public static void Debug(string message)
 		{
 #if DEBUG
-			CrestronConsole.PrintLine($"| {_programId} DEBUG LOG | {message}");
+			Console.WriteLine($"| {_programId} DEBUG LOG | {message}");
 #else
             if (!_debugEnabled || string.IsNullOrEmpty(message))
             {
                 return;
             }
 
-            CrestronConsole.PrintLine($"| {_programId} DEBUG LOG | {message}");
+            Console.WriteLine($"| {_programId} DEBUG LOG | {message}");
 #endif
 		}
 

@@ -11,6 +11,7 @@ namespace pkd_crestron_avf
     public class ControlSystem : CrestronControlSystem
     {
         private ConfigurationService? _configService;
+        private readonly CrestronTextWriter _consoleWriter = new();
 
         private IInfrastructureService? _infrastructureService;
         private IApplicationService? _applicationService;
@@ -22,7 +23,8 @@ namespace pkd_crestron_avf
             {
                 Crestron.SimplSharpPro.CrestronThread.Thread.MaxNumberOfUserThreads = 100;
                 CrestronEnvironment.ProgramStatusEventHandler += ControllerProgramEventHandler;
-
+                Console.SetOut(_consoleWriter);
+                
                 CrestronConsole.AddNewConsoleCommand(
                     SetDebugMode,
                     "setdebug",

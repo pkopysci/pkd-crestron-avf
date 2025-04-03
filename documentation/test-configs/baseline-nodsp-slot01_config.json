@@ -53,15 +53,26 @@
           }
         ],
         "Tags": []
-      }  
+    },
+    {
+      "Id": "ui01",
+      "IpId": 8080,
+      "Model": "Rest API",
+      "ClassName": "RestApiUserInterface",
+      "Library": "PkdAvfRestApi.dll",
+      "Sgd": "ProgramConfig.json",
+      "DefaultActivity": "",
+      "Menu": [],
+      "Tags": []
+    }  
   ],
   "Displays": [
     {
       "Id": "disp01",
       "Label": "Projector",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Display Emulator",
       "Icon": "",
-      "Manufacturer": "NEC",
-      "Model": "P502",
       "Tags": [],
       "HasScreen": true,
       "RelayController": "rly01",
@@ -69,9 +80,9 @@
       "ScreenDownRelay": 2,
       "Connection": {
         "Id": "con01",
-        "Transport": "NecProjectorTcp",
-        "Driver": "NecProjector.dll",
-        "Host": "10.16.6.16",
+        "Transport": "DisplayEmulatorTcp",
+        "Driver": "DisplayEmulator.dll",
+        "Host": "192.168.1.252",
         "Port": 7142,
         "Authentication": {
           "Id": "auth01",
@@ -104,20 +115,70 @@
     },
     {
       "Id": "disp02",
-      "Label": "Display",
+      "Label": "Display 1",
       "Icon": "",
-      "Manufacturer": "NEC",
-      "Model": "P502",
-      "Tags": [],
-      "HasScreen": true,
-      "RelayController": "rly01",
-      "ScreenUpRelay": 1,
-      "ScreenDownRelay": 2,
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Display Emulator",
+      "Tags": ["station"],
+      "HasScreen": false,
+      "RelayController": "",
+      "ScreenUpRelay": 3,
+      "ScreenDownRelay": 4,
+      "LecternInput": 1,
+      "StationInput": 2,
       "Connection": {
         "Id": "con01",
-        "Transport": "NecMultisyncDisplayTcp",
-        "Driver": "NecMultisyncDisplay.dll",
-        "Host": "10.16.6.17",
+        "Transport": "DisplayEmulatorTcp",
+        "Driver": "DisplayEmulator.dll",
+        "Host": "192.168.1.252",
+        "Port": 7142,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        },
+        "ComSpec": {
+          "Protocol": "rs232",
+          "BaudRate": 9600,
+          "DataBits": 8,
+          "StopBits": 1,
+          "HwHandshake": "none",
+          "SwHandshake": "none",
+          "Parity": "none"
+        }
+      },
+      "UserAttributes": [
+        {
+          "Id": "ID",
+          "DataType": "string",
+          "Value": "0"
+        }
+      ],
+      "CustomCommands": {
+        "FreezeOnTx": "",
+        "FreezeOnRx": "",
+        "FreezeOffTx": "",
+        "FreezeOffRx": ""
+      }
+    },
+    {
+      "Id": "disp03",
+      "Label": "Display 2",
+      "Icon": "",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Display Emulator",
+      "Tags": ["station"],
+      "HasScreen": false,
+      "RelayController": "",
+      "ScreenUpRelay": 3,
+      "ScreenDownRelay": 4,
+      "LecternInput": 1,
+      "StationInput": 2,
+      "Connection": {
+        "Id": "con01",
+        "Transport": "DisplayEmulatorTcp",
+        "Driver": "DisplayEmulator.dll",
+        "Host": "192.168.1.252",
         "Port": 7142,
         "Authentication": {
           "Id": "auth01",
@@ -160,7 +221,7 @@
         "Control": "",
         "Matrix": "rtr01",
         "Input": 1,
-        "Tags": ["pc","event01"]
+        "Tags": ["pc"]
       },
       {
         "Id": "SRC02",
@@ -169,7 +230,7 @@
         "Control": "",
         "Matrix": "rtr01",
         "Input": 5,
-        "Tags": ["vga","event02"]
+        "Tags": ["vga"]
       },
       {
         "Id": "SRC03",
@@ -204,14 +265,14 @@
     "MatrixData": [
       {
         "Id": "rtr01",
-        "Label": "Kramer VP-440X",
-        "ClassName": "KramerAvSwitchTcp",
+        "Label": "EVR Emulator",
+        "ClassName": "AvSwitchEmulator",
         "Inputs": 5,
         "Outputs": 1,
         "Connection": {
           "Id": "con01",
           "Transport": "tcp",
-          "Driver": "KramerAvSwitch.dll",
+          "Driver": "AvSwitchEmulator.dll",
           "Host": "10.16.6.14",
           "Port": 5000,
           "Authentication": {

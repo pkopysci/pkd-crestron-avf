@@ -53,26 +53,15 @@
           }
         ],
         "Tags": []
-    },
-    {
-      "Id": "ui01",
-      "IpId": 8080,
-      "Model": "Rest API",
-      "ClassName": "RestApiUserInterface",
-      "Library": "PkdAvfRestApi.dll",
-      "Sgd": "ProgramConfig.json",
-      "DefaultActivity": "",
-      "Menu": [],
-      "Tags": []
-    }  
+      }  
   ],
   "Displays": [
     {
       "Id": "disp01",
       "Label": "Projector",
-      "Manufacturer": "Emulation, Inc.",
-      "Model": "Display Emulator",
       "Icon": "",
+      "Manufacturer": "NEC",
+      "Model": "P502",
       "Tags": [],
       "HasScreen": true,
       "RelayController": "rly01",
@@ -80,9 +69,9 @@
       "ScreenDownRelay": 2,
       "Connection": {
         "Id": "con01",
-        "Transport": "DisplayEmulatorTcp",
-        "Driver": "DisplayEmulator.dll",
-        "Host": "192.168.1.252",
+        "Transport": "NecProjectorTcp",
+        "Driver": "NecProjector.dll",
+        "Host": "10.16.6.16",
         "Port": 7142,
         "Authentication": {
           "Id": "auth01",
@@ -115,70 +104,20 @@
     },
     {
       "Id": "disp02",
-      "Label": "Display 1",
+      "Label": "Display",
       "Icon": "",
-      "Manufacturer": "Emulation, Inc.",
-      "Model": "Display Emulator",
-      "Tags": ["station"],
+      "Manufacturer": "NEC",
+      "Model": "V484",
+      "Tags": [],
       "HasScreen": false,
-      "RelayController": "",
-      "ScreenUpRelay": 3,
-      "ScreenDownRelay": 4,
-      "LecternInput": 1,
-      "StationInput": 2,
+      "RelayController": "rly01",
+      "ScreenUpRelay": 1,
+      "ScreenDownRelay": 2,
       "Connection": {
         "Id": "con01",
-        "Transport": "DisplayEmulatorTcp",
-        "Driver": "DisplayEmulator.dll",
-        "Host": "192.168.1.252",
-        "Port": 7142,
-        "Authentication": {
-          "Id": "auth01",
-          "UserName": "",
-          "Password": ""
-        },
-        "ComSpec": {
-          "Protocol": "rs232",
-          "BaudRate": 9600,
-          "DataBits": 8,
-          "StopBits": 1,
-          "HwHandshake": "none",
-          "SwHandshake": "none",
-          "Parity": "none"
-        }
-      },
-      "UserAttributes": [
-        {
-          "Id": "ID",
-          "DataType": "string",
-          "Value": "0"
-        }
-      ],
-      "CustomCommands": {
-        "FreezeOnTx": "",
-        "FreezeOnRx": "",
-        "FreezeOffTx": "",
-        "FreezeOffRx": ""
-      }
-    },
-    {
-      "Id": "disp03",
-      "Label": "Display 2",
-      "Icon": "",
-      "Manufacturer": "Emulation, Inc.",
-      "Model": "Display Emulator",
-      "Tags": ["station"],
-      "HasScreen": false,
-      "RelayController": "",
-      "ScreenUpRelay": 3,
-      "ScreenDownRelay": 4,
-      "LecternInput": 1,
-      "StationInput": 2,
-      "Connection": {
-        "Id": "con01",
-        "Transport": "DisplayEmulatorTcp",
-        "Driver": "DisplayEmulator.dll",
-        "Host": "192.168.1.252",
+        "Transport": "NecMultisyncDisplayTcp",
+        "Driver": "NecMultisyncDisplay.dll",
+        "Host": "10.16.6.17",
         "Port": 7142,
         "Authentication": {
           "Id": "auth01",
@@ -221,7 +160,7 @@
         "Control": "",
         "Matrix": "rtr01",
         "Input": 1,
-        "Tags": ["pc"]
+        "Tags": ["pc","event01"]
       },
       {
         "Id": "SRC02",
@@ -230,7 +169,7 @@
         "Control": "",
         "Matrix": "rtr01",
         "Input": 5,
-        "Tags": ["vga"]
+        "Tags": ["vga","event02"]
       },
       {
         "Id": "SRC03",
@@ -265,14 +204,14 @@
     "MatrixData": [
       {
         "Id": "rtr01",
-        "Label": "EVR Emulator",
-        "ClassName": "AvSwitchEmulator",
+        "Label": "Kramer VP-440X",
+        "ClassName": "KramerAvSwitchTcp",
         "Inputs": 5,
         "Outputs": 1,
         "Connection": {
           "Id": "con01",
           "Transport": "tcp",
-          "Driver": "AvSwitchEmulator.dll",
+          "Driver": "KramerAvSwitch.dll",
           "Host": "10.16.6.14",
           "Port": 5000,
           "Authentication": {
@@ -286,29 +225,61 @@
     "MatrixEdges": []
   },
   "Audio": {
-    "Dsps": [],
+    "Dsps": [{
+        "Id": "dsp01",
+        "CoreId": 1,
+        "Dependencies": [
+          "TCPClient.dll",
+          "QscQsys.dll",
+          "ExtensionMethods.dll"
+        ],
+        "Presets": [
+          {
+            "Id": "startup",
+            "Bank": "StartupShutdown",
+            "Index": 1
+          },
+          {
+            "Id": "shutdown",
+            "Bank": "StartupShutdown",
+            "Index": 2
+          }
+        ],
+        "Connection": {
+          "Id": "con02",
+          "Transport": "QscDspTcp",
+          "Driver": "QscDsp.dll",
+          "Host": "10.16.6.12",
+          "Port": 1710,
+          "Authentication": {
+            "Id": "auth02",
+            "UserName": "",
+            "Password": "1234"
+          }
+        }
+      }],
     "Channels": [
       {
         "Id": "CHAN01",
-        "DspId": "rtr01",
-        "LevelControlTag": "",
-        "MuteControlTag": "",
-        "RouterControlTag": "",
+        "DspId": "dsp01",
+        "LevelControlTag": "ZONE-01-LEVEL",
+        "MuteControlTag": "ZONE-01-MUTE",
+        "RouterControlTag": "ZONE-01-RTR",
         "RouterIndex": 1,
         "BankIndex": 1,
-        "Label": "Room Volume",
+        "Label": "Room Audio",
         "Icon": "Volume",
         "ZoneEnableToggles": [],
         "Tags": ["pgm", "output"]
       },
       {
         "Id": "CHAN02",
-        "DspId": "rtr01",
-        "LevelControlTag": "",
-        "MuteControlTag": "",
+        "DspId": "dsp01",
+        "LevelControlTag": "MIC-01-LEVEL",
+        "MuteControlTag": "MIC-01-MUTE",
         "RouterControlTag": "",
         "RouterIndex": 0,
-        "BankIndex": 0,
+        "BankIndex": 1,
         "Label": "Podium",
         "Icon": "Mic",
         "ZoneEnableToggles": [],

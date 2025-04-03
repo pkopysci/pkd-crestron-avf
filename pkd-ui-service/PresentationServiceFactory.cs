@@ -43,11 +43,9 @@ namespace pkd_ui_service
 				Logger.Error("pkd_ui_service.PresentationServiceFactory.CreateUserInterface() - UiData argument must contain ClassName and Library entries.");
 				return null;
 			}
-			else
-			{
-				Logger.Debug($"PresentationServiceFactory.CreateUserInterface() - Loading {uiData.Library}.{uiData.ClassName}");
-				return CreateInterfaceFromPlugin(parent, uiData, appService);
-			}
+			
+			Logger.Debug($"PresentationServiceFactory.CreateUserInterface() - Loading {uiData.Library}.{uiData.ClassName}");
+			return CreateInterfaceFromPlugin(parent, uiData, appService);
 		}
 
 		internal static IFusionInterface CreateFusionService(
@@ -102,6 +100,7 @@ namespace pkd_ui_service
 				appService.GetAllAudioDspDevices());
 			(device as ITransportControlUserInterface)?.SetCableBoxData(appService.GetAllCableBoxes());
 			(device as ILightingUserInterface)?.SetLightingData(appService.GetAllLightingDeviceInfo());
+			(device as IUsesApplicationService)?.SetApplicationService(appService);
 
 			if (device is ICustomEventUserInterface eventUi && appService is ICustomEventAppService eventApp)
 			{

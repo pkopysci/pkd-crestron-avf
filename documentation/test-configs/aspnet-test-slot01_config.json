@@ -1,0 +1,650 @@
+{
+  "ServerInfo": {
+    "Host": "10.8.113.152",
+    "User": "svc_crestron",
+    "Key": "sftp-crestron"
+  },
+  "RoomInfo": {
+    "Id": "ROOM01",
+    "RoomName": "ASP.NET Test",
+    "HelpContact": "123-456-4321",
+    "SystemType": "baseline",
+    "Logic": {
+      "AppServiceLibrary": "",
+      "AppServiceClass": ""
+    }
+  },
+  "UserInterfaces": [
+    {
+        "Id": "ui01",
+        "IpId": 8080,
+        "Model": "Rest API",
+        "ClassName": "RestApiUserInterface",
+        "Library": "PkdAvfRestApi.dll",
+        "Sgd": "rm01-programconfig.json",
+        "DefaultActivity": "",
+        "Menu": [],
+        "Tags": []
+      }  
+  ],
+  "Displays": [
+    {
+      "Id": "disp01",
+      "Label": "Projector 1",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Display Emulator",
+      "Icon": "",
+      "Tags": [],
+      "HasScreen": true,
+      "RelayController": "rly01",
+      "ScreenUpRelay": 1,
+      "ScreenDownRelay": 2,
+      "Connection": {
+        "Id": "con01",
+        "Transport": "DisplayEmulatorTcp",
+        "Driver": "DisplayEmulator.dll",
+        "Host": "192.168.1.252",
+        "Port": 7142,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        },
+        "ComSpec": {
+          "Protocol": "rs232",
+          "BaudRate": 9600,
+          "DataBits": 8,
+          "StopBits": 1,
+          "HwHandshake": "none",
+          "SwHandshake": "none",
+          "Parity": "none"
+        }
+      },
+      "UserAttributes": [
+        {
+          "Id": "ID",
+          "DataType": "string",
+          "Value": "0"
+        }
+      ],
+      "CustomCommands": {
+        "FreezeOnTx": "",
+        "FreezeOnRx": "",
+        "FreezeOffTx": "",
+        "FreezeOffRx": ""
+      }
+    },
+    {
+      "Id": "disp02",
+      "Label": "Display 1",
+      "Icon": "",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Display Emulator",
+      "Tags": ["station"],
+      "HasScreen": false,
+      "RelayController": "",
+      "ScreenUpRelay": 3,
+      "ScreenDownRelay": 4,
+      "LecternInput": 1,
+      "StationInput": 2,
+      "Connection": {
+        "Id": "con01",
+        "Transport": "DisplayEmulatorTcp",
+        "Driver": "DisplayEmulator.dll",
+        "Host": "192.168.1.252",
+        "Port": 7142,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        },
+        "ComSpec": {
+          "Protocol": "rs232",
+          "BaudRate": 9600,
+          "DataBits": 8,
+          "StopBits": 1,
+          "HwHandshake": "none",
+          "SwHandshake": "none",
+          "Parity": "none"
+        }
+      },
+      "UserAttributes": [
+        {
+          "Id": "ID",
+          "DataType": "string",
+          "Value": "0"
+        }
+      ],
+      "CustomCommands": {
+        "FreezeOnTx": "",
+        "FreezeOnRx": "",
+        "FreezeOffTx": "",
+        "FreezeOffRx": ""
+      }
+    },
+    {
+      "Id": "disp03",
+      "Label": "Display 2",
+      "Icon": "",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Display Emulator",
+      "Tags": ["station"],
+      "HasScreen": false,
+      "RelayController": "",
+      "ScreenUpRelay": 3,
+      "ScreenDownRelay": 4,
+      "LecternInput": 1,
+      "StationInput": 2,
+      "Connection": {
+        "Id": "con01",
+        "Transport": "DisplayEmulatorTcp",
+        "Driver": "DisplayEmulator.dll",
+        "Host": "192.168.1.252",
+        "Port": 7142,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        },
+        "ComSpec": {
+          "Protocol": "rs232",
+          "BaudRate": 9600,
+          "DataBits": 8,
+          "StopBits": 1,
+          "HwHandshake": "none",
+          "SwHandshake": "none",
+          "Parity": "none"
+        }
+      },
+      "UserAttributes": [
+        {
+          "Id": "ID",
+          "DataType": "string",
+          "Value": "0"
+        }
+      ],
+      "CustomCommands": {
+        "FreezeOnTx": "",
+        "FreezeOnRx": "",
+        "FreezeOffTx": "",
+        "FreezeOffRx": ""
+      }
+    }
+  ],
+  "Routing": {
+    "RouteOnSourceSelect": true,
+    "StartupSource": "SRC01",
+    "Sources": [
+      {
+        "Id": "SRC01",
+        "Label": "PC",
+        "Icon": "laptop",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 1,
+        "Tags": ["pc","event01"]
+      },
+      {
+        "Id": "SRC02",
+        "Label": "VGA",
+        "Icon": "vga",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 5,
+        "Tags": ["vga","event02"]
+      },
+      {
+        "Id": "SRC03",
+        "Label": "HDMI",
+        "Icon": "hdmi",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 2,
+        "Tags": ["hdmi"]
+      },
+      {
+        "Id": "SRC04",
+        "Label": "CableTv",
+        "Icon": "cable-tv",
+        "Control": "tv01",
+        "Matrix": "rtr01",
+        "Input": 3,
+        "Tags": []
+      }
+    ],
+    "Destinations": [
+      {
+        "Id": "DEST01",
+        "Label": "Main Content",
+        "Icon": "Projector",
+        "Matrix": "rtr01",
+        "Output": 1,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST02",
+        "Label": "Display 1",
+        "Icon": "Projector",
+        "Matrix": "rtr01",
+        "Output": 2,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST03",
+        "Label": "Display 2",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 3,
+        "RoutingGroup": 0,
+        "Tags": []
+      },
+      {
+        "Id": "DEST04",
+        "Label": "Patio",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 4,
+        "RoutingGroup": 0,
+        "Tags": []
+      }
+    ],
+    "MatrixData": [
+      {
+        "Id": "rtr01",
+        "Label": "Kramer VP-440x",
+        "ClassName": "KramerAvSwitchTcp",
+        "Inputs": 5,
+        "Outputs": 1,
+        "Connection": {
+          "Id": "con01",
+          "Transport": "tcp",
+          "Driver": "KramerAvSwitch.dll",
+          "Host": "10.16.6.14",
+          "Port": 5000,
+          "Authentication": {
+            "Id": "auth01",
+            "UserName": "",
+            "Password": ""
+          }
+        }
+      }
+    ],
+    "MatrixEdges": []
+  },
+  "Audio": {
+    "Dsps": [
+      {
+        "Id": "dsp01",
+        "CoreId": 1,
+        "Dependencies": [
+          "TCPClient.dll",
+          "QscQsys.dll",
+          "ExtensionMethods.dll"
+        ],
+        "Presets": [
+          {
+            "Id": "startup",
+            "Bank": "StartupShutdown",
+            "Index": 1
+          },
+          {
+            "Id": "shutdown",
+            "Bank": "StartupShutdown",
+            "Index": 2
+          }
+        ],
+        "Connection": {
+          "Id": "con02",
+          "Transport": "QscDspTcp",
+          "Driver": "QscDsp.dll",
+          "Host": "10.16.6.12",
+          "Port": 1710,
+          "Authentication": {
+            "Id": "auth02",
+            "UserName": "",
+            "Password": "1234"
+          }
+        }
+      }
+    ],
+    "Channels": [
+      {
+        "Id": "CHAN01",
+        "DspId": "dsp01",
+        "LevelControlTag": "ZONE-01-LEVEL",
+        "MuteControlTag": "ZONE-01-MUTE",
+        "RouterControlTag": "ZONE-01-RTR",
+        "RouterIndex": 1,
+        "BankIndex": 1,
+        "Label": "Zone 1",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [],
+        "Tags": ["pgm", "output"]
+      },
+      {
+        "Id": "CHAN02",
+        "DspId": "dsp01",
+        "LevelControlTag": "ZONE-02-LEVEL",
+        "MuteControlTag": "ZONE-02-MUTE",
+        "RouterControlTag": "ZONE-02-RTR",
+        "RouterIndex": 1,
+        "BankIndex": 1,
+        "Label": "Zone 2",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [],
+        "Tags": ["output"]
+      },
+      {
+        "Id": "CHAN03",
+        "DspId": "dsp01",
+        "LevelControlTag": "ZONE-03-LEVEL",
+        "MuteControlTag": "ZONE-03-MUTE",
+        "RouterControlTag": "ZONE-03-RTR",
+        "RouterIndex": 1,
+        "BankIndex": 1,
+        "Label": "Zone 3",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [],
+        "Tags": ["output"]
+      },
+      {
+        "Id": "CHAN04",
+        "DspId": "dsp01",
+        "LevelControlTag": "ZONE-04-LEVEL",
+        "MuteControlTag": "ZONE-04-MUTE",
+        "RouterControlTag": "ZONE-04-RTR",
+        "RouterIndex": 1,
+        "BankIndex": 1,
+        "Label": "Zone 4",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [],
+        "Tags": ["output"]
+      },
+      {
+        "Id": "CHAN05",
+        "DspId": "dsp01",
+        "LevelControlTag": "MIC-01-LEVEL",
+        "MuteControlTag": "MIC-01-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 0,
+        "BankIndex": 1,
+        "Label": "Podium",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input"]
+      },
+      {
+        "Id": "CHAN10",
+        "DspId": "dsp01",
+        "LevelControlTag": "MIC-02-LEVEL",
+        "MuteControlTag": "MIC-02-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 0,
+        "BankIndex": 1,
+        "Label": "Wireless 1",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input"]
+      },{
+        "Id": "CHAN011",
+        "DspId": "dsp01",
+        "LevelControlTag": "MIC-03-LEVEL",
+        "MuteControlTag": "MIC-03-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 0,
+        "BankIndex": 1,
+        "Label": "Wireless 2",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input"]
+      },
+      {
+        "Id": "CHAN06",
+        "DspId": "dsp01",
+        "LevelControlTag": "SRC-01-LEVEL",
+        "MuteControlTag": "SRC-01-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 1,
+        "BankIndex": 0,
+        "Label": "PC",
+        "Icon": "laptop",
+        "ZoneEnableToggles": [],
+        "Tags": ["input"]
+      },
+      {
+        "Id": "CHAN07",
+        "DspId": "dsp01",
+        "LevelControlTag": "SRC-02-LEVEL",
+        "MuteControlTag": "SRC-02-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 2,
+        "BankIndex": 0,
+        "Label": "HDMI",
+        "Icon": "laptop",
+        "ZoneEnableToggles": [],
+        "Tags": ["input"]
+      },
+      {
+        "Id": "CHAN08",
+        "DspId": "dsp01",
+        "LevelControlTag": "SRC-03-LEVEL",
+        "MuteControlTag": "SRC-03-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 3,
+        "BankIndex": 0,
+        "Label": "VGA",
+        "Icon": "laptop",
+        "ZoneEnableToggles": [],
+        "Tags": ["input"]
+      },
+      {
+        "Id": "CHAN09",
+        "DspId": "dsp01",
+        "LevelControlTag": "SRC-04-LEVEL",
+        "MuteControlTag": "SRC-04-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 4,
+        "BankIndex": 0,
+        "Label": "Cable TV",
+        "Icon": "cable-tv",
+        "ZoneEnableToggles": [],
+        "Tags": ["input"]
+      }
+    ]
+  },
+  "Cameras": [
+    {
+      "Id": "cam01",
+      "Label": "Axis Camera",
+      "Manufacturer": "Axis",
+      "Model": "ME5525-E",
+      "ClassName": "AxisPtzCamera",
+      "Tags": [],
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "AxisCameras.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number":1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number":2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number":3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number":4
+        }
+      ]
+    }
+  ],
+  "CableBoxes": [
+    {
+      "Id": "tv01",
+      "Label": "Cable TV 1",
+      "Connection": {
+        "Id": "con06",
+        "Transport": "DirecTvCableBoxIr",
+        "Driver": "DirecTVCableBox.dll",
+        "Host": "control",
+        "Port": 1,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        }
+      },
+      "UserAttributes": [
+        {
+          "Id": "ID",
+          "DataType": "string",
+          "Value": ""
+        }
+      ],
+      "Favorites": [
+        {
+          "Id": "FAV01",
+          "Label": "Favorite 1",
+          "Number": "1234"
+        },
+        {
+          "Id": "FAV02",
+          "Label": "Favorite 2",
+          "Number": "2678"
+        },
+        {
+          "Id": "FAV03",
+          "Label": "Favorite 3",
+          "Number": "33-333"
+        },
+        {
+          "Id": "FAV04",
+          "Label": "Favorite 4",
+          "Number": "4444"
+        },
+        {
+          "Id": "FAV05",
+          "Label": "Favorite 5",
+          "Number": "5555"
+        },
+        {
+          "Id": "FAV06",
+          "Label": "Favorite 6",
+          "Number": "6666"
+        }
+      ]
+    }
+  ],
+  "Blurays": [],
+  "LightingControllers": [
+    {
+      "Id": "0x00bdef74",
+      "Label": "Lighting Emulator",
+      "ClassName": "VirtualLightingControl",
+      "StartupSceneId": "",
+      "ShutdownSceneId": "",
+      "Connection": {
+        "Id": "lcon01",
+        "Transport": "tcp",
+        "Driver": "VirtualLighting.dll",
+        "Host": "192.168.1.253",
+        "Port": 23,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "nwk",
+          "Password": ""
+        }
+      },
+      "Tags": ["component-141"],
+      "Zones": [],
+      "Scenes": [
+        {
+          "Id": "l01s01",
+          "Label": "Full On",
+          "Index": 1,
+          "Tags": ["on"]
+        },
+        {
+          "Id": "l01s02",
+          "Label": "Full Off",
+          "Index": 0,
+          "Tags": ["off"]
+        },
+        {
+          "Id": "l01s03",
+          "Label": "Scene 1",
+          "Index": 2,
+          "Tags": []
+        },
+        {
+          "Id": "l01s04",
+          "Label": "Scene 2",
+          "Index": 3,
+          "Tags": []
+        },
+        {
+          "Id": "l01s05",
+          "Label": "Scene 3",
+          "Index": 4,
+          "Tags": []
+        }
+      ]
+    }
+  ],
+  "Endpoints": [
+    {
+      "Id": "rly01",
+      "Port": 0,
+      "Host": "",
+      "Class": "processor",
+      "Relays": [1, 2, 3, 4, 5, 6, 7, 8],
+      "ComPorts": [],
+      "IrPorts": []
+    }
+  ],
+  "VideoWalls": [
+    {
+      "Id": "vwall01",
+      "Label": "Video Wall 1",
+      "ClassName": "VideoWallEmulator",
+      "Connection": {
+        "Id": "vcon01",
+        "Transport": "tcp",
+        "Driver": "VideoWallEmulation.dll",
+        "Host": "192.168.1.253",
+        "Port": 23,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        }
+      }
+    }
+  ],
+  "FusionInfo": {
+    "Id": "Fusion01",
+    "RoomName": "Test Classroom 101",
+    "GUID": "01c57d66-21d4-4aeb-ae55-5ae6a4664ac9",
+    "IpId": 48
+  }
+}

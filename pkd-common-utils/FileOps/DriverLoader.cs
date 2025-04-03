@@ -70,16 +70,23 @@ namespace pkd_common_utils.FileOps
 			T? device = default;
 			try
 			{
-				var dllPath = DirectoryHelper.NormalizePath($@"{DirectoryHelper.GetUserFolder()}\net8-plugins\{assemblyName}");
+				var dllPath =
+					DirectoryHelper.NormalizePath($@"{DirectoryHelper.GetUserFolder()}\net8-plugins\{assemblyName}");
 
 				Logger.Debug("Attempting to load driver from file {0}...", dllPath);
 				var dll = Assembly.LoadFrom(dllPath);
+
+				// Add event handler to resolve dependencies
+				AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolver;
+
 				foreach (var type in dll.GetTypes())
 				{
+					Logger.Debug($"{type.FullName}");
+
 					if (!type.Name.Equals(className, StringComparison.InvariantCulture)) continue;
 					if (!type.GetInterfaces()
 						    .Any(x => x.Name.Equals(interfaceName, StringComparison.InvariantCulture))) continue;
-					
+
 					device = type.FullName != null ? (T?)dll.CreateInstance(type.FullName) : default;
 					break;
 				}
@@ -90,7 +97,11 @@ namespace pkd_common_utils.FileOps
 			{
 				Logger.Error(e, $"DriverLoader.LoadClassByInterface({assemblyName},{interfaceName})");
 			}
-
+			finally
+			{
+				AppDomain.CurrentDomain.AssemblyResolve -= AssemblyResolver;
+			}
+			
 			return device;
 		}
 
@@ -343,32 +354,11 @@ namespace pkd_common_utils.FileOps
 			}
 		}
 
-		// TODO: update assembly handling to not use sandbox.
-		// .NET 4.0+ support only. Commented out for 3-series support.
-		//private static Assembly CurrentDomain_AssemblyResolve()
-		//{
-		//    Logger.Warn(string.Format(
-		//        "{0} contains dependencies. Attempting to load {1}...",
-		//        args.RequestingAssembly.FullName,
-		//        args.Name));
-
-		//    foreach (var reference in args.RequestingAssembly.GetReferencedAssemblies())
-		//    {
-		//        if (reference.FullName.Equals(args.Name))
-		//        {
-		//            try
-		//            {
-		//                Assembly resolved = Assembly.LoadFrom(string.Format("{0}/{1}.dll", DirectoryHelper.GetUserFolder(), reference.Name));
-		//                return resolved;
-		//            }
-		//            catch (Exception e)
-		//            {
-		//                Logger.Error(e, "DriverLoader Assembly resolve handler failed.");
-		//            }
-		//        }
-		//    }
-
-		//    return null;
-		//}
+		private static Assembly? AssemblyResolver(object? sender, ResolveEventArgs args)
+		{
+			var dependencyName = new AssemblyName(args.Name).Name;
+			var dependencyPath = DirectoryHelper.NormalizePath($@"{DirectoryHelper.GetUserFolder()}\net8-plugins\{dependencyName}.dll");
+			return File.Exists(dependencyPath) ? Assembly.LoadFrom(dependencyPath) : null;
+		}
 	}
 }

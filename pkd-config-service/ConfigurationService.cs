@@ -18,10 +18,10 @@ namespace pkd_config_service
     public sealed class ConfigurationService(uint programSlot) : IDisposable
 	{
 		private const string Root = "/user/net8-plugins/";
-		private readonly Queue<DependencyData> missingDependencies = [];
-		private bool disposed;
-		private bool errorDownloading;
-		private BasicFtpClient? client;
+		private readonly Queue<DependencyData> _missingDependencies = [];
+		private bool _disposed;
+		private bool _errorDownloading;
+		private BasicFtpClient? _client;
 
 		/// <inheritdoc />
 		~ConfigurationService()
@@ -83,8 +83,8 @@ namespace pkd_config_service
 				}
 
 				// Download any missing dependencies from the server.
-				Logger.Info("{0} dependencies missing.", missingDependencies.Count);
-				if (missingDependencies.Count == 0)
+				Logger.Info("{0} dependencies missing.", _missingDependencies.Count);
+				if (_missingDependencies.Count == 0)
 				{
 					Notify(ConfigLoadComplete);
 					return;
@@ -108,12 +108,12 @@ namespace pkd_config_service
 
 		private void CleanupClient()
 		{
-			if (client == null) return;
-			client.Disconnect();
-			client.DownloadComplete -= ClientDownloadCompleteHandler;
-			client.ErrorOccurred -= ClientErrorHandler;
-			client.Dispose();
-			client = null;
+			if (_client == null) return;
+			_client.Disconnect();
+			_client.DownloadComplete -= ClientDownloadCompleteHandler;
+			_client.ErrorOccurred -= ClientErrorHandler;
+			_client.Dispose();
+			_client = null;
 		}
 
 		private bool CreateClient()
@@ -131,14 +131,14 @@ namespace pkd_config_service
 				
 				Logger.Debug($"CreateClient() : Creating key file {keyPath} for {Domain.ServerInfo.Host}");
 				
-				client = new BasicFtpClient(
+				_client = new BasicFtpClient(
 					Domain.ServerInfo.Host,
 					Domain.ServerInfo.User,
 					key);
 
-				client.DownloadComplete += ClientDownloadCompleteHandler;
-				client.ErrorOccurred += ClientErrorHandler;
-				client.Connect();
+				_client.DownloadComplete += ClientDownloadCompleteHandler;
+				_client.ErrorOccurred += ClientErrorHandler;
+				_client.Connect();
 				return true;
 			}
 			catch (Exception e)
@@ -151,11 +151,11 @@ namespace pkd_config_service
 
 		private void ClientDownloadCompleteHandler(object? sender, EventArgs e)
 		{
-			if (missingDependencies.Count == 0)
+			if (_missingDependencies.Count == 0)
 			{
 				CleanupClient();
 				Logger.Info("All dependencies downloaded. Restarting program...");
-				if (errorDownloading)
+				if (_errorDownloading)
 				{
 					Logger.Error($"ConfigurationService - Failed to download all dependencies. See error logs for details.");
 					return;
@@ -165,24 +165,24 @@ namespace pkd_config_service
 			}
 			else
 			{
-				var nextItem = missingDependencies.Dequeue();
-				client?.DownloadFile(nextItem.Remote, nextItem.Local);
+				var nextItem = _missingDependencies.Dequeue();
+				_client?.DownloadFile(nextItem.Remote, nextItem.Local);
 			}
 		}
 
 		private void ClientErrorHandler(object? sender, EventArgs e)
 		{
-			Logger.Error($"Failed to download a dependency: {client?.LastErrorMessage}");
-			errorDownloading = true;
-            if (missingDependencies.Count == 0)
+			Logger.Error($"Failed to download a dependency: {_client?.LastErrorMessage}");
+			_errorDownloading = true;
+            if (_missingDependencies.Count == 0)
 			{
 				CleanupClient();
 				Notify(ConfigLoadFailed);
 				return;
 			}
 
-			var item = missingDependencies.Dequeue();
-			client?.DownloadFile(item.Remote, item.Local);
+			var item = _missingDependencies.Dequeue();
+			_client?.DownloadFile(item.Remote, item.Local);
 		}
 
 		private void CheckDependency(string fileName, string remoteSubDir, string[] allFiles)
@@ -199,7 +199,7 @@ namespace pkd_config_service
 			}
 
 			// Prevent duplicates
-			foreach (var file in missingDependencies)
+			foreach (var file in _missingDependencies)
 			{
 				if (file.Equals(data))
 				{
@@ -208,7 +208,7 @@ namespace pkd_config_service
 			}
 
 			Logger.Debug($"Missing dependency {data.Local}");
-			missingDependencies.Enqueue(data);
+			_missingDependencies.Enqueue(data);
 		}
 
 		private void CheckLogicLibrary(string[] allFiles)
@@ -457,7 +457,7 @@ namespace pkd_config_service
 
 		private void TryDownloadDependencies()
 		{
-			if (missingDependencies.Count == 0)
+			if (_missingDependencies.Count == 0)
 			{
 				Notify(ConfigLoadComplete);
 				return;
@@ -474,23 +474,23 @@ namespace pkd_config_service
 
 			Logger.Info("Downloading missing dependencies...");
 			if (!CreateClient()) return;
-			var dependency = missingDependencies.Dequeue();
-			client?.DownloadFile(dependency.Remote, dependency.Local);
+			var dependency = _missingDependencies.Dequeue();
+			_client?.DownloadFile(dependency.Remote, dependency.Local);
 		}
 
 		private void Dispose(bool disposing)
 		{
-			if (disposed)
+			if (_disposed)
 			{
 				return;
 			}
 
 			if (disposing)
 			{
-				client?.Dispose();
+				_client?.Dispose();
 			}
 
-			disposed = true;
+			_disposed = true;
 		}
 
 		private void Notify(EventHandler<EventArgs>? handler)

@@ -1,7 +1,7 @@
-using Crestron.SimplSharp;
 using pkd_common_utils.Logging;
 using pkd_common_utils.Validation;
 using Renci.SshNet;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace pkd_common_utils.NetComs
 {
@@ -11,8 +11,8 @@ namespace pkd_common_utils.NetComs
 	/// </summary>
 	public class BasicFtpClient : IDisposable
 	{
-		private readonly SftpClient client;
-		private bool disposed;
+		private readonly SftpClient _client;
+		private bool _disposed;
 
 		/// <summary>
 		/// Creates an instance of <see cref="BasicFtpClient"/> using a username and password for SFTP connection.
@@ -27,7 +27,7 @@ namespace pkd_common_utils.NetComs
 			ParameterValidator.ThrowIfNullOrEmpty(username, "Ctor", nameof(username));
 			ParameterValidator.ThrowIfNullOrEmpty(password, "Ctor", nameof(password));
 
-			client = new SftpClient(host, username, password);
+			_client = new SftpClient(host, username, password);
 			LastErrorMessage = string.Empty;
 		}
 
@@ -44,7 +44,7 @@ namespace pkd_common_utils.NetComs
 			ParameterValidator.ThrowIfNullOrEmpty(username, "Ctor", nameof(username));
 			ParameterValidator.ThrowIfNull(sshKey, "Ctor", nameof(sshKey));
 
-			client = new SftpClient(host, username, sshKey);
+			_client = new SftpClient(host, username, sshKey);
 			LastErrorMessage = string.Empty;
 		}
 
@@ -61,7 +61,7 @@ namespace pkd_common_utils.NetComs
 		public event EventHandler<EventArgs>? FileQueryComplete;
 
 		/// <summary>
-		/// Triggered whenever there is an error querying, downloading, or connected to the the SFTP server.
+		/// Triggered whenever there is an error querying, downloading, or connected to the SFTP server.
 		/// Error information will be stored in the LastErrorMessage property.
 		/// </summary>
 		public event EventHandler<EventArgs>? ErrorOccurred;
@@ -85,18 +85,18 @@ namespace pkd_common_utils.NetComs
 		/// <summary>
 		/// Gets a value indicating whether there is an active connection with the remote server.
 		/// </summary>
-		public bool IsConnected => client.IsConnected;
+		public bool IsConnected => _client.IsConnected;
 
 		/// <summary>
 		/// Attempts to connect to the remote SFTP server. Does nothing if the client is already connected.
 		/// </summary>
 		public void Connect()
 		{
-			if (client.IsConnected) return;
+			if (_client.IsConnected) return;
 			Logger.Debug("BasicFtpClient.Connect()");
 			try
 			{
-				client.Connect();
+				_client.Connect();
 			}
 			catch (Exception e)
 			{
@@ -110,9 +110,9 @@ namespace pkd_common_utils.NetComs
 		/// </summary>
 		public void Disconnect()
 		{
-			if (!client.IsConnected) return;
+			if (!_client.IsConnected) return;
 			Logger.Debug("BasicFtpClient.Disconnect()");
-			client.Disconnect();
+			_client.Disconnect();
 		}
 
 		/// <summary>
@@ -126,7 +126,7 @@ namespace pkd_common_utils.NetComs
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(remoteDirectory, "QueryFileNames", "remoteDirectory");
 
-			if (!client.IsConnected)
+			if (!_client.IsConnected)
 			{
 				Logger.Warn("BasicFtpClient.QueryFileNames() - SFTP Client is not connected.");
 				return;
@@ -135,7 +135,7 @@ namespace pkd_common_utils.NetComs
 			var allFiles = new List<string>();
 			try
 			{
-				var fileObjs = client.ListDirectory(remoteDirectory, (numFiles) => { Logger.Debug("num files = {0}", numFiles); });
+				var fileObjs = _client.ListDirectory(remoteDirectory, (numFiles) => { Logger.Debug("num files = {0}", numFiles); });
 				allFiles.AddRange(from file in fileObjs where !file.IsDirectory select file.Name);
 				FilesNamesReceived = allFiles;
 				Notify(FileQueryComplete);
@@ -159,7 +159,7 @@ namespace pkd_common_utils.NetComs
 			ParameterValidator.ThrowIfNullOrEmpty(remoteFilePath, "DownloadFile", "remoteFilePath");
 			ParameterValidator.ThrowIfNullOrEmpty(localFilePath, "DownloadFile", "localFilePath");
 
-			if (!client.IsConnected)
+			if (!_client.IsConnected)
 			{
 				Logger.Error("BasicFtpClient.DownloadFile() - SFTP Client is not connected.");
 				return;
@@ -169,7 +169,7 @@ namespace pkd_common_utils.NetComs
 
 			try
 			{
-				if (!client.Exists(remoteFilePath))
+				if (!_client.Exists(remoteFilePath))
 				{
 					var msg = $"Cannot download file {remoteFilePath} - it does not exist on remote server.";
 					Logger.Error(msg);
@@ -179,7 +179,7 @@ namespace pkd_common_utils.NetComs
 				}
 
 				var stream = new FileStream(localFilePath, FileMode.Create);
-				client.BeginDownloadFile(remoteFilePath, stream, DownloadCallback);
+				_client.BeginDownloadFile(remoteFilePath, stream, DownloadCallback);
 			}
 			catch (Exception ex)
 			{
@@ -197,22 +197,22 @@ namespace pkd_common_utils.NetComs
 
 		private void Dispose(bool disposing)
 		{
-			if (disposed)
+			if (_disposed)
 			{
 				return;
 			}
 
 			if (disposing)
 			{
-				if (client.IsConnected)
+				if (_client.IsConnected)
 				{
-					client.Disconnect();
+					_client.Disconnect();
 				}
 
-				client.Dispose();
+				_client.Dispose();
 			}
 		
-			disposed = true;
+			_disposed = true;
 		}
 
 		private void Notify(EventHandler<EventArgs>? handler)
@@ -223,7 +223,7 @@ namespace pkd_common_utils.NetComs
 		private void DownloadCallback(IAsyncResult result)
 		{
 			Logger.Debug("BasicFtpClient.DownloadCallback() - result = {0}", result.IsCompleted);
-			client.EndDownloadFile(result);
+			_client.EndDownloadFile(result);
 			if (result.IsCompleted)
 			{
 				Notify(DownloadComplete);

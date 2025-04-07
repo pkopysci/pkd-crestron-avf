@@ -3,6 +3,7 @@ using Crestron.SimplSharp;
 using Crestron.SimplSharp.CrestronSockets;
 using pkd_common_utils.GenericEventArgs;
 using pkd_common_utils.Logging;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace pkd_common_utils.NetComs
 {
@@ -11,10 +12,10 @@ namespace pkd_common_utils.NetComs
 	/// </summary>
 	public class BasicTcpClient : IDisposable
 	{
-		private readonly TCPClient client;
-		private CTimer? retryTimer;
-		private bool userDisconnect;
-		private bool disposed;
+		private readonly TCPClient _client;
+		private CTimer? _retryTimer;
+		private bool _userDisconnect;
+		private bool _disposed;
 
 		/// <summary>Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.</summary>
 		~BasicTcpClient()
@@ -46,10 +47,10 @@ namespace pkd_common_utils.NetComs
 			Port = port;
 			BufferSize = bufferSize;
 			Hostname = hostname;
-			userDisconnect = false;
+			_userDisconnect = false;
 			ReconnectTime = 30000;
-			client = new TCPClient(hostname, port, bufferSize);
-			client.SocketStatusChange += client_SocketStatusChange;
+			_client = new TCPClient(hostname, port, bufferSize);
+			_client.SocketStatusChange += client_SocketStatusChange;
 		}
 
 		/// <summary>
@@ -98,7 +99,7 @@ namespace pkd_common_utils.NetComs
 		/// <summary>
 		/// Gets the current connection status. <see cref="SocketStatus"/>.
 		/// </summary>
-		public SocketStatus ClientStatusMessage => client.ClientStatus;
+		public SocketStatus ClientStatusMessage => _client.ClientStatus;
 
 		/// <summary>
 		/// Gets the port number being used for connection.
@@ -114,7 +115,7 @@ namespace pkd_common_utils.NetComs
 		/// <summary>
 		/// Gets the current connection status. True = client reports connected, false = client reports disconnected.
 		/// </summary>
-		public bool Connected => client.ClientStatus == SocketStatus.SOCKET_STATUS_CONNECTED;
+		public bool Connected => _client.ClientStatus == SocketStatus.SOCKET_STATUS_CONNECTED;
 
 		/// <summary>
 		/// Gets or sets whether the client should auto-attempt a reconnect at the ReconnectTime interval.
@@ -136,8 +137,8 @@ namespace pkd_common_utils.NetComs
 				Disconnect();
 			}
 
-			client.ConnectToServerAsync(ConnectionCallback);
-			userDisconnect = false;
+			_client.ConnectToServerAsync(ConnectionCallback);
+			_userDisconnect = false;
 		}
 
 		/// <summary>
@@ -145,10 +146,10 @@ namespace pkd_common_utils.NetComs
 		/// </summary>
 		public void Disconnect()
 		{
-			userDisconnect = true;
+			_userDisconnect = true;
 			if (Connected)
 			{
-				client.DisconnectFromServer();
+				_client.DisconnectFromServer();
 			}
 		}
 
@@ -160,7 +161,7 @@ namespace pkd_common_utils.NetComs
 		public void Send(string data)
 		{
 			var byteData = Encoding.GetEncoding("ISO-8859-1").GetBytes(data);
-			client.SendDataAsync(byteData, byteData.Length, SendDataCallback);
+			_client.SendDataAsync(byteData, byteData.Length, SendDataCallback);
 		}
 
 		/// <summary>
@@ -171,7 +172,7 @@ namespace pkd_common_utils.NetComs
 		{
 			if (data.Length > 0)
 			{
-				client.SendDataAsync(data, data.Length, SendDataCallback);
+				_client.SendDataAsync(data, data.Length, SendDataCallback);
 			}
 		}
 
@@ -189,9 +190,9 @@ namespace pkd_common_utils.NetComs
 			switch (clientSocketStatus)
 			{
 				case SocketStatus.SOCKET_STATUS_CONNECTED:
-					client.ReceiveDataAsync(RxHandler);
+					_client.ReceiveDataAsync(RxHandler);
 					var temp = ClientConnected;
-					Logger.Debug("TcpClient {0} - Socket connected.", client.AddressClientConnectedTo);
+					Logger.Debug("TcpClient {0} - Socket connected.", _client.AddressClientConnectedTo);
 					temp?.Invoke(this, EventArgs.Empty);
 					break;
 
@@ -201,10 +202,10 @@ namespace pkd_common_utils.NetComs
 					var failed = ConnectionFailed;
 					failed?.Invoke(this, new GenericSingleEventArgs<SocketStatus>(clientSocketStatus));
 
-					Logger.Debug("TcpClient {0} - EnableReconnect = {1}", client.AddressClientConnectedTo, EnableReconnect);
+					Logger.Debug("TcpClient {0} - EnableReconnect = {1}", _client.AddressClientConnectedTo, EnableReconnect);
 					if (EnableReconnect)
 					{
-						Logger.Debug("TcpClient {0} - No Connect. Attempting Reconnect.", client.AddressClientConnectedTo);
+						Logger.Debug("TcpClient {0} - No Connect. Attempting Reconnect.", _client.AddressClientConnectedTo);
 						AttemptReconnect();
 					}
 					break;
@@ -225,21 +226,21 @@ namespace pkd_common_utils.NetComs
 
 		private void AttemptReconnect()
 		{
-			Logger.Debug("TcpClient {0} - AttemptReconnect()", client.AddressClientConnectedTo);
-			if (userDisconnect) return;
+			Logger.Debug("TcpClient {0} - AttemptReconnect()", _client.AddressClientConnectedTo);
+			if (_userDisconnect) return;
 			if (Connected)
 			{
-				client.DisconnectFromServer();
+				_client.DisconnectFromServer();
 			}
 
-			retryTimer = new CTimer(x =>
+			_retryTimer = new CTimer(_ =>
 			{
-				if (client.ClientStatus == SocketStatus.SOCKET_STATUS_CONNECTED)
+				if (_client.ClientStatus == SocketStatus.SOCKET_STATUS_CONNECTED)
 				{
 					return;
 				}
 
-				client.ConnectToServerAsync(ConnectionCallback);
+				_client.ConnectToServerAsync(ConnectionCallback);
 			}, ReconnectTime);
 		}
 
@@ -259,15 +260,15 @@ namespace pkd_common_utils.NetComs
 
 		private void Dispose(bool disposing)
 		{
-			if (disposed) return;
+			if (_disposed) return;
 			if (disposing)
 			{
-				client.DisconnectFromServer();
-				client.Dispose();
-				retryTimer?.Dispose();
+				_client.DisconnectFromServer();
+				_client.Dispose();
+				_retryTimer?.Dispose();
 			}
 
-			disposed = true;
+			_disposed = true;
 		}
 	}
 }

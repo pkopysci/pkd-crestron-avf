@@ -4,8 +4,7 @@ using pkd_common_utils.Logging;
 using pkd_common_utils.Validation;
 using pkd_domain_service.Data.RoutingData;
 using pkd_hardware_service.AvIpMatrix;
-using pkd_hardware_service.AvSwitchDevices.DmMd400;
-using pkd_hardware_service.AvSwitchDevices.DmMd8x1;
+// ReSharper disable UnusedParameter.Local
 
 namespace pkd_hardware_service.AvSwitchDevices
 {
@@ -32,42 +31,10 @@ namespace pkd_hardware_service.AvSwitchDevices
 			IInfrastructureService hwService)
 		{
 			ParameterValidator.ThrowIfNull(switchData, "CreateAvSwitcher", "displayData");
-			ParameterValidator.ThrowIfNull(processor, "CreateAvSwitcher", "processor");
-			ParameterValidator.ThrowIfNull(hwService, "CreateAvSwitcher", "hwService");
+			ParameterValidator.ThrowIfNull(processor, "CreateAvSwitcher", nameof(processor));
+			ParameterValidator.ThrowIfNull(hwService, "CreateAvSwitcher", nameof(hwService));
 
-			switch (switchData.ClassName.ToUpper())
-			{
-				case "DMMD8X1":
-					return Get8X1Switch(switchData, processor, hwService);
-
-				case "HDMD400":
-					return GetMd400Switch(switchData, processor, hwService);
-
-				default:
-					return LoadSwitchDriver(sources, destinations, switchData, processor, hwService);
-			}
-		}
-
-		private static DmMd8X1AvSwitch Get8X1Switch(
-			MatrixData switchData,
-			CrestronControlSystem processor,
-#pragma warning disable IDE0060 // Remove unused parameter
-			IInfrastructureService hwService)
-#pragma warning restore IDE0060 // Remove unused parameter
-		{
-			Logger.Info("Create Dm-MD-8x1 switch with device ID {0}", switchData.Id);
-			return new DmMd8X1AvSwitch(switchData, processor);
-		}
-
-		private static DmMd400AvSwitch GetMd400Switch(
-			MatrixData switchData,
-			CrestronControlSystem processor,
-#pragma warning disable IDE0060 // Remove unused parameter
-			IInfrastructureService hwService)
-#pragma warning restore IDE0060 // Remove unused parameter
-		{
-			Logger.Info("Create DM-MD-400 switch with device ID {0}", switchData.Id);
-			return new DmMd400AvSwitch(switchData, processor);
+			return LoadSwitchDriver(sources, destinations, switchData, processor, hwService);
 		}
 
 		private static IAvSwitcher? LoadSwitchDriver(
@@ -75,9 +42,7 @@ namespace pkd_hardware_service.AvSwitchDevices
 			List<Destination> destinations,
 			MatrixData switchData,
 			CrestronControlSystem processor,
-#pragma warning disable IDE0060 // Remove unused parameter
 			IInfrastructureService hwService)
-#pragma warning restore IDE0060 // Remove unused parameter
 		{
 			var path = DirectoryHelper.NormalizePath(switchData.Connection.Driver);
 

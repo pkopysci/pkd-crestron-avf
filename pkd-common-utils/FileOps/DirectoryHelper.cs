@@ -20,12 +20,6 @@ namespace pkd_common_utils.FileOps
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(currentPath, "NormalizePath", nameof(currentPath));
 			return currentPath.Replace("\\", "/");
-			// var crestronSeries = Type.GetType("Mono.Runtime") != null ? eCrestronSeries.Series4 : eCrestronSeries.Series3;
-			// var platform = CrestronEnvironment.DevicePlatform;
-			// if (crestronSeries == eCrestronSeries.Series4 || platform == eDevicePlatform.Server)
-			// {
-			// 	
-			// }
 		}
 
 		/// <summary>

@@ -221,7 +221,7 @@ namespace pkd_common_utils.FileOps
 					return eComDataBits.ComspecDataBits8;
 
 				default:
-					Logger.Error($"GetBaudeRate() - undefined data bits encountered: {data}");
+					Logger.Error($"GetDataBits() - undefined data bits encountered: {data}");
 					return eComDataBits.NotSpecified;
 			}
 		}

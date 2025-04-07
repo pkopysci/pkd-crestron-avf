@@ -2,8 +2,8 @@
 {
 	internal class DependencyData
 	{
-		public string Local { get; set; } = string.Empty;
-		public string Remote { get; set; } = string.Empty;
+		public string Local { get; init; } = string.Empty;
+		public string Remote { get; init; } = string.Empty;
 
 		public override bool Equals(object? obj)
 		{
@@ -12,8 +12,8 @@
 				return false;
 			}
 
-			var localEquals = Local.Equals(other?.Local, StringComparison.InvariantCulture);
-			var remoteEquals = Remote.Equals(other?.Remote, StringComparison.InvariantCulture);
+			var localEquals = Local.Equals(other.Local, StringComparison.InvariantCulture);
+			var remoteEquals = Remote.Equals(other.Remote, StringComparison.InvariantCulture);
 			return localEquals && remoteEquals;
 		}
 

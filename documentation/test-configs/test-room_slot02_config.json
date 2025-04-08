@@ -6,8 +6,8 @@
   },
   "RoomInfo": {
     "Id": "ROOM01",
-    "RoomName": "Test Room 101",
-    "HelpContact": "555-555-5555",
+    "RoomName": "Test Room Slot 2",
+    "HelpContact": "123-456-1122",
     "SystemType": "baseline",
     "Logic": {
       "AppServiceLibrary": "",
@@ -16,73 +16,73 @@
   },
   "UserInterfaces": [
     {
-      "Id": "ui01",
-      "IpId": 3,
-      "Model": "TSW-770",
-      "ClassName": "CrComLibUserInterface",
-      "Library": "CrComLibUi.dll",
-      "Sgd": "",
-      "DefaultActivity": "av-routing",
-      "Menu": [
-        {
-          "Id": "MENUHOME",
-          "Visible": true,
-          "Label": "Sources",
-          "Icon": "routing",
-          "Control": "av-routing",
-          "SourceSelect": "",
-          "Tags": []
-        },
-        {
-          "Id": "MENU01",
-          "Visible": true,
-          "Label": "Display Controls",
-          "Icon": "projector",
-          "Control": "displays",
-          "SourceSelect": "",
-          "Tags": []
-        },
-        {
-          "Id": "MENU03",
-          "Visible": true,
-          "Label": "Mics",
-          "Icon": "mics",
-          "Control": "mics",
-          "SourceSelect": "",
-          "Tags": []
-        }
-      ],
-      "Tags": []
-    },
-    {
-      "Id": "ui02",
-      "IpId": 8080,
-      "Model": "Rest API",
-      "ClassName": "RestApiUserInterface",
-      "Library": "PkdAvfRestApi.dll",
-      "Sgd": "rm01-programconfig.json",
-      "DefaultActivity": "",
-      "Menu": [],
-      "Tags": []
-    }
+        "Id": "ui01",
+        "IpId": 4,
+        "Model": "TSW-770",
+        "ClassName": "CrComLibUserInterface",
+        "Library": "CrComLibUi.dll",
+        "Sgd": "",
+        "DefaultActivity": "av-routing",
+        "Menu": [
+          {
+            "Id": "MENUHOME",
+            "Visible": true,
+            "Label": "Sources",
+            "Icon": "routing",
+            "Control": "av-routing",
+            "SourceSelect": "",
+            "Tags": []
+          },
+          {
+            "Id": "MENU01",
+            "Visible": true,
+            "Label": "Display Controls",
+            "Icon": "projector",
+            "Control": "displays",
+            "SourceSelect": "",
+            "Tags": []
+          },
+          {
+            "Id": "MENU03",
+            "Visible": true,
+            "Label": "Mics",
+            "Icon": "mics",
+            "Control": "mics",
+            "SourceSelect": "",
+            "Tags": []
+          } 
+        ],
+        "Tags": []
+      },
+      {
+        "Id": "ui02",
+        "IpId": 8081,
+        "Model": "Rest API",
+        "ClassName": "RestApiUserInterface",
+        "Library": "PkdAvfRestApi.dll",
+        "Sgd": "rm02-programconfig.json",
+        "DefaultActivity": "",
+        "Menu": [],
+        "Tags": []
+      } 
   ],
   "Displays": [
     {
       "Id": "disp01",
       "Label": "Projector",
+      "Icon": "",
       "Manufacturer": "Emulation, Inc.",
       "Model": "Display Emulator",
-      "Icon": "",
       "Tags": [],
       "HasScreen": true,
       "RelayController": "rly01",
-      "ScreenUpRelay": 1,
-      "ScreenDownRelay": 2,
+      "ScreenUpRelay": 3,
+      "ScreenDownRelay": 4,
       "Connection": {
         "Id": "con01",
         "Transport": "DisplayEmulatorTcp",
         "Driver": "DisplayEmulator.dll",
-        "Host": "192.168.1.252",
+        "Host": "10.16.6.16",
         "Port": 7142,
         "Authentication": {
           "Id": "auth01",
@@ -115,70 +115,20 @@
     },
     {
       "Id": "disp02",
-      "Label": "Display 1",
+      "Label": "Display",
       "Icon": "",
       "Manufacturer": "Emulation, Inc.",
       "Model": "Display Emulator",
-      "Tags": ["station"],
+      "Tags": [],
       "HasScreen": false,
-      "RelayController": "",
-      "ScreenUpRelay": 3,
-      "ScreenDownRelay": 4,
-      "LecternInput": 1,
-      "StationInput": 2,
+      "RelayController": "rly01",
+      "ScreenUpRelay": 1,
+      "ScreenDownRelay": 2,
       "Connection": {
         "Id": "con01",
         "Transport": "DisplayEmulatorTcp",
         "Driver": "DisplayEmulator.dll",
-        "Host": "192.168.1.252",
-        "Port": 7142,
-        "Authentication": {
-          "Id": "auth01",
-          "UserName": "",
-          "Password": ""
-        },
-        "ComSpec": {
-          "Protocol": "rs232",
-          "BaudRate": 9600,
-          "DataBits": 8,
-          "StopBits": 1,
-          "HwHandshake": "none",
-          "SwHandshake": "none",
-          "Parity": "none"
-        }
-      },
-      "UserAttributes": [
-        {
-          "Id": "ID",
-          "DataType": "string",
-          "Value": "0"
-        }
-      ],
-      "CustomCommands": {
-        "FreezeOnTx": "",
-        "FreezeOnRx": "",
-        "FreezeOffTx": "",
-        "FreezeOffRx": ""
-      }
-    },
-    {
-      "Id": "disp03",
-      "Label": "Display 2",
-      "Icon": "",
-      "Manufacturer": "Emulation, Inc.",
-      "Model": "Display Emulator",
-      "Tags": ["station"],
-      "HasScreen": false,
-      "RelayController": "",
-      "ScreenUpRelay": 3,
-      "ScreenDownRelay": 4,
-      "LecternInput": 1,
-      "StationInput": 2,
-      "Connection": {
-        "Id": "con01",
-        "Transport": "DisplayEmulatorTcp",
-        "Driver": "DisplayEmulator.dll",
-        "Host": "192.168.1.252",
+        "Host": "10.16.6.17",
         "Port": 7142,
         "Authentication": {
           "Id": "auth01",
@@ -221,7 +171,7 @@
         "Control": "",
         "Matrix": "rtr01",
         "Input": 1,
-        "Tags": ["pc"]
+        "Tags": ["pc","event01"]
       },
       {
         "Id": "SRC02",
@@ -230,7 +180,7 @@
         "Control": "",
         "Matrix": "rtr01",
         "Input": 5,
-        "Tags": ["vga"]
+        "Tags": ["vga","event02"]
       },
       {
         "Id": "SRC03",
@@ -291,12 +241,12 @@
       {
         "Id": "CHAN01",
         "DspId": "rtr01",
-        "LevelControlTag": "",
-        "MuteControlTag": "",
-        "RouterControlTag": "",
+        "LevelControlTag": "ZONE-01-LEVEL",
+        "MuteControlTag": "ZONE-01-MUTE",
+        "RouterControlTag": "ZONE-01-RTR",
         "RouterIndex": 1,
         "BankIndex": 1,
-        "Label": "Room Volume",
+        "Label": "Room Audio",
         "Icon": "Volume",
         "ZoneEnableToggles": [],
         "Tags": ["pgm", "output"]
@@ -304,11 +254,11 @@
       {
         "Id": "CHAN02",
         "DspId": "rtr01",
-        "LevelControlTag": "",
-        "MuteControlTag": "",
+        "LevelControlTag": "MIC-01-LEVEL",
+        "MuteControlTag": "MIC-01-MUTE",
         "RouterControlTag": "",
         "RouterIndex": 0,
-        "BankIndex": 0,
+        "BankIndex": 1,
         "Label": "Podium",
         "Icon": "Mic",
         "ZoneEnableToggles": [],
@@ -436,7 +386,7 @@
       "Port": 0,
       "Host": "",
       "Class": "processor",
-      "Relays": [1, 2],
+      "Relays": [1, 2, 3, 4],
       "ComPorts": [],
       "IrPorts": []
     }
@@ -444,8 +394,8 @@
   "VideoWalls": [],
   "FusionInfo": {
     "Id": "Fusion01",
-    "RoomName": "Test Classroom 101",
+    "RoomName": "Test Classroom 2",
     "GUID": "01c57d66-21d4-4aeb-ae55-5ae6a4664ac9",
-    "IpId": 48
+    "IpId": 49
   }
 }

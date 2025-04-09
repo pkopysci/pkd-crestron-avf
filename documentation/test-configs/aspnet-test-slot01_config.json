@@ -10,22 +10,22 @@
     "HelpContact": "123-456-4321",
     "SystemType": "baseline",
     "Logic": {
-      "AppServiceLibrary": "",
-      "AppServiceClass": ""
+      "AppServiceLibrary": "CameraTestingAppService.dll",
+      "AppServiceClass": "CameraTestingApp"
     }
   },
   "UserInterfaces": [
     {
-        "Id": "ui01",
-        "IpId": 8080,
-        "Model": "Rest API",
-        "ClassName": "RestApiUserInterface",
-        "Library": "PkdAvfRestApi.dll",
-        "Sgd": "rm01-programconfig.json",
-        "DefaultActivity": "",
-        "Menu": [],
-        "Tags": []
-      }  
+      "Id": "ui01",
+      "IpId": 8080,
+      "Model": "Rest API",
+      "ClassName": "RestApiUserInterface",
+      "Library": "PkdAvfRestApi.dll",
+      "Sgd": "rm01-programconfig.json",
+      "DefaultActivity": "",
+      "Menu": [],
+      "Tags": []
+    }
   ],
   "Displays": [
     {
@@ -182,7 +182,7 @@
         "Control": "",
         "Matrix": "rtr01",
         "Input": 1,
-        "Tags": ["pc","event01"]
+        "Tags": ["pc", "event01"]
       },
       {
         "Id": "SRC02",
@@ -191,7 +191,7 @@
         "Control": "",
         "Matrix": "rtr01",
         "Input": 5,
-        "Tags": ["vga","event02"]
+        "Tags": ["vga", "event02"]
       },
       {
         "Id": "SRC03",
@@ -387,7 +387,8 @@
         "Icon": "Mic",
         "ZoneEnableToggles": [],
         "Tags": ["microphone", "input"]
-      },{
+      },
+      {
         "Id": "CHAN011",
         "DspId": "dsp01",
         "LevelControlTag": "MIC-03-LEVEL",
@@ -478,22 +479,64 @@
         {
           "Id": "cam01p01",
           "Label": "Preset 1",
-          "Number":1
+          "Number": 1
         },
         {
           "Id": "cam01p02",
           "Label": "Preset 2",
-          "Number":2
+          "Number": 2
         },
         {
           "Id": "cam01p03",
           "Label": "Preset 3",
-          "Number":3
+          "Number": 3
         },
         {
           "Id": "cam01p04",
           "Label": "Preset 4",
-          "Number":4
+          "Number": 4
+        }
+      ]
+    },
+    {
+      "Id": "cam02",
+      "Label": "Camera Emulator",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Tags": [],
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
         }
       ]
     }

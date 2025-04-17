@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Common methods and properties for tracking device usage via Crestron Fusion.
 	/// </summary>
-	internal interface IFusionDeviceUse
+	public interface IFusionDeviceUse
 	{
 		/// <summary>
 		/// Add a device to the internal collection used for tracking use.

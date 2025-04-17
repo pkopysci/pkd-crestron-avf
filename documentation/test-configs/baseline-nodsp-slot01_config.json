@@ -11,7 +11,9 @@
     "SystemType": "baseline",
     "Logic": {
       "AppServiceLibrary": "",
-      "AppServiceClass": ""
+      "AppServiceClass": "",
+      "PresentationServiceLibrary": "",
+      "PresentationServiceClass": ""
     }
   },
   "UserInterfaces": [

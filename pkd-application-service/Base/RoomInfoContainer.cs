@@ -15,8 +15,8 @@
 		public RoomInfoContainer(string id, string label, string helpContact, string systemType)
 			: base(id, label, Empty.Icon, Empty.Tags)
 		{
-			this.HelpContact = helpContact;
-			this.SystemType = systemType;
+			HelpContact = helpContact;
+			SystemType = systemType;
 		}
 
 		/// <summary>
@@ -28,5 +28,15 @@
 		/// Gets the system type for this room that was set in the configuration file.
 		/// </summary>
 		public string SystemType { get; private set; }
+
+		/// <summary>
+		/// the custom presentation service plugin library that will be loaded at system boot.
+		/// </summary>
+		public string PresentationServiceLibrary { get; init; } = string.Empty;
+		
+		/// <summary>
+		/// class name of the custom presentation service plugin that will be instantiated from <see cref="PresentationServiceLibrary"/>.
+		/// </summary>
+		public string PresentationServiceClass { get; init; } = string.Empty;
 	}
 }

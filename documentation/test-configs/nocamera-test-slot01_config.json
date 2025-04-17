@@ -11,7 +11,9 @@
     "SystemType": "baseline",
     "Logic": {
       "AppServiceLibrary": "",
-      "AppServiceClass": ""
+      "AppServiceClass": "",
+      "PresentationServiceLibrary": "",
+      "PresentationServiceClass": ""
     }
   },
   "UserInterfaces": [
@@ -319,14 +321,14 @@
     "MatrixData": [
       {
         "Id": "rtr01",
-        "Label": "Kramer VP-440x",
-        "ClassName": "KramerAvSwitchTcp",
+        "Label": "EVR Emulator",
+        "ClassName": "AvSwitchEmulator",
         "Inputs": 5,
         "Outputs": 1,
         "Connection": {
           "Id": "con01",
           "Transport": "tcp",
-          "Driver": "KramerAvSwitch.dll",
+          "Driver": "AvSwitchEmulator.dll",
           "Host": "10.16.6.14",
           "Port": 5000,
           "Authentication": {

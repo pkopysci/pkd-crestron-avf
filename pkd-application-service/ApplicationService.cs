@@ -259,7 +259,11 @@ namespace pkd_application_service
 				Domain.RoomInfo.RoomName,
 				Domain.RoomInfo.HelpContact,
 				Domain.RoomInfo.SystemType
-			);
+			)
+			{
+				PresentationServiceClass = Domain.RoomInfo.Logic.PresentationServiceClass,
+				PresentationServiceLibrary = Domain.RoomInfo.Logic.PresentationServiceLibrary,
+			};
 		}
 
 		/// <inheritdoc/>

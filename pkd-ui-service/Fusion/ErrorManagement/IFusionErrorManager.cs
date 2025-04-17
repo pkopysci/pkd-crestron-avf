@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Common methods and properties used for reporting errors to a Crestron Fusion server.
 	/// </summary>
-	internal interface IFusionErrorManager
+	public interface IFusionErrorManager
 	{
 		/// <summary>
 		/// Add an offline error to the current error queue for the target device.

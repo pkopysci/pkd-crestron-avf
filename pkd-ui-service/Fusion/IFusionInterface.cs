@@ -4,7 +4,10 @@ using pkd_ui_service.Fusion.ErrorManagement;
 
 namespace pkd_ui_service.Fusion
 {
-	internal interface IFusionInterface : IFusionDeviceUse, IFusionErrorManager, IDisposable
+	/// <summary>
+	/// Required methods, properties, and events for supporting a fusion connection in the AVF.
+	/// </summary>
+	public interface IFusionInterface : IFusionDeviceUse, IFusionErrorManager, IDisposable
 	{
 		/// <summary>
 		/// Triggered when the Fusion server connection comes online or goes offline.

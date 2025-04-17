@@ -92,7 +92,7 @@ namespace pkd_ui_service
 		}
 
 		/// <inheritdoc/>
-		public void Initialize()
+		public virtual void Initialize()
 		{
 			foreach (var uiDevice in UiConnections)
 			{
@@ -105,7 +105,7 @@ namespace pkd_ui_service
 		/// <summary>
 		/// disposes of all internal component objects if they are disposable.
 		/// </summary>
-		protected void Dispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
 		{
 			if (Disposed) return;
 			if (disposing)
@@ -144,7 +144,7 @@ namespace pkd_ui_service
 		/// Iterate through all user interface definitions in the application service and create the associated objects
 		/// and event subscriptions.
 		/// </summary>
-		protected void BuildInterfaces()
+		protected virtual void BuildInterfaces()
 		{
 			foreach (var device in AppService.GetAllUserInterfaces())
 			{
@@ -176,7 +176,7 @@ namespace pkd_ui_service
 		/// <summary>
 		/// Subscribe to all application service events for all implemented application interfaces.
 		/// </summary>
-		protected void SubscribeToAppService()
+		protected virtual void SubscribeToAppService()
 		{
 			AppService.AudioDspConnectionStatusChanged += AppServiceDspConnectionHandler;
 			AppService.AudioInputLevelChanged += AppServiceAudioInputLevelHandler;
@@ -228,7 +228,7 @@ namespace pkd_ui_service
 		/// <summary>
 		/// Unsubscribe from all application services that were subscribed through <see cref="SubscribeToAppService"/>.
 		/// </summary>
-		protected void UnsubscribeFromAppService()
+		protected virtual void UnsubscribeFromAppService()
 		{
 			AppService.AudioDspConnectionStatusChanged -= AppServiceDspConnectionHandler;
 			AppService.AudioInputLevelChanged -= AppServiceAudioInputLevelHandler;
@@ -277,7 +277,7 @@ namespace pkd_ui_service
 		/// Subscribe to all user interface events for all implemented plugin interfaces.
 		/// </summary>
 		/// <param name="ui"></param>
-		protected void SubscribeToInterface(IUserInterface ui)
+		protected virtual void SubscribeToInterface(IUserInterface ui)
 		{
 			ui.OnlineStatusChanged += UiConnectionHandler;
 			ui.SystemStateChangeRequest += UiStatusChangeHandler;
@@ -355,7 +355,7 @@ namespace pkd_ui_service
 		/// <summary>
 		/// Unsubscribe from all events handlers added by <see cref="BuildInterfaces"/>.
 		/// </summary>
-		protected void UnsubscribeFromInterfaces()
+		protected virtual void UnsubscribeFromInterfaces()
 		{
 			foreach (var ui in UiConnections)
 			{
@@ -416,7 +416,7 @@ namespace pkd_ui_service
 		/// Callback action that is triggered once <see cref="StateChangeTimer"/> expires.
  		/// </summary>
 		/// <param name="obj">The user object provided when the timer is set.</param>
-		protected void StateChangeTimerCallback(object? obj)
+		protected virtual void StateChangeTimerCallback(object? obj)
 		{
 			foreach (var conn in UiConnections)
 			{
@@ -427,7 +427,7 @@ namespace pkd_ui_service
 		/// <summary>
 		/// Begin the timer for system state change events.
 		/// </summary>
-		protected void TriggerStateChangeTimer()
+		protected virtual void TriggerStateChangeTimer()
 		{
 			if (StateChangeTimer != null)
 			{
@@ -446,7 +446,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">args.Arg = the id of the camera that updated.</param>
-		protected void CameraAppConnectionChangeHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void CameraAppConnectionChangeHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			if (sender is not ICameraControlApp cameraApp) return;
 			var newState = cameraApp.QueryCameraConnectionStatus(args.Arg);
@@ -473,7 +473,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">args.Arg = the id of the camera that updated.</param>
-		protected void CameraAppPowerChangeHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void CameraAppPowerChangeHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			if (sender is not ICameraControlApp cameraApp) return;
 			var newState = cameraApp.QueryCameraPowerStatus(args.Arg);
@@ -489,7 +489,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">args.Arg = the id of the video wall that updated.</param>
-		protected void VideoWallAppLayoutChangedHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void VideoWallAppLayoutChangedHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			if (sender is not IVideoWallApp videoWallApp) return;
 			var activeLayoutId = videoWallApp.QueryActiveVideoWallLayout(args.Arg);
@@ -505,7 +505,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">args.Arg = the id of the video wall that updated.</param>
-		protected void VideoWallAppConnectionChangeHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void VideoWallAppConnectionChangeHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			if (sender is not IVideoWallApp videoWallApp) return;
 			var onlineStatus = videoWallApp.QueryVideoWallConnectionStatus(args.Arg);
@@ -526,7 +526,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">args.Arg1 = the id of the video wall that updated., Arg2 = ID of the cell that updated.</param>
-		protected void VideoWallAppRouteHandler(object? sender, GenericDualEventArgs<string, string> args)
+		protected virtual void VideoWallAppRouteHandler(object? sender, GenericDualEventArgs<string, string> args)
 		{
 			if (sender is not IVideoWallApp videoWallApp) return;
 			var newRoute = videoWallApp.QueryVideoWallCellSource(args.Arg1, args.Arg2);
@@ -542,7 +542,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">args.Arg = true = all non-tech UIs should lock, false = unlock.</param>
-		protected void AppServiceTechLockoutHandler(object? sender, GenericSingleEventArgs<bool> e)
+		protected virtual void AppServiceTechLockoutHandler(object? sender, GenericSingleEventArgs<bool> e)
 		{
 			foreach (var ui in UiConnections)
 			{
@@ -563,7 +563,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">args.Arg = true = all non-tech UIs should lock, false = unlock.</param>
-		protected void AppServiceLightingLoadHandler(object? sender, GenericDualEventArgs<string, string> e)
+		protected virtual void AppServiceLightingLoadHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
 			Logger.Debug("PresentationService.AppServiceLightingLoadHandler({0}, {1})", e.Arg1, e.Arg2);
 			if (sender is not ILightingControlApp lightingService) return;
@@ -583,7 +583,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = the id of the lighting controller that updated.</param>
-		protected void AppServiceLightingSceneHandler(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void AppServiceLightingSceneHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			if (sender is not ILightingControlApp lightingService) return;
 			var scene = lightingService.GetActiveScene(e.Arg);
@@ -601,7 +601,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = the id of the event that changed.</param>
-		protected void AppServiceCustomEventHandler(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void AppServiceCustomEventHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			if (sender is not CustomEventAppService customAppService) return;
 			bool state = customAppService.QueryCustomEventState(e.Arg);
@@ -617,7 +617,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg = the id of the DSP that changed.</param>
-		protected void AppServiceDspConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void AppServiceDspConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			var isOnline = AppService.QueryAudioDspConnectionStatus(args.Arg);
 			foreach (var ui in UiConnections)
@@ -644,7 +644,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg = the id of the audio channel that changed.</param>
-		protected void AppServiceAudioInputLevelHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void AppServiceAudioInputLevelHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			var level = AppService.QueryAudioInputLevel(args.Arg);
 			foreach (var ui in UiConnections)
@@ -661,7 +661,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg = the id of the audio channel that changed.</param>
-		protected void AppServiceAudioInputMuteHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void AppServiceAudioInputMuteHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			var newState = AppService.QueryAudioInputMute(args.Arg);
 			foreach (var ui in UiConnections)
@@ -680,7 +680,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg = the id of the audio channel that changed.</param>
-		protected void AppServiceAudioOutputLevelHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void AppServiceAudioOutputLevelHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			var level = AppService.QueryAudioOutputLevel(args.Arg);
 			foreach (var ui in UiConnections)
@@ -699,7 +699,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg = the id of the audio channel that changed.</param>
-		protected void AppServiceAudioOutputMuteHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void AppServiceAudioOutputMuteHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			var newState = AppService.QueryAudioOutputMute(args.Arg);
 			foreach (var ui in UiConnections)
@@ -718,7 +718,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg = the id of the audio output channel that changed.</param>
-		protected void AppServiceAudioOutputRouteHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void AppServiceAudioOutputRouteHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			var sourceId = AppService.QueryAudioOutputRoute(args.Arg);
 			foreach (var ui in UiConnections)
@@ -735,7 +735,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = the id of the audio channel being updated, Arg2 = the id of the zone that changed.</param>
-		protected void AppServiceAudioZoneEnableHandler(object? sender, GenericDualEventArgs<string, string> args)
+		protected virtual void AppServiceAudioZoneEnableHandler(object? sender, GenericDualEventArgs<string, string> args)
 		{
 			var newState = AppService.QueryAudioZoneState(args.Arg1, args.Arg2);
 			foreach (var ui in UiConnections)
@@ -750,7 +750,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = the id of the display that changed. Arg2 = true is online, false is offline.</param>
-		protected void AppServiceDisplayConnectionHandler(object? sender, GenericDualEventArgs<string, bool> args)
+		protected virtual void AppServiceDisplayConnectionHandler(object? sender, GenericDualEventArgs<string, bool> args)
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayConnectionHandler() - {0}, {1}", args.Arg1, args.Arg2);
 			var display = AppService.GetAllDisplayInfo().FirstOrDefault(x => x.Id.Equals(args.Arg1, StringComparison.InvariantCulture));
@@ -779,7 +779,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = the id of the display that changed. Arg2 = true is blanked, false is showing video.</param>
-		protected void AppServiceDisplayBlankHandler(object? sender, GenericDualEventArgs<string, bool> args)
+		protected virtual void AppServiceDisplayBlankHandler(object? sender, GenericDualEventArgs<string, bool> args)
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayBlankHandler() - {0}, {1}", args.Arg1, args.Arg2);
 			foreach (var ui in UiConnections)
@@ -796,7 +796,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = the id of the display that changed. Arg2 = true is frozen, false is not frozen.</param>
-		protected void AppServiceDisplayFreezeHandler(object? sender, GenericDualEventArgs<string, bool> args)
+		protected virtual void AppServiceDisplayFreezeHandler(object? sender, GenericDualEventArgs<string, bool> args)
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayFreezeHandler() - {0}, {1}", args.Arg1, args.Arg2);
 			foreach (var ui in UiConnections)
@@ -813,7 +813,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = the id of the display that changed. Arg2 = true is on, false is off.</param>
-		protected void AppServiceDisplayPowerHandler(object? sender, GenericDualEventArgs<string, bool> e)
+		protected virtual void AppServiceDisplayPowerHandler(object? sender, GenericDualEventArgs<string, bool> e)
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayPowerHandler() - {0}, {1}", e.Arg1, e.Arg2);
 			foreach (var ui in UiConnections)
@@ -840,7 +840,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = the id of the display that changed.</param>
-		protected void AppServiceDisplayInputChangedHandler(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void AppServiceDisplayInputChangedHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.AppServiceDisplayInputChangedHandler({0})", e.Arg);
 
@@ -866,7 +866,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = the id of the endpoint device that changed. Arg2 = true is online, false is offline.</param>
-		protected void AppServiceEndpointConnectionHandler(object? sender, GenericDualEventArgs<string, bool> args)
+		protected virtual void AppServiceEndpointConnectionHandler(object? sender, GenericDualEventArgs<string, bool> args)
 		{
 			Logger.Debug("PresentationService.AppServiceEndpointConnectionHandler() - {0}, {1}", args.Arg1, args.Arg2);
 			
@@ -888,7 +888,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = the id of the endpoint that changed. Arg2 = the index on the endpoint device that changed.</param>
-		protected void AppServiceEndpointChangedHandler(object? sender, GenericDualEventArgs<string, int> args)
+		protected virtual void AppServiceEndpointChangedHandler(object? sender, GenericDualEventArgs<string, int> args)
 		{
 			Logger.Debug("PresentationService.AppServiceEndpointChangedHandler() - {0}", args.Arg1, args.Arg2);
 		}
@@ -898,7 +898,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg = the id of the destination that changed.</param>
-		protected void AppServiceRouteHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void AppServiceRouteHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			var currentSrc = AppService.QueryCurrentRoute(args.Arg);
 			foreach (var conn in UiConnections)
@@ -917,7 +917,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg = the id of the AVR that updated.</param>
-		protected void AppServiceRouterConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void AppServiceRouterConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			Logger.Debug("PresentationService.AppServiceRouterConnectionHandler() - {0}", args.Arg);
 			
@@ -946,7 +946,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = the id of the lighting controller that updated.</param>
-		protected void AppServiceLightingConnectionHandler(object? sender, GenericDualEventArgs<string, bool> e)
+		protected virtual void AppServiceLightingConnectionHandler(object? sender, GenericDualEventArgs<string, bool> e)
 		{
 			Logger.Debug("PresentationService.AppServiceLightingConnectionHandler({0}, 1)", e.Arg1, e.Arg2);
 			foreach (var ui in UiConnections)
@@ -973,7 +973,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = the id of the lighting controller that updated.</param>
-		protected void AppServiceGlobalFreezeHandler(object? sender, EventArgs e)
+		protected virtual void AppServiceGlobalFreezeHandler(object? sender, EventArgs e)
 		{
 			bool freezeState = AppService.QueryGlobalVideoFreeze();
 			foreach (var ui in UiConnections)
@@ -989,7 +989,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Generic empty event args.</param>
-		protected void AppServiceGlobalBlankHandler(object? sender, EventArgs e)
+		protected virtual void AppServiceGlobalBlankHandler(object? sender, EventArgs e)
 		{
 			bool blankState = AppService.QueryGlobalVideoBlank();
 			foreach (var ui in UiConnections)
@@ -1005,7 +1005,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Generic empty event args.</param>
-		protected void AppServiceStateChangeHandler(object? sender, EventArgs args)
+		protected virtual void AppServiceStateChangeHandler(object? sender, EventArgs args)
 		{
 			bool state = AppService.CurrentSystemState;
 			foreach (var conn in UiConnections)
@@ -1041,7 +1041,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = camera id, Arg2 = preset id</param>
-		protected void CameraPresetRecallHandler(object? sender, GenericDualEventArgs<string, string> args)
+		protected virtual void CameraPresetRecallHandler(object? sender, GenericDualEventArgs<string, string> args)
 		{
 			if (AppService is not ICameraControlApp cameraApp) return;
 			cameraApp.SendCameraPresetRecall(args.Arg1, args.Arg2);
@@ -1052,7 +1052,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = camera id, Arg2 = preset id</param>
-		protected void CameraPresetSaveHandler(object? sender, GenericDualEventArgs<string, string> args)
+		protected virtual void CameraPresetSaveHandler(object? sender, GenericDualEventArgs<string, string> args)
 		{
 			if (AppService is not ICameraControlApp cameraApp) return;
 			cameraApp.SendCameraPresetSave(args.Arg1, args.Arg2);
@@ -1063,7 +1063,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = camera id, Arg2 = the direction to move the camera</param>
-		protected void CameraUiPanTiltHandler(object? sender, GenericDualEventArgs<string, Vector2D> args)
+		protected virtual void CameraUiPanTiltHandler(object? sender, GenericDualEventArgs<string, Vector2D> args)
 		{
 			if (AppService is not ICameraControlApp cameraApp) return;
 			cameraApp.SendCameraPanTilt(args.Arg1, args.Arg2);
@@ -1074,7 +1074,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = camera id, Arg2 = negative values for wide, positive for telephoto, 0 to stop.</param>
-		protected void CameraUiZoomHandler(object? sender, GenericDualEventArgs<string, int> args)
+		protected virtual void CameraUiZoomHandler(object? sender, GenericDualEventArgs<string, int> args)
 		{
 			if (AppService is not ICameraControlApp cameraApp) return;
 			cameraApp.SendCameraZoom(args.Arg1, args.Arg2);
@@ -1085,7 +1085,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = camera id, Arg2 = true is on, false is off </param>
-		protected void CameraUiPowerHandler(object? sender, GenericDualEventArgs<string, bool> args)
+		protected virtual void CameraUiPowerHandler(object? sender, GenericDualEventArgs<string, bool> args)
 		{
 			if (AppService is not ICameraControlApp cameraApp) return;
 			cameraApp.SendCameraPowerChange(args.Arg1, args.Arg2);
@@ -1096,7 +1096,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = controller id, Arg2 = layout id</param>
-		protected void VideoWallUiLayoutHandler(object? sender, GenericDualEventArgs<string, string> args)
+		protected virtual void VideoWallUiLayoutHandler(object? sender, GenericDualEventArgs<string, string> args)
 		{
 			if (AppService is not IVideoWallApp videoWallApp) return;
 			videoWallApp.SetActiveVideoWallLayout(args.Arg1, args.Arg2);
@@ -1107,7 +1107,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = control id, Arg2 = cell id, Arg3 = source id</param>
-		protected void VideoWallRouteHandler(object? sender, GenericTrippleEventArgs<string, string, string> args)
+		protected virtual void VideoWallRouteHandler(object? sender, GenericTrippleEventArgs<string, string, string> args)
 		{
 			Logger.Debug($"PresentationService.VideoWallRouteHandler(${args.Arg1}, {args.Arg2}, {args.Arg3})");
 			
@@ -1120,7 +1120,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = The id of the user interface that changed.</param>
-		protected void UiConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
+		protected virtual void UiConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
 		{
 			var found = UiConnections.FirstOrDefault(x => x.Id.Equals(args.Arg, StringComparison.InvariantCulture));
 			if (found == null) return;
@@ -1172,7 +1172,7 @@ namespace pkd_ui_service
 		/// update a user interface with the current state of all event modes, if the ui supports event control.
 		/// </summary>
 		/// <param name="ui">the user interface to update.</param>
-		protected void UpdateCustomEventUi(ICustomEventUserInterface ui)
+		protected virtual void UpdateCustomEventUi(ICustomEventUserInterface ui)
 		{
 			if (AppService is not CustomEventAppService eventServiceApp) return;
 			var events = eventServiceApp.QueryAllCustomEvents();
@@ -1187,7 +1187,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg = true to set state active, false to set state standby.</param>
-		protected void UiStatusChangeHandler(object? sender, GenericSingleEventArgs<bool> args)
+		protected virtual void UiStatusChangeHandler(object? sender, GenericSingleEventArgs<bool> args)
 		{
 			if (args.Arg)
 			{
@@ -1204,7 +1204,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">Arg1 = input id, Arg2 = output id.</param>
-		protected void UiRouteChangeHandler(object? sender, GenericDualEventArgs<string, string> args)
+		protected virtual void UiRouteChangeHandler(object? sender, GenericDualEventArgs<string, string> args)
 		{
 			Logger.Debug("PresentationService.UiRouteChangeHandler() - {0} -> {1}", args.Arg1, args.Arg2);
 			
@@ -1223,7 +1223,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = id of the display to change, Arg2 = true for on, false for off.</param>
-		protected void UiDisplayPowerHandler(object? sender, GenericDualEventArgs<string, bool> e)
+		protected virtual void UiDisplayPowerHandler(object? sender, GenericDualEventArgs<string, bool> e)
 		{
 			Logger.Debug("PresentationService.UiDisplayPowerHandler() - {0} - {1}", e.Arg1, e.Arg2);
 			AppService.SetDisplayPower(e.Arg1, e.Arg2);
@@ -1234,7 +1234,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = id of the display to change, Arg2 = true for freeze, false for disable freeze.</param>
-		protected void UiDisplayFreezeHandler(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiDisplayFreezeHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			bool currenState = AppService.DisplayFreezeQuery(e.Arg);
 			AppService.SetDisplayFreeze(e.Arg, !currenState);
@@ -1245,7 +1245,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = id of the display to change, Arg2 = true for blank, false for show video.</param>
-		protected void UiDisplayBlankHandler(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiDisplayBlankHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			bool currentState = AppService.DisplayBlankQuery(e.Arg);
 			AppService.SetDisplayBlank(e.Arg, !currentState);
@@ -1256,7 +1256,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = id of the display to change, Arg2 = true for blank, false for show video.</param>
-		protected void UiGlobalBlankHandler(object? sender, EventArgs e)
+		protected virtual void UiGlobalBlankHandler(object? sender, EventArgs e)
 		{
 			Logger.Debug("PresentationService.UiGlobalBlankHandler()");
 			bool currentState = AppService.QueryGlobalVideoBlank();
@@ -1268,7 +1268,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = id of the display to change, Arg2 = true for freeze, false for disable freeze.</param>
-		protected void UiGlobalFreezeHandler(object? sender, EventArgs e)
+		protected virtual void UiGlobalFreezeHandler(object? sender, EventArgs e)
 		{
 			Logger.Debug("PresentationService.UiGlobalFreezeHandler()");
 			bool currentState = AppService.QueryGlobalVideoFreeze();
@@ -1280,7 +1280,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = id of the display associated with the screen to raise.</param>
-		protected void UiDisplayScreenUpHandler(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiDisplayScreenUpHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			AppService.RaiseScreen(e.Arg);
 		}
@@ -1290,7 +1290,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = id of the display associated with the screen to lower.</param>
-		protected void UiDisplayScreenDownHandler(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiDisplayScreenDownHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			AppService.LowerScreen(e.Arg);
 		}
@@ -1300,7 +1300,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = id of the channel to mute.</param>
-		protected void UiAudioOutputMuteRequest(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiAudioOutputMuteRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioOutputMuteRequest() - {0}", e.Arg);
 			try
@@ -1319,7 +1319,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = id of the channel to increase.</param>
-		protected void UiAudioOutputLevelUpRequest(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiAudioOutputLevelUpRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioOutputLevelUpRequest() - {0}", e.Arg);
 			var newLevel = AppService.QueryAudioOutputLevel(e.Arg) + 3;
@@ -1331,7 +1331,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = id of the channel to decrease.</param>
-		protected void UiAudioOutputLevelDownRequest(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiAudioOutputLevelDownRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioOutputLevelDownRequest() - {0}", e.Arg);
 			var newLevel = AppService.QueryAudioOutputLevel(e.Arg) - 3;
@@ -1343,7 +1343,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = id of the input channel, Arg2 = id of the output channel.</param>
-		protected void UiAudioOutputRouteRequest(object? sender, GenericDualEventArgs<string, string> e)
+		protected virtual void UiAudioOutputRouteRequest(object? sender, GenericDualEventArgs<string, string> e)
 		{
 			AppService.SetAudioOutputRoute(e.Arg1, e.Arg2);
 		}
@@ -1353,7 +1353,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = id of the input to mute.</param>
-		protected void UiAudioInputMuteRequest(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiAudioInputMuteRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioInputMuteRequest() - {0}", e.Arg);
 			bool current = AppService.QueryAudioInputMute(e.Arg);
@@ -1365,7 +1365,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = id of the channel to decrease.</param>
-		protected void UiAudioInputLevelDownRequest(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiAudioInputLevelDownRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioInputLevelDownRequest() - {0}", e.Arg);
 			int newLevel = AppService.QueryAudioInputLevel(e.Arg) - 3;
@@ -1377,7 +1377,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = id of the channel to increase.</param>
-		protected void UiAudioInputLevelUpRequest(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiAudioInputLevelUpRequest(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.UiAudioInputLevelUpRequest() - {0}", e.Arg);
 			int newLevel = AppService.QueryAudioInputLevel(e.Arg) + 3;
@@ -1389,7 +1389,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = id of the input channel. Arg2 = id of the output zone to toggle</param>
-		protected void UiAudioZoneToggleHandler(object? sender, GenericDualEventArgs<string, string> e)
+		protected virtual void UiAudioZoneToggleHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
 			AppService.ToggleAudioZoneState(e.Arg1, e.Arg2);
 		}
@@ -1399,7 +1399,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = id of the channel to adjust, Arg2 = the 0-100 value to set.</param>
-		protected void DiscreteAudioOutputUiHandler(object? sender, GenericDualEventArgs<string, int> e)
+		protected virtual void DiscreteAudioOutputUiHandler(object? sender, GenericDualEventArgs<string, int> e)
 		{
 			var adjustedLevel = e.Arg2;
 			if (adjustedLevel < 0)
@@ -1419,7 +1419,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = id of the channel to adjust, Arg2 = the 0-100 value to set.</param>
-		protected void DiscreteAudioInputUiHandler(object? sender, GenericDualEventArgs<string, int> e)
+		protected virtual void DiscreteAudioInputUiHandler(object? sender, GenericDualEventArgs<string, int> e)
 		{
 			var adjustedLevel = e.Arg2;
 			if (adjustedLevel < 0)
@@ -1439,7 +1439,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = id of the controller to adjust, Arg2 = id of the lighting zone, Arg3 = the 0-100 value to set.</param>
-		protected void LightingUiLoadHandler(object? sender, GenericTrippleEventArgs<string, string, int> e)
+		protected virtual void LightingUiLoadHandler(object? sender, GenericTrippleEventArgs<string, string, int> e)
 		{
 			AppService.SetLightingLoad(e.Arg1, e.Arg2, e.Arg3);
 		}
@@ -1449,7 +1449,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = id of the device to adjust, Arg2 = id of the scene to set.</param>
-		protected void LightingUiSceneHandler(object? sender, GenericDualEventArgs<string, string> e)
+		protected virtual void LightingUiSceneHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
 			AppService.RecallLightingScene(e.Arg1, e.Arg2);
 		}
@@ -1459,7 +1459,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="id">The id of the error, used when referencing the specific error.</param>
 		/// <param name="label">The information to display on the user interface for the error.</param>
-		protected void AddErrorToUi(string id, string label)
+		protected virtual void AddErrorToUi(string id, string label)
 		{
 			foreach (var ui in UiConnections)
 			{
@@ -1474,7 +1474,7 @@ namespace pkd_ui_service
 		/// Remove an existing error from all user interfaces.
 		/// </summary>
 		/// <param name="id">The id of the error that was added with <see cref="AddErrorToUi"/>.</param>
-		protected void RemoveErrorFromUi(string id)
+		protected virtual void RemoveErrorFromUi(string id)
 		{
 			foreach (var ui in UiConnections)
 			{
@@ -1490,7 +1490,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = id of the display.</param>
-		protected void UiSetStationLecternHandler(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiSetStationLecternHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			AppService.SetInputLectern(e.Arg);
 		}
@@ -1500,7 +1500,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = id of the display.</param>
-		protected void UiSetStationLocalHandler(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void UiSetStationLocalHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			AppService.SetInputStation(e.Arg);
 		}
@@ -1510,7 +1510,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = the id of the device to control, Arg2 = the channel to dial.</param>
-		protected void TransportUi_TransportDialRequest(object? sender, GenericDualEventArgs<string, string> e)
+		protected virtual void TransportUi_TransportDialRequest(object? sender, GenericDualEventArgs<string, string> e)
 		{
 			AppService.TransportDial(e.Arg1, e.Arg2);
 		}
@@ -1520,7 +1520,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = the id of the device to control, Arg2 = the id of the channel to dial.</param>
-		protected void TransportUi_TransportDialFavoriteRequest(object? sender, GenericDualEventArgs<string, string> e)
+		protected virtual void TransportUi_TransportDialFavoriteRequest(object? sender, GenericDualEventArgs<string, string> e)
 		{
 			AppService.TransportDialFavorite(e.Arg1, e.Arg2);
 		}
@@ -1530,7 +1530,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = the id of the device to control, Arg2 = transport control to trigger.</param>
-		protected void TransportUi_TransportControlRequest(object? sender, GenericDualEventArgs<string, TransportTypes> e)
+		protected virtual void TransportUi_TransportControlRequest(object? sender, GenericDualEventArgs<string, TransportTypes> e)
 		{
 			TransportUtilities.SendCommand(AppService, e.Arg1, e.Arg2);
 		}
@@ -1540,7 +1540,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg1 = the id of the event, Arg2 = true to set active, false to set inactive.</param>
-		protected void EventUi_CustomEventStateChanged(object? sender, GenericDualEventArgs<string, bool> e)
+		protected virtual void EventUi_CustomEventStateChanged(object? sender, GenericDualEventArgs<string, bool> e)
 		{
 			if (AppService is ICustomEventAppService eventApp)
 			{
@@ -1555,7 +1555,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = the id of the source to route to all video destinations</param>
-		protected void FusionRouteSourceHandler(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void FusionRouteSourceHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.FusionRouteSourceHandler()");
 			AppService.RouteToAll(e.Arg);
@@ -1566,7 +1566,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = the id of the source to route to all video destinations</param>
-		protected void FusionAudioLevelHandler(object? sender, GenericSingleEventArgs<uint> e)
+		protected virtual void FusionAudioLevelHandler(object? sender, GenericSingleEventArgs<uint> e)
 		{
 			Logger.Debug("PresentationService.FusionAudioLevelHandler()");
 			var pgmOut = AppService.GetAudioOutputChannels().FirstOrDefault(x => x.Tags.Contains("pgm"));
@@ -1581,7 +1581,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Empty args package.</param>
-		protected void FusionAudioMuteHandler(object? sender, EventArgs e)
+		protected virtual void FusionAudioMuteHandler(object? sender, EventArgs e)
 		{
 			Logger.Debug("PresentationService.FusionAudioMuteHandler()");
 			var pgmOut = AppService.GetAudioOutputChannels().FirstOrDefault(x => x.Tags.Contains("pgm"));
@@ -1596,7 +1596,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Empty args package.</param>
-		protected void FusionDisplayFreezeHandler(object? sender, EventArgs e)
+		protected virtual void FusionDisplayFreezeHandler(object? sender, EventArgs e)
 		{
 			Logger.Debug("PresentationService.FusionDisplayFreezeHandler()");
 			AppService.SetGlobalVideoFreeze(!AppService.QueryGlobalVideoFreeze());
@@ -1607,7 +1607,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Empty args package.</param>
-		protected void FusionDisplayBlankHandler(object? sender, EventArgs e)
+		protected virtual void FusionDisplayBlankHandler(object? sender, EventArgs e)
 		{
 			Logger.Debug("PresentationService.FusionDisplayBlankHandler()");
 			AppService.SetGlobalVideoBlank(!AppService.QueryGlobalVideoFreeze());
@@ -1618,7 +1618,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = true for on, false for off.</param>
-		protected void FusionDisplayPowerHandler(object? sender, GenericSingleEventArgs<bool> e)
+		protected virtual void FusionDisplayPowerHandler(object? sender, GenericSingleEventArgs<bool> e)
 		{
 			Logger.Debug("PresentationService.FusionDisplayPowerHandler()");
 			foreach (var display in AppService.GetAllDisplayInfo())
@@ -1632,7 +1632,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = true for set active, false for set standby.</param>
-		protected void FusionPowerHandler(object? sender, GenericSingleEventArgs<bool> e)
+		protected virtual void FusionPowerHandler(object? sender, GenericSingleEventArgs<bool> e)
 		{
 			Logger.Debug("PresentationService.FusionPowerHandler()");
 			if (e.Arg)
@@ -1650,7 +1650,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Arg = the id of the microphone to toggle.</param>
-		protected void FusionMicMuteHandler(object? sender, GenericSingleEventArgs<string> e)
+		protected virtual void FusionMicMuteHandler(object? sender, GenericSingleEventArgs<string> e)
 		{
 			Logger.Debug("PresentationService.FusionMicMuteHandler()");
 			bool currentState = AppService.QueryAudioInputMute(e.Arg);
@@ -1662,7 +1662,7 @@ namespace pkd_ui_service
 		/// </summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="e">Empy args package.</param>
-		protected void FusionConnectionHandler(object? sender, EventArgs e)
+		protected virtual void FusionConnectionHandler(object? sender, EventArgs e)
 		{
 			Logger.Debug("PresentationService.FusionConnectionHandler()");
 			UpdateFusionFeedback();
@@ -1671,7 +1671,7 @@ namespace pkd_ui_service
 		/// <summary>
 		/// update all <see cref="IFusionInterface"/> devices with the current system use state.
 		/// </summary>
-		protected void UpdateFusionDisplayPowerFeedback()
+		protected virtual void UpdateFusionDisplayPowerFeedback()
 		{
 			bool aDisplayOn = false;
 			foreach (var display in AppService.GetAllDisplayInfo())
@@ -1691,7 +1691,7 @@ namespace pkd_ui_service
 		/// <summary>
 		/// Update all <see cref="IFusionInterface"/> devices with the current state of program audio level and mute.
 		/// </summary>
-		protected void UpdateFusionAudioFeedback()
+		protected virtual void UpdateFusionAudioFeedback()
 		{
 			var pgmAudio = AppService.GetAudioOutputChannels().FirstOrDefault(x => x.Tags.Contains("pgm"));
 			if (pgmAudio == null) return;
@@ -1702,7 +1702,7 @@ namespace pkd_ui_service
 		/// <summary>
 		/// Update all <see cref="IFusionInterface"/> devices with the current video route status.
 		/// </summary>
-		protected void UpdateFusionRoutingFeedback()
+		protected virtual void UpdateFusionRoutingFeedback()
 		{
 			var avDestinations = AppService.GetAllAvDestinations();
 			if (avDestinations.Count > 0)
@@ -1726,7 +1726,7 @@ namespace pkd_ui_service
 		/// <summary>
 		/// Update all <see cref="IFusionInterface"/> devices with all supported feedback.
 		/// </summary>
-		protected void UpdateFusionFeedback()
+		protected virtual void UpdateFusionFeedback()
 		{
 			Fusion?.UpdateSystemState(AppService.CurrentSystemState);
 			UpdateFusionDisplayPowerFeedback();

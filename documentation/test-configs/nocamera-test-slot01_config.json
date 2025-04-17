@@ -12,8 +12,8 @@
     "Logic": {
       "AppServiceLibrary": "",
       "AppServiceClass": "",
-      "PresentationServiceLibrary": "",
-      "PresentationServiceClass": ""
+      "PresentationServiceLibrary": "NursingUiServices.dll",
+      "PresentationServiceClass": "NursingUiService"
     }
   },
   "UserInterfaces": [

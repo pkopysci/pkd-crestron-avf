@@ -44,7 +44,8 @@ namespace pkd_ui_service
                 var obj = DriverLoader.LoadClassByInterface<IPresentationService>(
                     roomInfo.PresentationServiceLibrary,
                     roomInfo.PresentationServiceClass,
-                    "IPresentationService");
+                    "IPresentationService",
+                    [appService, control]);
 
                 if (obj == null)
                 {
@@ -53,24 +54,7 @@ namespace pkd_ui_service
                     return new PresentationService(appService, control);
                 }
 
-                var constructor =
-                    obj.GetType().GetConstructor([typeof(IApplicationService), typeof(CrestronControlSystem)]);
-
-                if (constructor == null)
-                {
-                    Logger.Error(
-                        $"PresentationServiceFactory.CreatePresentationService() - plugin does not contain a constructor that matches (IApplicationControl, CrestronControlSystem)");
-                    return new PresentationService(appService, control);
-                }
-
-                if (constructor.Invoke([appService, control]) is not IPresentationService service)
-                {
-                    Logger.Error(
-                        $"PresentationServiceFactory.CreatePresentationService() - plugin does not implement IPresentationService.");
-                    return new PresentationService(appService, control);
-                }
-
-                return service;
+                return obj;
             }
             catch (Exception e)
             {

@@ -61,7 +61,6 @@ namespace pkd_common_utils.FileOps
 		/// <param name="className">The class to search for in the assembly dll.</param>
 		/// <param name="interfaceName">The interface to search for in the assembly dll.</param>
 		/// <returns>The target T object, if found in the assembly, or T default if no matching driver is found.</returns>
-		/// <exception cref="Exception">Will propagate exceptions from System.Reflection.</exception>
 		public static T? LoadClassByInterface<T>(string assemblyName, string className, string interfaceName)
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(assemblyName, "LoadClassByInterface", nameof(assemblyName));
@@ -88,6 +87,67 @@ namespace pkd_common_utils.FileOps
 						    .Any(x => x.Name.Equals(interfaceName, StringComparison.InvariantCulture))) continue;
 
 					device = type.FullName != null ? (T?)dll.CreateInstance(type.FullName) : default;
+					break;
+				}
+
+				Logger.Debug("Done!");
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, $"DriverLoader.LoadClassByInterface({assemblyName},{interfaceName})");
+			}
+			finally
+			{
+				AppDomain.CurrentDomain.AssemblyResolve -= AssemblyResolver;
+			}
+			
+			return device;
+		}
+
+		/// <summary>
+		/// Return an instance of a class based on the defined interface name. This version of the method allows for
+		/// constructor arguments.
+		/// </summary>
+		/// <typeparam name="T">The expected return type.</typeparam>
+		/// <param name="assemblyName">The full directory and file name with extension of the target assembly.</param>
+		/// <param name="className">The class to search for in the assembly dll.</param>
+		/// <param name="interfaceName">The interface to search for in the assembly dll.</param>
+		/// <param name="constructorArgs">The constructor arguments to pass when creating the object.</param>
+		/// <returns>The target T object, if found in the assembly, or T default if no matching driver is found.</returns>
+		public static T? LoadClassByInterface<T>(string assemblyName, string className, string interfaceName,
+			object[] constructorArgs)
+		{
+			ParameterValidator.ThrowIfNullOrEmpty(assemblyName, "LoadClassByInterface", nameof(assemblyName));
+			ParameterValidator.ThrowIfNullOrEmpty(interfaceName, "LoadClassByInterface", nameof(interfaceName));
+
+			T? device = default;
+			try
+			{
+				var dllPath =
+					DirectoryHelper.NormalizePath($@"{DirectoryHelper.GetUserFolder()}\net8-plugins\{assemblyName}");
+
+				Logger.Debug("Attempting to load driver from file {0}...", dllPath);
+				var dll = Assembly.LoadFrom(dllPath);
+
+				// Add event handler to resolve dependencies
+				AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolver;
+
+				foreach (var type in dll.GetTypes())
+				{
+					Logger.Debug($"{type.FullName}");
+
+					if (!type.Name.Equals(className, StringComparison.InvariantCulture)) continue;
+					if (!type.GetInterfaces()
+						    .Any(x => x.Name.Equals(interfaceName, StringComparison.InvariantCulture))) continue;
+
+					var argTypes = new Type[constructorArgs.Length];
+					for (var i = 0; i < constructorArgs.Length; i++)
+					{
+						argTypes[i] = constructorArgs[i].GetType();
+					}
+					
+					//(T?)dll.CreateInstance(type.FullName) : default;
+					device = type.FullName != null ? (T?)type.GetConstructor(argTypes)?.Invoke(constructorArgs) : default; 
 					break;
 				}
 

@@ -5,31 +5,39 @@ using pkd_common_utils.Validation;
 
 namespace pkd_ui_service.Fusion.DeviceUse
 {
-	internal class FusionDeviceUse : IFusionDeviceUse
+	/// <summary>
+	/// Device use message object for sending data to the fusion server.
+	/// </summary>
+	public class FusionDeviceUse : IFusionDeviceUse
 	{
 		private const string DeviceTag = "Source";
 		private const string DisplayTag = "DISPLAY";
 		private const string TimeTag = "TIME";
 
-		private readonly FusionRoom fusion;
-		private readonly Dictionary<string, FusionDeviceData> devices;
-		private readonly Dictionary<string, FusionDeviceData> displays;
+		private readonly FusionRoom _fusion;
+		private readonly Dictionary<string, FusionDeviceData> _devices;
+		private readonly Dictionary<string, FusionDeviceData> _displays;
 
+		
+		/// <summary>
+		/// Instantiates a new instance of <see cref="FusionDeviceUse"/>.
+		/// </summary>
+		/// <param name="fusion">The Crestron fusion connection object that will be used for communication.</param>
 		public FusionDeviceUse(FusionRoom fusion)
 		{
-			ParameterValidator.ThrowIfNull(fusion, "FusionDeviceUse.Ctor", "fusion");
+			ParameterValidator.ThrowIfNull(fusion, "FusionDeviceUse.Ctor", nameof(fusion));
 
-			this.fusion = fusion;
-			devices = new Dictionary<string, FusionDeviceData>();
-			displays = new Dictionary<string, FusionDeviceData>();
+			this._fusion = fusion;
+			_devices = new Dictionary<string, FusionDeviceData>();
+			_displays = new Dictionary<string, FusionDeviceData>();
 		}
 
 		///<inheritdoc/>
 		public void AddDeviceToUseTracking(string id, string label)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(id, "FusionDeviceUse.AddDeviceToUseTracking", "id");
-			ParameterValidator.ThrowIfNullOrEmpty(label, "FusionDeviceUse.AddDeviceToUseTracking", "label");
-			devices.Add(id, new FusionDeviceData()
+			ParameterValidator.ThrowIfNullOrEmpty(id, "FusionDeviceUse.AddDeviceToUseTracking", nameof(id));
+			ParameterValidator.ThrowIfNullOrEmpty(label, "FusionDeviceUse.AddDeviceToUseTracking", nameof(label));
+			_devices.Add(id, new FusionDeviceData()
 			{
 				Id = id,
 				Label = label,
@@ -41,7 +49,7 @@ namespace pkd_ui_service.Fusion.DeviceUse
 		///<inheritdoc/>
 		public void StartDeviceUse(string id)
 		{
-			if (devices.TryGetValue(id, out var found))
+			if (_devices.TryGetValue(id, out var found))
 			{
 				found.StartTime = DateTime.Now;
 			}
@@ -50,7 +58,7 @@ namespace pkd_ui_service.Fusion.DeviceUse
 		///<inheritdoc/>
 		public void StopDeviceUse(string id)
 		{
-			if (!devices.TryGetValue(id, out var found)) return;
+			if (!_devices.TryGetValue(id, out var found)) return;
 			
 			var useMinutes = CalculateUseTime(found);
 			if (useMinutes <= 0) return;
@@ -64,7 +72,7 @@ namespace pkd_ui_service.Fusion.DeviceUse
 		{
 			ParameterValidator.ThrowIfNullOrEmpty(id, "FusionDeviceUse.AddDisplayToUseTracking", "id");
 			ParameterValidator.ThrowIfNullOrEmpty(label, "FusionDeviceUse.AddDisplayToUseTracking", "label");
-			displays.Add(id, new FusionDeviceData()
+			_displays.Add(id, new FusionDeviceData()
 			{
 				Id = id,
 				Label = label,
@@ -76,7 +84,7 @@ namespace pkd_ui_service.Fusion.DeviceUse
 		///<inheritdoc/>
 		public void StartDisplayUse(string id)
 		{
-			if (displays.TryGetValue(id, out var found))
+			if (_displays.TryGetValue(id, out var found))
 			{
 				found.StartTime = DateTime.Now;
 			}
@@ -85,7 +93,7 @@ namespace pkd_ui_service.Fusion.DeviceUse
 		///<inheritdoc/>
 		public void StopDisplayUse(string id)
 		{
-			if (!displays.TryGetValue(id, out var found)) return;
+			if (!_displays.TryGetValue(id, out var found)) return;
 			
 			var useMinutes = CalculateUseTime(found);
 			if (useMinutes <= 0) return;
@@ -122,7 +130,7 @@ namespace pkd_ui_service.Fusion.DeviceUse
 			builder.Append("||-||-||-||");
 
 			Logger.Debug("Sending command:\n{0}", builder.ToString());
-			fusion.DeviceUsage.InputSig.StringValue = builder.ToString();
+			_fusion.DeviceUsage.InputSig.StringValue = builder.ToString();
 		}
 
 		private static int CalculateUseTime(FusionDeviceData device)

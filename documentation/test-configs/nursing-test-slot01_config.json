@@ -1,0 +1,1179 @@
+{
+  "ServerInfo": {
+    "Host": "10.8.113.152",
+    "User": "svc_crestron",
+    "Key": "sftp-crestron"
+  },
+  "RoomInfo": {
+    "Id": "ROOM01",
+    "RoomName": "Nursing Testing",
+    "HelpContact": "602-639-7700",
+    "SystemType": "nursing-labs",
+    "Logic": {
+      "AppServiceLibrary": "NursingApplicationService.dll",
+      "AppServiceClass": "NursingAppService",
+      "PresentationServiceLibrary": "NursingUiServices.dll",
+      "PresentationServiceClass": "NursingUiService"
+    }
+  },
+  "UserInterfaces": [
+    {
+      "Id": "ui01",
+      "IpId": 3,
+      "Model": "TS-1542-C",
+      "ClassName": "CrComLibUserInterface",
+      "Library": "CrComLibUi.dll",
+      "Sgd": "",
+      "DefaultActivity": "",
+      "Menu": [],
+      "Tags": ["control:01", "name:Station 1"]
+    },
+    {
+      "Id": "ui02",
+      "IpId": 3,
+      "Model": "TS-1542-C",
+      "ClassName": "CrComLibUserInterface",
+      "Library": "CrComLibUi.dll",
+      "Sgd": "",
+      "DefaultActivity": "",
+      "Menu": [],
+      "Tags": ["control:02", "name:Station 2"]
+    }
+  ],
+  "Displays": [
+    {
+      "Id": "disp01",
+      "Label": "Display",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Display Emulator",
+      "Icon": "",
+      "Tags": ["debrief:d01"],
+      "HasScreen": true,
+      "RelayController": "rly01",
+      "ScreenUpRelay": 1,
+      "ScreenDownRelay": 2,
+      "Connection": {
+        "Id": "con01",
+        "Transport": "DisplayEmulatorTcp",
+        "Driver": "DisplayEmulator.dll",
+        "Host": "192.168.1.252",
+        "Port": 7142,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        },
+        "ComSpec": {
+          "Protocol": "rs232",
+          "BaudRate": 9600,
+          "DataBits": 8,
+          "StopBits": 1,
+          "HwHandshake": "none",
+          "SwHandshake": "none",
+          "Parity": "none"
+        }
+      },
+      "UserAttributes": [
+        {
+          "Id": "ID",
+          "DataType": "string",
+          "Value": "0"
+        }
+      ],
+      "CustomCommands": {
+        "FreezeOnTx": "",
+        "FreezeOnRx": "",
+        "FreezeOffTx": "",
+        "FreezeOffRx": ""
+      }
+    },
+    {
+      "Id": "disp02",
+      "Label": "Display",
+      "Icon": "",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Display Emulator",
+      "Tags": ["debrief:d02"],
+      "HasScreen": false,
+      "RelayController": "",
+      "ScreenUpRelay": 3,
+      "ScreenDownRelay": 4,
+      "LecternInput": 1,
+      "StationInput": 2,
+      "Connection": {
+        "Id": "con01",
+        "Transport": "DisplayEmulatorTcp",
+        "Driver": "DisplayEmulator.dll",
+        "Host": "192.168.1.252",
+        "Port": 7142,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "",
+          "Password": ""
+        },
+        "ComSpec": {
+          "Protocol": "rs232",
+          "BaudRate": 9600,
+          "DataBits": 8,
+          "StopBits": 1,
+          "HwHandshake": "none",
+          "SwHandshake": "none",
+          "Parity": "none"
+        }
+      },
+      "UserAttributes": [
+        {
+          "Id": "ID",
+          "DataType": "string",
+          "Value": "0"
+        }
+      ],
+      "CustomCommands": {
+        "FreezeOnTx": "",
+        "FreezeOnRx": "",
+        "FreezeOffTx": "",
+        "FreezeOffRx": ""
+      }
+    }
+  ],
+  "Routing": {
+    "RouteOnSourceSelect": true,
+    "StartupSource": "SRC01",
+    "Sources": [
+      {
+        "Id": "SRC01",
+        "Label": "HDMI",
+        "Icon": "laptop",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 1,
+        "Tags": ["debrief:d01"]
+      },
+      {
+        "Id": "SRC02",
+        "Label": "PC",
+        "Icon": "laptop",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 2,
+        "Tags": ["debrief:d01"]
+      },
+      {
+        "Id": "SRC03",
+        "Label": "Station 1 Stream",
+        "Icon": "laptop",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 3,
+        "Tags": ["debrief:d01"]
+      },
+      {
+        "Id": "SRC04",
+        "Label": "Station 2 Stream",
+        "Icon": "laptop",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 4,
+        "Tags": ["debrief:d01"]
+      },
+      {
+        "Id": "SRC05",
+        "Label": "HDMI",
+        "Icon": "laptop",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 5,
+        "Tags": ["debrief:d02"]
+      },
+      {
+        "Id": "SRC06",
+        "Label": "PC",
+        "Icon": "laptop",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 6,
+        "Tags": ["debrief:d02"]
+      },
+      {
+        "Id": "SRC07",
+        "Label": "Station 1 Stream",
+        "Icon": "laptop",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 7,
+        "Tags": ["debrief:d02"]
+      },
+      {
+        "Id": "SRC08",
+        "Label": "Station 2 Stream",
+        "Icon": "laptop",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 8,
+        "Tags": ["debrief:d02"]
+      }
+    ],
+    "Destinations": [
+      {
+        "Id": "DEST01",
+        "Label": "Debrief Room 1",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 5,
+        "RoutingGroup": 0,
+        "Tags": ["debrief:d01"]
+      },
+      {
+        "Id": "DEST02",
+        "Label": "Debrief Room 2",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 6,
+        "RoutingGroup": 0,
+        "Tags": ["debrief:d02"]
+      }
+    ],
+    "MatrixData": [
+      {
+        "Id": "rtr01",
+        "Label": "EVR Emulator",
+        "ClassName": "AvSwitchEmulator",
+        "Inputs": 24,
+        "Outputs": 24,
+        "Connection": {
+          "Id": "con01",
+          "Transport": "tcp",
+          "Driver": "AvSwitchEmulator.dll",
+          "Host": "10.16.6.14",
+          "Port": 5000,
+          "Authentication": {
+            "Id": "auth01",
+            "UserName": "",
+            "Password": ""
+          }
+        }
+      }
+    ],
+    "MatrixEdges": []
+  },
+  "Audio": {
+    "Dsps": [
+      {
+        "Id": "dsp01",
+        "CoreId": 1,
+        "Dependencies": [
+          "TCPClient.dll",
+          "QscQsys.dll",
+          "ExtensionMethods.dll"
+        ],
+        "Presets": [
+          {
+            "Id": "startup",
+            "Bank": "StartupShutdown",
+            "Index": 1
+          },
+          {
+            "Id": "shutdown",
+            "Bank": "StartupShutdown",
+            "Index": 2
+          }
+        ],
+        "Connection": {
+          "Id": "con02",
+          "Transport": "QscDspTcp",
+          "Driver": "QscDsp.dll",
+          "Host": "10.16.6.12",
+          "Port": 1710,
+          "Authentication": {
+            "Id": "auth02",
+            "UserName": "",
+            "Password": "1234"
+          }
+        }
+      }
+    ],
+    "Channels": [
+      {
+        "Id": "CHAN01",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB-01-LEVEL",
+        "MuteControlTag": "LAB-01-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 1,
+        "BankIndex": 1,
+        "Label": "Lab 1",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [
+            {
+                "ZoneId":"control:01",
+                "Label": "station 1",
+                "Tag":"STATION1-LAB1-MIX"
+            },
+            {
+                "ZoneId":"control:02",
+                "Label": "station 2",
+                "Tag":"STATION2-LAB1-MIX"
+            }
+        ],
+        "Tags": ["output", "lab:l01"]
+      },
+      {
+        "Id": "CHAN02",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB-02-LEVEL",
+        "MuteControlTag": "LAB-02-MUTE",
+        "RouterControlTag": "LAB-02-RTR",
+        "RouterIndex": 2,
+        "BankIndex": 1,
+        "Label": "Lab 2",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [
+            {
+                "ZoneId":"control:01",
+                "Label": "station 1",
+                "Tag":"STATION1-LAB2-MIX"
+            },
+            {
+                "ZoneId":"control:02",
+                "Label": "station 2",
+                "Tag":"STATION2-LAB2-MIX"
+            }
+        ],
+        "Tags": ["output", "lab:l02"]
+      },
+      {
+        "Id": "CHAN03",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB-03-LEVEL",
+        "MuteControlTag": "LAB-03-MUTE",
+        "RouterControlTag": "LAB-03-RTR",
+        "RouterIndex": 3,
+        "BankIndex": 1,
+        "Label": "Lab 3",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [
+            {
+                "ZoneId":"control:01",
+                "Label": "station 1",
+                "Tag":"STATION1-LAB3-MIX"
+            },
+            {
+                "ZoneId":"control:02",
+                "Label": "station 2",
+                "Tag":"STATION2-LAB3-MIX"
+            }
+        ],
+        "Tags": ["output", "lab:l03"]
+      },
+      {
+        "Id": "CHAN04",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB-04-LEVEL",
+        "MuteControlTag": "LAB-04-MUTE",
+        "RouterControlTag": "LAB-04-RTR",
+        "RouterIndex": 4,
+        "BankIndex": 1,
+        "Label": "Lab 4",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [
+            {
+                "ZoneId":"control:01",
+                "Label": "station 1",
+                "Tag":"STATION1-LAB4-MIX"
+            },
+            {
+                "ZoneId":"control:02",
+                "Label": "station 2",
+                "Tag":"STATION2-LAB4-MIX"
+            }
+        ],
+        "Tags": ["output", "lab:l04"]
+      },
+      {
+        "Id": "CHAN05",
+        "DspId": "dsp01",
+        "LevelControlTag": "DEBRIEF-01-LEVEL",
+        "MuteControlTag": "DEBRIEF-01-MUTE",
+        "RouterControlTag": "DEBRIEF-01-RTR",
+        "RouterIndex": 5,
+        "BankIndex": 1,
+        "Label": "Debrief 1",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [ {
+            "ZoneId":"control:01",
+            "Label": "station 1",
+            "Tag":"STATION1-DB1-MIX"
+        },
+        {
+            "ZoneId":"control:02",
+            "Label": "station 2",
+            "Tag":"STATION2-DB1-MIX"
+        }],
+        "Tags": ["output", "debrief:d01"]
+      },
+      {
+        "Id": "CHAN06",
+        "DspId": "dsp01",
+        "LevelControlTag": "DEBRIEF-02-LEVEL",
+        "MuteControlTag": "DEBRIEF-02-MUTE",
+        "RouterControlTag": "DEBRIEF-02-RTR",
+        "RouterIndex": 6,
+        "BankIndex": 1,
+        "Label": "Debrief 2",
+        "Icon": "Volume",
+        "ZoneEnableToggles": [
+            {
+                "ZoneId":"control:01",
+                "Label": "station 1",
+                "Tag":"STATION1-DB2-MIX"
+            },
+            {
+                "ZoneId":"control:02",
+                "Label": "station 2",
+                "Tag":"STATION2-DB2-MIX"
+            }
+        ],
+        "Tags": ["output", "debrief:d02"]
+      },
+      {
+        "Id": "CHAN06",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB01-MIC01-LEVEL",
+        "MuteControlTag": "LABM01-MIC01-MUTE",
+        "RouterControlTag": "LAB01-MIC01-RTR",
+        "RouterIndex": 7,
+        "BankIndex": 1,
+        "Label": "Lab 1 A",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [
+            {
+                "ZoneId":"control:01",
+                "Label": "station 1",
+                "Tag":"STATION1-LAB1MIC-MIX"
+            },
+            {
+                "ZoneId":"control:02",
+                "Label": "station 2",
+                "Tag":"STATION2-LAB1MIC-MIX"
+            }
+        ],
+        "Tags": ["microphone", "input","lab:l01"]
+      },
+      {
+        "Id": "CHAN07",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB01-MIC02-LEVEL",
+        "MuteControlTag": "LABM01-MIC02-MUTE",
+        "RouterControlTag": "LAB01-MIC02-RTR",
+        "RouterIndex": 8,
+        "BankIndex": 1,
+        "Label": "Lab 1 B",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input","lab:l01"]
+      },
+      {
+        "Id": "CHAN08",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB02-MIC01-LEVEL",
+        "MuteControlTag": "LAB02-MIC01-MUTE",
+        "RouterControlTag": "LAB02-MIC01-RTR",
+        "RouterIndex": 9,
+        "BankIndex": 1,
+        "Label": "Lab 2 A",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input","lab:l02"]
+      },
+      {
+        "Id": "CHAN09",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB02-MIC02-LEVEL",
+        "MuteControlTag": "LAB02-MIC02-MUTE",
+        "RouterControlTag": "LAB02-MIC02-RTR",
+        "RouterIndex": 10,
+        "BankIndex": 1,
+        "Label": "Lab 2 B",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input","lab:l02"]
+      },
+      {
+        "Id": "CHAN10",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB03-MIC01-LEVEL",
+        "MuteControlTag": "LAB03-MIC01-MUTE",
+        "RouterControlTag": "LAB03-MIC01-RTR",
+        "RouterIndex": 11,
+        "BankIndex": 1,
+        "Label": "Lab 3 A",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input","lab:l03"]
+      },
+      {
+        "Id": "CHAN11",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB03-MIC02-LEVEL",
+        "MuteControlTag": "LAB03-MIC02-MUTE",
+        "RouterControlTag": "LAB03-MIC02-RTR",
+        "RouterIndex": 12,
+        "BankIndex": 1,
+        "Label": "Lab 3 B",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input","lab:l03"]
+      },
+      {
+        "Id": "CHAN12",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB04-MIC01-LEVEL",
+        "MuteControlTag": "LAB04-MIC01-MUTE",
+        "RouterControlTag": "LAB04-MIC01-RTR",
+        "RouterIndex": 13,
+        "BankIndex": 1,
+        "Label": "Lab 4 A",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input","lab:l04"]
+      },
+      {
+        "Id": "CHAN13",
+        "DspId": "dsp01",
+        "LevelControlTag": "LAB04-MIC02-LEVEL",
+        "MuteControlTag": "LAB04-MIC02-MUTE",
+        "RouterControlTag": "LAB04-MIC02-RTR",
+        "RouterIndex": 14,
+        "BankIndex": 1,
+        "Label": "Lab 4 B",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input","lab:l04"]
+      },
+      {
+        "Id": "CHAN14",
+        "DspId": "dsp01",
+        "LevelControlTag": "DEBRIEF1-MIC-LEVEL",
+        "MuteControlTag": "DEBRIEF1-MIC-MUTE",
+        "RouterControlTag": "DEBRIEF1-MIC-RTR",
+        "RouterIndex": 15,
+        "BankIndex": 1,
+        "Label": "Debrief 1",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input","debrief:d01"]
+      },
+      {
+        "Id": "CHAN15",
+        "DspId": "dsp01",
+        "LevelControlTag": "DEBRIEF2-MIC-LEVEL",
+        "MuteControlTag": "DEBRIEF2-MIC-MUTE",
+        "RouterControlTag": "DEBRIEF2-MIC-RTR",
+        "RouterIndex": 16,
+        "BankIndex": 1,
+        "Label": "Debrief 2",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input","debrief:d02"]
+      },
+      {
+        "Id": "CHAN16",
+        "DspId": "dsp01",
+        "LevelControlTag": "NURSE-MIC-LEVEL",
+        "MuteControlTag": "NURSE-MIC-MUTE",
+        "RouterControlTag": "NURSE-MIC-RTR",
+        "RouterIndex": 17,
+        "BankIndex": 1,
+        "Label": "Nurse Station",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [],
+        "Tags": ["microphone", "input","nurse:n01"]
+      }
+    ]
+  },
+  "Cameras": [
+    {
+      "Id": "cam01",
+      "Label": "Lab 1 A",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Tags": ["lab:l01"],
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        },
+        {
+          "Id": "cam01p05",
+          "Label": "Preset 5",
+          "Number": 5
+        },
+        {
+          "Id": "cam01p06",
+          "Label": "Preset 6",
+          "Number": 6
+        }
+      ]
+    },
+    {
+      "Id": "cam02",
+      "Label": "Lab 1 B",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Tags": ["lab:l01"],
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        },
+        {
+          "Id": "cam01p05",
+          "Label": "Preset 5",
+          "Number": 5
+        },
+        {
+          "Id": "cam01p06",
+          "Label": "Preset 6",
+          "Number": 6
+        }
+      ]
+    },
+    {
+      "Id": "cam03",
+      "Label": "Lab 2 A",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Tags": ["lab:l02"],
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        },
+        {
+          "Id": "cam01p05",
+          "Label": "Preset 5",
+          "Number": 5
+        },
+        {
+          "Id": "cam01p06",
+          "Label": "Preset 6",
+          "Number": 6
+        }
+      ]
+    },
+    {
+      "Id": "cam04",
+      "Label": "Lab 2 B",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Tags": ["lab:l02"],
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        },
+        {
+          "Id": "cam01p05",
+          "Label": "Preset 5",
+          "Number": 5
+        },
+        {
+          "Id": "cam01p06",
+          "Label": "Preset 6",
+          "Number": 6
+        }
+      ]
+    },
+    {
+      "Id": "cam05",
+      "Label": "Lab 3 A",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Tags": ["lab:l03"],
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        },
+        {
+          "Id": "cam01p05",
+          "Label": "Preset 5",
+          "Number": 5
+        },
+        {
+          "Id": "cam01p06",
+          "Label": "Preset 6",
+          "Number": 6
+        }
+      ]
+    },
+    {
+      "Id": "cam06",
+      "Label": "Lab 3 B",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Tags": ["lab:l03"],
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        },
+        {
+          "Id": "cam01p05",
+          "Label": "Preset 5",
+          "Number": 5
+        },
+        {
+          "Id": "cam01p06",
+          "Label": "Preset 6",
+          "Number": 6
+        }
+      ]
+    },
+    {
+      "Id": "cam07",
+      "Label": "Lab 4 A",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Tags": ["lab:l04"],
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        },
+        {
+          "Id": "cam01p05",
+          "Label": "Preset 5",
+          "Number": 5
+        },
+        {
+          "Id": "cam01p06",
+          "Label": "Preset 6",
+          "Number": 6
+        }
+      ]
+    },
+    {
+      "Id": "cam08",
+      "Label": "Lab 4 B",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Tags": ["lab:l04"],
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        },
+        {
+          "Id": "cam01p05",
+          "Label": "Preset 5",
+          "Number": 5
+        },
+        {
+          "Id": "cam01p06",
+          "Label": "Preset 6",
+          "Number": 6
+        }
+      ]
+    },
+    {
+      "Id": "cam09",
+      "Label": "Debrief 1",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Tags": ["debrief:d01"],
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        },
+        {
+          "Id": "cam01p05",
+          "Label": "Preset 5",
+          "Number": 5
+        },
+        {
+          "Id": "cam01p06",
+          "Label": "Preset 6",
+          "Number": 6
+        }
+      ]
+    },
+    {
+      "Id": "cam10",
+      "Label": "Debrief 2",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Tags": ["debrief:d02"],
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        },
+        {
+          "Id": "cam01p05",
+          "Label": "Preset 5",
+          "Number": 5
+        },
+        {
+          "Id": "cam01p06",
+          "Label": "Preset 6",
+          "Number": 6
+        }
+      ]
+    },
+    {
+      "Id": "cam11",
+      "Label": "Nurse Station",
+      "Manufacturer": "Emulation, Inc.",
+      "Model": "Camera Emulator",
+      "ClassName": "CameraEmulator",
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "CameraEmulation.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Tags": ["nurse:n01"],
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        },
+        {
+          "Id": "cam01p05",
+          "Label": "Preset 5",
+          "Number": 5
+        },
+        {
+          "Id": "cam01p06",
+          "Label": "Preset 6",
+          "Number": 6
+        }
+      ]
+    }
+  ],
+  "CableBoxes": [],
+  "Blurays": [],
+  "LightingControllers": [],
+  "Endpoints": [],
+  "VideoWalls": [],
+  "FusionInfo": {
+    "Id": "Fusion01",
+    "RoomName": "Test Classroom 101",
+    "GUID": "01c57d66-21d4-4aeb-ae55-5ae6a4664ac9",
+    "IpId": 48
+  }
+}

@@ -82,17 +82,6 @@
         }
       ],
       "Tags": ["secure-1234"]
-    },
-    {
-      "Id": "ui02",
-      "IpId": 8080,
-      "Model": "Rest API",
-      "ClassName": "RestApiUserInterface",
-      "Library": "PkdAvfRestApi.dll",
-      "Sgd": "rm01-programconfig.json",
-      "DefaultActivity": "",
-      "Menu": [],
-      "Tags": []
     }
   ],
   "Displays": [

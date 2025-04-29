@@ -5,39 +5,39 @@
     "Key": "sftp-crestron"
   },
   "RoomInfo": {
-    "Id": "ROOM01",
+    "Id": "b6-330",
     "RoomName": "Nursing Testing",
     "HelpContact": "602-639-7700",
     "SystemType": "nursing-labs",
     "Logic": {
-      "AppServiceLibrary": "NursingApplicationService.dll",
-      "AppServiceClass": "NursingAppService",
-      "PresentationServiceLibrary": "NursingUiServices.dll",
-      "PresentationServiceClass": "NursingUiService"
+      "AppServiceLibrary": "NursingAppService.dll",
+      "AppServiceClass": "NursingApplicationService",
+      "PresentationServiceLibrary": "",
+      "PresentationServiceClass": ""
     }
   },
   "UserInterfaces": [
     {
-      "Id": "ui01",
+      "Id": "station01",
       "IpId": 3,
-      "Model": "TS-1542-C",
+      "Model": "TSW-770",
       "ClassName": "CrComLibUserInterface",
       "Library": "CrComLibUi.dll",
       "Sgd": "",
       "DefaultActivity": "",
       "Menu": [],
-      "Tags": ["control:01", "name:Station 1"]
+      "Tags": []
     },
     {
-      "Id": "ui02",
-      "IpId": 3,
-      "Model": "TS-1542-C",
+      "Id": "station02",
+      "IpId": 4,
+      "Model": "TSW-770",
       "ClassName": "CrComLibUserInterface",
       "Library": "CrComLibUi.dll",
       "Sgd": "",
       "DefaultActivity": "",
       "Menu": [],
-      "Tags": ["control:02", "name:Station 2"]
+      "Tags": []
     }
   ],
   "Displays": [
@@ -211,6 +211,105 @@
         "Matrix": "rtr01",
         "Input": 8,
         "Tags": ["debrief:d02"]
+      },
+      {
+        "Id": "SRC09",
+        "Label": "Lab 1  A",
+        "Icon": "camera",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 9,
+        "Tags": []
+      },
+      {
+        "Id": "SRC10",
+        "Label": "Lab 1 B",
+        "Icon": "Camera",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 10,
+        "Tags": []
+      },
+      {
+        "Id": "SRC11",
+        "Label": "Lab 2  A",
+        "Icon": "camera",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 11,
+        "Tags": []
+      },
+      {
+        "Id": "SRC12",
+        "Label": "Lab 2 B",
+        "Icon": "Camera",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 12,
+        "Tags": []
+      },
+      {
+        "Id": "SRC13",
+        "Label": "Lab 3  A",
+        "Icon": "camera",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 13,
+        "Tags": []
+      },
+      {
+        "Id": "SRC14",
+        "Label": "Lab 3 B",
+        "Icon": "Camera",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 14,
+        "Tags": []
+      },
+      {
+        "Id": "SRC15",
+        "Label": "Lab 4  A",
+        "Icon": "camera",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 14,
+        "Tags": []
+      },
+      {
+        "Id": "SRC16",
+        "Label": "Lab 4 B",
+        "Icon": "Camera",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 15,
+        "Tags": []
+      },
+      {
+        "Id": "SRC17",
+        "Label": "Nurse Station",
+        "Icon": "Camera",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 16,
+        "Tags": []
+      },
+      {
+        "Id": "SRC18",
+        "Label": "Debrief 1",
+        "Icon": "Camera",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 17,
+        "Tags": []
+      },
+      {
+        "Id": "SRC19",
+        "Label": "Debrief 2",
+        "Icon": "Camera",
+        "Control": "",
+        "Matrix": "rtr01",
+        "Input": 18,
+        "Tags": []
       }
     ],
     "Destinations": [
@@ -231,6 +330,24 @@
         "Output": 6,
         "RoutingGroup": 0,
         "Tags": ["debrief:d02"]
+      },
+      {
+        "Id": "DEST03",
+        "Label": "Station 1 Preview",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 7,
+        "RoutingGroup": 0,
+        "Tags": ["control:station01"]
+      },
+      {
+        "Id": "DEST04",
+        "Label": "Station 2 Preview",
+        "Icon": "tv",
+        "Matrix": "rtr01",
+        "Output": 8,
+        "RoutingGroup": 0,
+        "Tags": ["control:station02"]
       }
     ],
     "MatrixData": [
@@ -298,23 +415,12 @@
         "DspId": "dsp01",
         "LevelControlTag": "LAB-01-LEVEL",
         "MuteControlTag": "LAB-01-MUTE",
-        "RouterControlTag": "",
+        "RouterControlTag": "LAB-01-RTR",
         "RouterIndex": 1,
         "BankIndex": 1,
         "Label": "Lab 1",
         "Icon": "Volume",
-        "ZoneEnableToggles": [
-            {
-                "ZoneId":"control:01",
-                "Label": "station 1",
-                "Tag":"STATION1-LAB1-MIX"
-            },
-            {
-                "ZoneId":"control:02",
-                "Label": "station 2",
-                "Tag":"STATION2-LAB1-MIX"
-            }
-        ],
+        "ZoneEnableToggles": [],
         "Tags": ["output", "lab:l01"]
       },
       {
@@ -327,18 +433,7 @@
         "BankIndex": 1,
         "Label": "Lab 2",
         "Icon": "Volume",
-        "ZoneEnableToggles": [
-            {
-                "ZoneId":"control:01",
-                "Label": "station 1",
-                "Tag":"STATION1-LAB2-MIX"
-            },
-            {
-                "ZoneId":"control:02",
-                "Label": "station 2",
-                "Tag":"STATION2-LAB2-MIX"
-            }
-        ],
+        "ZoneEnableToggles": [],
         "Tags": ["output", "lab:l02"]
       },
       {
@@ -351,18 +446,7 @@
         "BankIndex": 1,
         "Label": "Lab 3",
         "Icon": "Volume",
-        "ZoneEnableToggles": [
-            {
-                "ZoneId":"control:01",
-                "Label": "station 1",
-                "Tag":"STATION1-LAB3-MIX"
-            },
-            {
-                "ZoneId":"control:02",
-                "Label": "station 2",
-                "Tag":"STATION2-LAB3-MIX"
-            }
-        ],
+        "ZoneEnableToggles": [],
         "Tags": ["output", "lab:l03"]
       },
       {
@@ -375,18 +459,7 @@
         "BankIndex": 1,
         "Label": "Lab 4",
         "Icon": "Volume",
-        "ZoneEnableToggles": [
-            {
-                "ZoneId":"control:01",
-                "Label": "station 1",
-                "Tag":"STATION1-LAB4-MIX"
-            },
-            {
-                "ZoneId":"control:02",
-                "Label": "station 2",
-                "Tag":"STATION2-LAB4-MIX"
-            }
-        ],
+        "ZoneEnableToggles": [],
         "Tags": ["output", "lab:l04"]
       },
       {
@@ -399,16 +472,7 @@
         "BankIndex": 1,
         "Label": "Debrief 1",
         "Icon": "Volume",
-        "ZoneEnableToggles": [ {
-            "ZoneId":"control:01",
-            "Label": "station 1",
-            "Tag":"STATION1-DB1-MIX"
-        },
-        {
-            "ZoneId":"control:02",
-            "Label": "station 2",
-            "Tag":"STATION2-DB1-MIX"
-        }],
+        "ZoneEnableToggles": [],
         "Tags": ["output", "debrief:d01"]
       },
       {
@@ -421,18 +485,7 @@
         "BankIndex": 1,
         "Label": "Debrief 2",
         "Icon": "Volume",
-        "ZoneEnableToggles": [
-            {
-                "ZoneId":"control:01",
-                "Label": "station 1",
-                "Tag":"STATION1-DB2-MIX"
-            },
-            {
-                "ZoneId":"control:02",
-                "Label": "station 2",
-                "Tag":"STATION2-DB2-MIX"
-            }
-        ],
+        "ZoneEnableToggles": [],
         "Tags": ["output", "debrief:d02"]
       },
       {
@@ -440,16 +493,16 @@
         "DspId": "dsp01",
         "LevelControlTag": "LAB01-MIC01-LEVEL",
         "MuteControlTag": "LABM01-MIC01-MUTE",
-        "RouterControlTag": "LAB01-MIC01-RTR",
+        "RouterControlTag": "",
         "RouterIndex": 7,
         "BankIndex": 1,
         "Label": "Lab 1 A",
         "Icon": "Mic",
         "ZoneEnableToggles": [
             {
-                "ZoneId":"control:01",
+                "ZoneId":"c1l1m1",
                 "Label": "station 1",
-                "Tag":"STATION1-LAB1MIC-MIX"
+                "Tag":"STATION1-LAB1MIC1-MIX"
             },
             {
                 "ZoneId":"control:02",
@@ -464,12 +517,23 @@
         "DspId": "dsp01",
         "LevelControlTag": "LAB01-MIC02-LEVEL",
         "MuteControlTag": "LABM01-MIC02-MUTE",
-        "RouterControlTag": "LAB01-MIC02-RTR",
+        "RouterControlTag": "",
         "RouterIndex": 8,
         "BankIndex": 1,
         "Label": "Lab 1 B",
         "Icon": "Mic",
-        "ZoneEnableToggles": [],
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"control:station01",
+            "Label": "station 1",
+              "Tag":"STATION1-LAB1MIC2-MIX"
+          },
+          {
+              "ZoneId":"control:02",
+              "Label": "station 2",
+              "Tag":"STATION2-LAB1MIC2-MIX"
+          }
+        ],
         "Tags": ["microphone", "input","lab:l01"]
       },
       {
@@ -477,12 +541,23 @@
         "DspId": "dsp01",
         "LevelControlTag": "LAB02-MIC01-LEVEL",
         "MuteControlTag": "LAB02-MIC01-MUTE",
-        "RouterControlTag": "LAB02-MIC01-RTR",
+        "RouterControlTag": "",
         "RouterIndex": 9,
         "BankIndex": 1,
         "Label": "Lab 2 A",
         "Icon": "Mic",
-        "ZoneEnableToggles": [],
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"control:station01",
+            "Label": "station 1",
+              "Tag":"STATION1-LAB2MIC1-MIX"
+          },
+          {
+              "ZoneId":"control:station02",
+              "Label": "station 2",
+              "Tag":"STATION2-LAB2MIC1-MIX"
+          }
+        ],
         "Tags": ["microphone", "input","lab:l02"]
       },
       {
@@ -490,12 +565,23 @@
         "DspId": "dsp01",
         "LevelControlTag": "LAB02-MIC02-LEVEL",
         "MuteControlTag": "LAB02-MIC02-MUTE",
-        "RouterControlTag": "LAB02-MIC02-RTR",
+        "RouterControlTag": "",
         "RouterIndex": 10,
         "BankIndex": 1,
         "Label": "Lab 2 B",
         "Icon": "Mic",
-        "ZoneEnableToggles": [],
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"control:station01",
+            "Label": "station 1",
+              "Tag":"STATION1-LAB2MIC2-MIX"
+          },
+          {
+              "ZoneId":"control:02",
+              "Label": "station 2",
+              "Tag":"STATION2-LAB2MIC2-MIX"
+          }
+        ],
         "Tags": ["microphone", "input","lab:l02"]
       },
       {
@@ -503,12 +589,23 @@
         "DspId": "dsp01",
         "LevelControlTag": "LAB03-MIC01-LEVEL",
         "MuteControlTag": "LAB03-MIC01-MUTE",
-        "RouterControlTag": "LAB03-MIC01-RTR",
+        "RouterControlTag": "",
         "RouterIndex": 11,
         "BankIndex": 1,
         "Label": "Lab 3 A",
         "Icon": "Mic",
-        "ZoneEnableToggles": [],
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"control:station01",
+            "Label": "station 1",
+              "Tag":"STATION1-LAB3MIC1-MIX"
+          },
+          {
+              "ZoneId":"control:02",
+              "Label": "station 2",
+              "Tag":"STATION2-LAB3MIC1-MIX"
+          }
+        ],
         "Tags": ["microphone", "input","lab:l03"]
       },
       {
@@ -516,12 +613,23 @@
         "DspId": "dsp01",
         "LevelControlTag": "LAB03-MIC02-LEVEL",
         "MuteControlTag": "LAB03-MIC02-MUTE",
-        "RouterControlTag": "LAB03-MIC02-RTR",
+        "RouterControlTag": "",
         "RouterIndex": 12,
         "BankIndex": 1,
         "Label": "Lab 3 B",
         "Icon": "Mic",
-        "ZoneEnableToggles": [],
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"control:station01",
+            "Label": "station 1",
+              "Tag":"STATION1-LAB3MIC2-MIX"
+          },
+          {
+              "ZoneId":"control:02",
+              "Label": "station 2",
+              "Tag":"STATION2-LAB3MIC2-MIX"
+          }
+        ],
         "Tags": ["microphone", "input","lab:l03"]
       },
       {
@@ -529,7 +637,7 @@
         "DspId": "dsp01",
         "LevelControlTag": "LAB04-MIC01-LEVEL",
         "MuteControlTag": "LAB04-MIC01-MUTE",
-        "RouterControlTag": "LAB04-MIC01-RTR",
+        "RouterControlTag": "",
         "RouterIndex": 13,
         "BankIndex": 1,
         "Label": "Lab 4 A",
@@ -542,12 +650,23 @@
         "DspId": "dsp01",
         "LevelControlTag": "LAB04-MIC02-LEVEL",
         "MuteControlTag": "LAB04-MIC02-MUTE",
-        "RouterControlTag": "LAB04-MIC02-RTR",
+        "RouterControlTag": "",
         "RouterIndex": 14,
         "BankIndex": 1,
         "Label": "Lab 4 B",
         "Icon": "Mic",
-        "ZoneEnableToggles": [],
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"control:station01",
+            "Label": "station 1",
+              "Tag":"STATION1-LAB4MIC1-MIX"
+          },
+          {
+              "ZoneId":"control:02",
+              "Label": "station 2",
+              "Tag":"STATION2-LAB4MIC1-MIX"
+          }
+        ],
         "Tags": ["microphone", "input","lab:l04"]
       },
       {
@@ -555,12 +674,23 @@
         "DspId": "dsp01",
         "LevelControlTag": "DEBRIEF1-MIC-LEVEL",
         "MuteControlTag": "DEBRIEF1-MIC-MUTE",
-        "RouterControlTag": "DEBRIEF1-MIC-RTR",
+        "RouterControlTag": "",
         "RouterIndex": 15,
         "BankIndex": 1,
         "Label": "Debrief 1",
         "Icon": "Mic",
-        "ZoneEnableToggles": [],
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"control:station01",
+            "Label": "station 1",
+              "Tag":"STATION1-DB1MIC-MIX"
+          },
+          {
+              "ZoneId":"control:02",
+              "Label": "station 2",
+              "Tag":"STATION2-DB1MIC-MIX"
+          }
+        ],
         "Tags": ["microphone", "input","debrief:d01"]
       },
       {
@@ -568,12 +698,23 @@
         "DspId": "dsp01",
         "LevelControlTag": "DEBRIEF2-MIC-LEVEL",
         "MuteControlTag": "DEBRIEF2-MIC-MUTE",
-        "RouterControlTag": "DEBRIEF2-MIC-RTR",
+        "RouterControlTag": "",
         "RouterIndex": 16,
         "BankIndex": 1,
         "Label": "Debrief 2",
         "Icon": "Mic",
-        "ZoneEnableToggles": [],
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"control:station01",
+            "Label": "station 1",
+              "Tag":"STATION1-DB2MIC-MIX"
+          },
+          {
+              "ZoneId":"control:02",
+              "Label": "station 2",
+              "Tag":"STATION2-DB2MIC-MIX"
+          }
+        ],
         "Tags": ["microphone", "input","debrief:d02"]
       },
       {
@@ -581,13 +722,220 @@
         "DspId": "dsp01",
         "LevelControlTag": "NURSE-MIC-LEVEL",
         "MuteControlTag": "NURSE-MIC-MUTE",
-        "RouterControlTag": "NURSE-MIC-RTR",
+        "RouterControlTag": "",
         "RouterIndex": 17,
         "BankIndex": 1,
         "Label": "Nurse Station",
         "Icon": "Mic",
-        "ZoneEnableToggles": [],
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"control:station01",
+            "Label": "station 1",
+              "Tag":"STATION1-NURSE1MIC-MIX"
+          },
+          {
+              "ZoneId":"control:02",
+              "Label": "station 2",
+              "Tag":"STATION2-NURSE1MIC-MIX"
+          }
+        ],
         "Tags": ["microphone", "input","nurse:n01"]
+      },
+      {
+        "Id": "CHAN17",
+        "DspId": "dsp01",
+        "LevelControlTag": "OPERATOR1-MIC-LEVEL",
+        "MuteControlTag": "OPERATOR1-MIC-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 18,
+        "BankIndex": 1,
+        "Label": "Operator",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"CHAN01",
+            "Label": "Lab 1",
+            "Tag":"OPERATOR1-LAB1-MIX"
+          },
+          {
+              "ZoneId":"CHAN02",
+              "Label": "Lab 2",
+              "Tag":"OPERATOR1-LAB2-MIX"
+          },
+          {
+            "ZoneId":"CHAN03",
+            "Label": "Lab 3",
+            "Tag":"OPERATOR1-LAB3-MIX"
+          },
+          {
+            "ZoneId":"CHAN04",
+            "Label": "Lab 4",
+            "Tag":"OPERATOR1-LAB4-MIX"
+          },
+          {
+            "ZoneId":"CHAN05",
+            "Label": "Debrief 1",
+            "Tag":"OPERATOR1-DB1-MIX"
+          },
+          {
+            "ZoneId":"CHAN06",
+            "Label": "Debrief 2",
+            "Tag":"OPERATOR1-DB2-MIX"
+          },
+          {
+            "ZoneId":"CHAN07",
+            "Label": "Nurse",
+            "Tag":"OPERATOR1-NURSE-MIX"
+          }
+        ],
+        "Tags": ["microphone", "input","operator", "control:station01"]
+      },
+      {
+        "Id": "CHAN18",
+        "DspId": "dsp01",
+        "LevelControlTag": "CONDUCTOR1-MIC-LEVEL",
+        "MuteControlTag": "CONDUCTOR1-MIC-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 19,
+        "BankIndex": 1,
+        "Label": "Conductor",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"CHAN01",
+            "Label": "Lab 1",
+            "Tag":"CONDUCTOR1-LAB1-MIX"
+          },
+          {
+              "ZoneId":"CHAN02",
+              "Label": "Lab 2",
+              "Tag":"CONDUCTOR1-LAB2-MIX"
+          },
+          {
+            "ZoneId":"CHAN03",
+            "Label": "Lab 3",
+            "Tag":"CONDUCTOR1-LAB3-MIX"
+          },
+          {
+            "ZoneId":"CHAN04",
+            "Label": "Lab 4",
+            "Tag":"CONDUCTOR1-LAB4-MIX"
+          },
+          {
+            "ZoneId":"CHAN05",
+            "Label": "Debrief 1",
+            "Tag":"CONDUCTOR1-DB1-MIX"
+          },
+          {
+            "ZoneId":"CHAN06",
+            "Label": "Debrief 2",
+            "Tag":"CONDUCTOR1-DB2-MIX"
+          },
+          {
+            "ZoneId":"CHAN07",
+            "Label": "Nurse",
+            "Tag":"CONDUCTOR1-NURSE-MIX"
+          }
+        ],
+        "Tags": ["microphone", "input","conductor", "control:station01"]
+      },
+      {
+        "Id": "CHAN19",
+        "DspId": "dsp01",
+        "LevelControlTag": "OPERATOR2-MIC-LEVEL",
+        "MuteControlTag": "OPERATOR2-MIC-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 20,
+        "BankIndex": 1,
+        "Label": "Operator",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"CHAN01",
+            "Label": "Lab 1",
+            "Tag":"OPERATOR2-LAB1-MIX"
+          },
+          {
+              "ZoneId":"CHAN02",
+              "Label": "Lab 2",
+              "Tag":"OPERATOR2-LAB2-MIX"
+          },
+          {
+            "ZoneId":"CHAN03",
+            "Label": "Lab 3",
+            "Tag":"OPERATOR2-LAB3-MIX"
+          },
+          {
+            "ZoneId":"CHAN04",
+            "Label": "Lab 4",
+            "Tag":"OPERATOR2-LAB4-MIX"
+          },
+          {
+            "ZoneId":"CHAN05",
+            "Label": "Debrief 1",
+            "Tag":"OPERATOR2-DB1-MIX"
+          },
+          {
+            "ZoneId":"CHAN06",
+            "Label": "Debrief 2",
+            "Tag":"OPERATOR2-DB2-MIX"
+          },
+          {
+            "ZoneId":"CHAN07",
+            "Label": "Nurse",
+            "Tag":"OPERATOR2-NURSE-MIX"
+          }
+        ],
+        "Tags": ["microphone", "input","operator", "control:station02"]
+      },
+      {
+        "Id": "CHAN18",
+        "DspId": "dsp01",
+        "LevelControlTag": "CONDUCTOR2-MIC-LEVEL",
+        "MuteControlTag": "CONDUCTOR2-MIC-MUTE",
+        "RouterControlTag": "",
+        "RouterIndex": 21,
+        "BankIndex": 1,
+        "Label": "Conductor",
+        "Icon": "Mic",
+        "ZoneEnableToggles": [
+          {
+            "ZoneId":"CHAN01",
+            "Label": "Lab 1",
+            "Tag":"CONDUCTOR2-LAB1-MIX"
+          },
+          {
+              "ZoneId":"CHAN02",
+              "Label": "Lab 2",
+              "Tag":"CONDUCTOR2-LAB2-MIX"
+          },
+          {
+            "ZoneId":"CHAN03",
+            "Label": "Lab 3",
+            "Tag":"CONDUCTOR2-LAB3-MIX"
+          },
+          {
+            "ZoneId":"CHAN04",
+            "Label": "Lab 4",
+            "Tag":"CONDUCTOR2-LAB4-MIX"
+          },
+          {
+            "ZoneId":"CHAN05",
+            "Label": "Debrief 1",
+            "Tag":"CONDUCTOR2-DB1-MIX"
+          },
+          {
+            "ZoneId":"CHAN06",
+            "Label": "Debrief 2",
+            "Tag":"CONDUCTOR2-DB2-MIX"
+          },
+          {
+            "ZoneId":"CHAN07",
+            "Label": "Nurse",
+            "Tag":"CONDUCTOR2-NURSE-MIX"
+          }
+        ],
+        "Tags": ["microphone", "input","conductor", "control::station02"]
       }
     ]
   },
@@ -1130,7 +1478,7 @@
           "Password": "C@mpu$Tech"
         }
       },
-      "Tags": ["nurse:n01"],
+      "Tags": ["lab:n01"],
       "Presets": [
         {
           "Id": "cam01p01",

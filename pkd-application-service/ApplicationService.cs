@@ -378,6 +378,9 @@ namespace pkd_application_service
 		public virtual void ToggleAudioZoneState(string channelId, string zoneId) => AudioControl.ToggleAudioZoneState(channelId, zoneId);
 
 		/// <inheritdoc/>
+		public void SetAudioZoneState(string channelId, string zoneId, bool state) =>  AudioControl.SetAudioZoneState(channelId, zoneId, state);
+
+		/// <inheritdoc/>
 		public virtual bool QueryRouterConnectionStatus(string id) => RoutingControl.QueryRouterConnectionStatus(id);
 
 		/// <inheritdoc/>

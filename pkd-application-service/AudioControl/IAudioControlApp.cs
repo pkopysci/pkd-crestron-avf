@@ -161,5 +161,13 @@ namespace pkd_application_service.AudioControl
 		/// <param name="channelId">The unique ID of the audio channel to modify.</param>
 		/// <param name="zoneId">The unique ID of the zone toggle to change.</param>
 		void ToggleAudioZoneState(string channelId, string zoneId);
+		
+		/// <summary>
+		/// Send a command to the hardware service to discretely set an output zone mix state.
+		/// </summary>
+		/// <param name="channelId">The unique ID of the audio channel to modify.</param>
+		/// <param name="zoneId">The unique ID of the zone toggle to change.</param>
+		/// <param name="state">true = enable the channel mix, false = disable/mute the channel mix.</param>
+		void SetAudioZoneState(string channelId, string zoneId, bool state);
 	}
 }

@@ -38,6 +38,14 @@ namespace pkd_hardware_service.AudioDevices
 		/// <param name="channelId">The unique ID associated with the zone enable control.</param>
 		/// <param name="zoneId">The unique ID of the zone to send the change request to.</param>
 		void ToggleAudioZoneEnable(string channelId, string zoneId);
+		
+		/// <summary>
+		/// Discretely set whether an audio channel is mixed to a given output zone.
+		/// </summary>
+		/// <param name="channelId">The unique ID associated with the zone enable control.</param>
+		/// <param name="zoneId">The unique ID of the zone to send the change request to.</param>
+		/// <param name="enable">true = enable the channel mix, false = mute/disable the channel mix.</param>
+		void SetAudioZoneEnable(string channelId, string zoneId, bool enable);
 
 		/// <summary>
 		/// Queries the device for the current status of the target zone enable control.

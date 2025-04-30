@@ -384,6 +384,26 @@ namespace pkd_application_service.AudioControl
 		}
 
 		/// <inheritdoc/>
+		public void SetAudioZoneState(string channelId, string zoneId, bool state)
+		{
+			Logger.Debug($"AudioControlApp.SetAudioZoneState({channelId}, {zoneId}, {state})");
+			if (string.IsNullOrEmpty(channelId) || string.IsNullOrEmpty(zoneId))
+			{
+				Logger.Error($"AudioControlApp.SetAudioZoneState({channelId}, {zoneId}, {state}) - channelId and zoneId cannot be null or empty.");
+				return;
+			}
+
+			foreach (var dsp in _dspDevices.GetAllDevices())
+			{
+				if (dsp is not IAudioZoneEnabler enabler) continue;
+				if (dsp.GetAudioInputIds().Contains(channelId) || dsp.GetAudioOutputIds().Contains(channelId))
+				{
+					enabler.SetAudioZoneEnable(channelId, zoneId, state);
+				}
+			}
+		}
+
+		/// <inheritdoc/>
 		public ReadOnlyCollection<InfoContainer> QueryDspAudioPresets(string dspId)
 		{
 			return _allPresets.TryGetValue(dspId, out var presets) ? 

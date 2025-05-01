@@ -80,8 +80,6 @@ namespace pkd_common_utils.FileOps
 
 				foreach (var type in dll.GetTypes())
 				{
-					Logger.Debug($"{type.FullName}");
-
 					if (!type.Name.Equals(className, StringComparison.InvariantCulture)) continue;
 					if (!type.GetInterfaces()
 						    .Any(x => x.Name.Equals(interfaceName, StringComparison.InvariantCulture))) continue;

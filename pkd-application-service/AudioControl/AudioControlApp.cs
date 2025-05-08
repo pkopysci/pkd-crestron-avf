@@ -110,8 +110,7 @@ namespace pkd_application_service.AudioControl
 				Logger.Error("AudioControlApp.QueryAudioDspConnectionStatus({0}) - no device with that id.", id);
 				return false;
 			}
-
-			Logger.Debug("ApplicationService.AudioControlApp.QueryAudioDspConnectionStatus({0}) => {1}", id, device.IsOnline);
+			
 			return device.IsOnline;
 		}
 
@@ -365,8 +364,6 @@ namespace pkd_application_service.AudioControl
 		/// <inheritdoc/>
 		public void ToggleAudioZoneState(string channelId, string zoneId)
 		{
-			Logger.Debug("AudioControlApp.ToggleAudioZoneState({0}, {1})", channelId, zoneId);
-
 			if (string.IsNullOrEmpty(channelId) || string.IsNullOrEmpty(zoneId))
 			{
 				Logger.Error("AudioControlApp.ToggleAudioZoneState({0}, {1}) - channelId and zoneId cannot be null or empty.", channelId, zoneId);
@@ -386,7 +383,6 @@ namespace pkd_application_service.AudioControl
 		/// <inheritdoc/>
 		public void SetAudioZoneState(string channelId, string zoneId, bool state)
 		{
-			Logger.Debug($"AudioControlApp.SetAudioZoneState({channelId}, {zoneId}, {state})");
 			if (string.IsNullOrEmpty(channelId) || string.IsNullOrEmpty(zoneId))
 			{
 				Logger.Error($"AudioControlApp.SetAudioZoneState({channelId}, {zoneId}, {state}) - channelId and zoneId cannot be null or empty.");
@@ -477,7 +473,6 @@ namespace pkd_application_service.AudioControl
 
 		private void AudioOutputMuteChangeHandler(object? sender, GenericDualEventArgs<string, string> e)
 		{
-			Logger.Debug("AudioControlApp.AudioOutputMuteChangeHandler()- {0}, {1}", e.Arg1, e.Arg2);
 			Notify(AudioOutputMuteChanged, e.Arg2);
 		}
 

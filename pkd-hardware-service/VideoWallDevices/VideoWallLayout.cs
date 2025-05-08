@@ -14,6 +14,11 @@ public class VideoWallLayout
     /// The human-friendly name of this layout.
     /// </summary>
     public string Label { get; init; } = string.Empty;
+
+    /// <summary>
+    /// An icon tag used to display an associated image on the ui.
+    /// </summary>
+    public string Icon { get; init; } = string.Empty;
     
     /// <summary>
     /// The number of cells in the layout on the x-axis.

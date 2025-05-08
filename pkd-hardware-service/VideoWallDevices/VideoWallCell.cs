@@ -11,6 +11,16 @@ public class VideoWallCell
     public string Id { get; init; } = string.Empty;
     
     /// <summary>
+    /// A human-friendly name of the cell.
+    /// </summary>
+    public string Label { get; init; } =  string.Empty;
+
+    /// <summary>
+    /// an icon tag used for displaying an image on a UI.
+    /// </summary>
+    public string Icon { get; set; } = string.Empty;
+    
+    /// <summary>
     /// The unique id of the currently routed video source.
     /// </summary>
     public string SourceId { get; set; } = string.Empty;

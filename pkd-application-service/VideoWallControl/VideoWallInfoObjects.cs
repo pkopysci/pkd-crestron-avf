@@ -10,6 +10,8 @@ namespace pkd_application_service.VideoWallControl;
 
 public record VideoWallCellInfo(
     string Id,
+    string Label,
+    string Icon,
     int XPosition,
     int YPosition,
     string SourceId);
@@ -20,6 +22,7 @@ public record VideoWallLayoutInfo(
     int Height,
     string Id,
     string Label,
+    string Icon,
     List<VideoWallCellInfo> Cells);
 
 public record VideoWallCanvasInfo(

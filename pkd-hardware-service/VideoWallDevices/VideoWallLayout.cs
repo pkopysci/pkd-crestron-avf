@@ -29,4 +29,9 @@ public class VideoWallLayout
     /// A collection of all video cells and their positions within this layout.
     /// </summary>
     public List<VideoWallCell> Cells { get; init; } = [];
+
+    /// <summary>
+    /// A collection of tags used internally for additional behavior.
+    /// </summary>
+    public List<string> Tags { get; init; } = [];
 }

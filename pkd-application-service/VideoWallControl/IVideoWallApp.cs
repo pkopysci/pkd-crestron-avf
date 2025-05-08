@@ -9,16 +9,17 @@ namespace pkd_application_service.VideoWallControl;
 public interface IVideoWallApp
 {
     /// <summary>
-    /// Args package must be the id of the new layout id.
+    /// Args package must be: Arg1 = controller id, Arg2 = canvas id.
     /// </summary>
-    event EventHandler<GenericSingleEventArgs<string>> VideoWallLayoutChanged;
+    event EventHandler<GenericDualEventArgs<string, string>> VideoWallLayoutChanged;
     
     /// <summary>
     /// Args package must be:<br/>
     /// Arg1 - the id of the video wall controller that changed.<br/>
-    /// Arg2 - the id of the cell in the active layout that changed.
+    /// Arg2 - the id of the canvas on the controller that changed.<br/>
+    /// Arg3 - the id of the cell in the active layout that changed.
     /// </summary>
-    event EventHandler<GenericDualEventArgs<string,string>> VideoWallCellRouteChanged;
+    event EventHandler<GenericTrippleEventArgs<string, string, string>> VideoWallCellRouteChanged;
     
     /// <summary>
     /// Args package must be the id of the controller that changed.
@@ -33,23 +34,27 @@ public interface IVideoWallApp
     bool QueryVideoWallConnectionStatus(string controlId);
     
     /// <param name="controlId">the id of the video wall controller to query.</param>
+    /// <param name="canvasId">The id of the canvas controlled by the video wall to query.</param>
     /// <returns>the id of the layout that is currently selected on the controller.</returns>
-    string QueryActiveVideoWallLayout(string controlId);
+    string QueryActiveVideoWallLayout(string controlId, string canvasId);
     
     /// <param name="controlId">the id of the video wall controller to query.</param>
+    /// <param name="canvasId">The id of the canvas controlled by the video wall to query.</param>
     /// <param name="cellId">the id of the cell that is part of the active layout.</param>
     /// <returns>the id of the source currently routed to the cell/window.</returns>
-    string QueryVideoWallCellSource(string controlId, string cellId);
+    string QueryVideoWallCellSource(string controlId, string canvasId, string cellId);
     
     /// <summary>
     /// Send a request to the hardware service to select a new layout.
     /// </summary>
     /// <param name="controlId">the id of the video wall controller to change.</param>
+    /// <param name="canvasId">The id of the canvas controlled by the video wall to change.</param>
     /// <param name="layoutId">the id of the new layout to set as active.</param>
-    void SetActiveVideoWallLayout(string controlId, string layoutId);
+    void SetActiveVideoWallLayout(string controlId, string canvasId, string layoutId);
     
     /// <param name="controlId">the id of the video wall controller to change.</param>
+    /// <param name="canvasId">The id of the canvas controlled by the video wall to change.</param>
     /// <param name="cellId">The id of the cell/window in the active layout to change.</param>
     /// <param name="sourceId">the id of the video source to route to the cell/window.</param>
-    void SetVideoWallCellRoute(string controlId, string cellId, string sourceId);
+    void SetVideoWallCellRoute(string controlId, string canvasId, string cellId, string sourceId);
 }

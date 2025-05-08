@@ -30,4 +30,9 @@ public class VideoWallCell
     /// The vertical location of this cell/window.
     /// </summary>
     public int YPosition { get; init;  }
+
+    /// <summary>
+    /// A collection of tags used internally for additional behavior.
+    /// </summary>
+    public List<string> Tags { get; init; } = [];
 }

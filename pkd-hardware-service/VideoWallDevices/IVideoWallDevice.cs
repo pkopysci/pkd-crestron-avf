@@ -11,40 +11,27 @@ namespace pkd_hardware_service.VideoWallDevices;
 public interface IVideoWallDevice : IBaseDevice
 {
     /// <summary>
-    /// Triggered whenever the device reports that the active layout has changed.
+    /// Triggered whenever the device reports that the active layout has changed.<br/>
     /// </summary>
-    event EventHandler VideoWallLayoutChanged;
+    /// <remarks>Args.Arg1 = canvas id that changed</remarks>
+    event EventHandler<GenericSingleEventArgs<string>> VideoWallLayoutChanged;
     
     /// <summary>
     /// Event args:<br/>
-    /// Arg1 - the id of the cell in the active layout that changed.<br/>
+    /// args.Arg1 - the id of the canvas that changed.
+    /// args.Arg2 - the id of the cell in the active layout that changed.<br/>
     /// </summary>
-    event EventHandler<GenericSingleEventArgs<string>> VideoWallCellSourceChanged;
+    event EventHandler<GenericDualEventArgs<string,string>> VideoWallCellSourceChanged;
     
     /// <summary>
-    /// A collection of all <see cref="VideoWallLayout"/>s that are selectable by this controller.
+    /// A collection of all <see cref="VideoWallCanvas"/>s that are selectable by this controller.
     /// </summary>
-    List<VideoWallLayout> Layouts { get; }
+    List<VideoWallCanvas> Canvases { get; }
     
     /// <summary>
     /// A collection of all <see cref="pkd_domain_service.Data.RoutingData.Source"/> objects that are routable. 
     /// </summary>
     List<Source> Sources { get; }
-    
-    /// <summary>
-    /// The id of the layout that should be selected on system startup or boot.
-    /// </summary>
-    string StartupLayoutId { get; }
-    
-    /// <summary>
-    /// The total height of physical video wall displays.
-    /// </summary>
-    int MaxHeight { get; }
-    
-    /// <summary>
-    /// The total width of physical video wall displays.
-    /// </summary>
-    int MaxWidth { get; }
 
     /// <summary>
     /// Register all internal components and define connection information.
@@ -64,28 +51,32 @@ public interface IVideoWallDevice : IBaseDevice
         string password);
     
     /// <summary>
-    /// Send a layout change command to the video wall controller.
+    /// Send a layout change command to a canvas on the video wall controller.
     /// </summary>
-    /// <param name="id">The unique id of the layout to select.</param>
-    void SetActiveLayout(string id);
+    /// <param name="canvasId">The unique id of the canvas to change.</param>
+    /// <param name="layoutId">The unique id of the layout to select.</param>
+    void SetActiveLayout(string canvasId, string layoutId);
     
     /// <summary>
     /// Get the id of the currently selected layout.
     /// </summary>
+    /// <param name="canvasId">The unique id of the canvas to query.</param>
     /// <returns>the id of the currently selected layout.</returns>
-    string GetActiveLayoutId();
+    string GetActiveLayoutId(string canvasId);
     
     /// <summary>
     /// Route a video source to a cell in the currently selected layout.
     /// </summary>
+    /// <param name="canvasId">The unique id of the canvas on which to change the route.</param>
     /// <param name="cellId">The unique id of the cell to route to.</param>
     /// <param name="sourceId">The unique id of the source being routed.</param>
-    void SetCellSource(string cellId, string sourceId);
+    void SetCellSource(string canvasId, string cellId, string sourceId);
     
     /// <summary>
     /// Query the controller for the currently routed source.
     /// </summary>
+    /// <param name="canvasId">The unique ID of the canvas to query.</param>
     /// <param name="cellId">the unique id of the cell in the currently active layout being queried</param>
     /// <returns>the unique id of the source routed to the queried cell.</returns>
-    string GetCellSourceId(string cellId);
+    string GetCellSourceId(string canvasId, string cellId);
 }

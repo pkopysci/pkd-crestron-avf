@@ -448,11 +448,9 @@ namespace pkd_config_service
 					return false;
 				}
 			}
-			else
-			{
-				Logger.Error("ConfigurationService - Unable to locate configuration file.");
-				return false;
-			}
+			
+			Logger.Error("ConfigurationService - Unable to locate configuration file.");
+			return false;
 		}
 
 		private void TryDownloadDependencies()

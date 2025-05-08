@@ -503,15 +503,9 @@ namespace pkd_ui_service
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
         /// <param name="args">args.Arg = the id of the video wall that updated.</param>
-        protected virtual void VideoWallAppLayoutChangedHandler(object? sender, GenericSingleEventArgs<string> args)
+        protected virtual void VideoWallAppLayoutChangedHandler(object? sender, GenericDualEventArgs<string,string> args)
         {
-            if (sender is not IVideoWallApp videoWallApp) return;
-            var activeLayoutId = videoWallApp.QueryActiveVideoWallLayout(args.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is not IVideoWallUserInterface videoWallUi) continue;
-                videoWallUi.UpdateActiveVideoWallLayout(args.Arg, activeLayoutId);
-            }
+            // TODO: VideoWallAppLayoutChangedHandler()
         }
 
         /// <summary>
@@ -540,15 +534,9 @@ namespace pkd_ui_service
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
         /// <param name="args">args.Arg1 = the id of the video wall that updated., Arg2 = ID of the cell that updated.</param>
-        protected virtual void VideoWallAppRouteHandler(object? sender, GenericDualEventArgs<string, string> args)
+        protected virtual void VideoWallAppRouteHandler(object? sender, GenericTrippleEventArgs<string, string, string> args)
         {
-            if (sender is not IVideoWallApp videoWallApp) return;
-            var newRoute = videoWallApp.QueryVideoWallCellSource(args.Arg1, args.Arg2);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is not IVideoWallUserInterface videoWallUi) continue;
-                videoWallUi.UpdateCellRoutedSource(args.Arg1, args.Arg2, newRoute);
-            }
+            // TODO: VideoWallAppRouteHandler()
         }
 
         /// <summary>
@@ -593,7 +581,7 @@ namespace pkd_ui_service
         }
 
         /// <summary>
-        /// Handle lighing scene change notifications from the application service.
+        /// Handle lighting scene change notifications from the application service.
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
         /// <param name="e">Arg = the id of the lighting controller that updated.</param>
@@ -1160,8 +1148,7 @@ namespace pkd_ui_service
         /// <param name="args">Arg1 = controller id, Arg2 = layout id</param>
         protected virtual void VideoWallUiLayoutHandler(object? sender, GenericDualEventArgs<string, string> args)
         {
-            if (AppService is not IVideoWallApp videoWallApp) return;
-            videoWallApp.SetActiveVideoWallLayout(args.Arg1, args.Arg2);
+            // TODO: VideoWallUiLayoutHandler()
         }
 
         /// <summary>
@@ -1172,10 +1159,7 @@ namespace pkd_ui_service
         protected virtual void VideoWallRouteHandler(object? sender,
             GenericTrippleEventArgs<string, string, string> args)
         {
-            Logger.Debug($"PresentationService.VideoWallRouteHandler(${args.Arg1}, {args.Arg2}, {args.Arg3})");
-
-            if (AppService is not IVideoWallApp videoWallApp) return;
-            videoWallApp.SetVideoWallCellRoute(args.Arg1, args.Arg2, args.Arg3);
+            // TODO: VideoWallRouteHandler()
         }
 
         /// <summary>
@@ -1740,7 +1724,7 @@ namespace pkd_ui_service
         /// Handle <see cref="IFusionInterface"/> device online/offline state change events.
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Empy args package.</param>
+        /// <param name="e">Empty args package.</param>
         protected virtual void FusionConnectionHandler(object? sender, EventArgs e)
         {
             Logger.Debug("PresentationService.FusionConnectionHandler()");

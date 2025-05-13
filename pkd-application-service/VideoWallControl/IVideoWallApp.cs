@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using pkd_application_service.AvRouting;
 using pkd_common_utils.GenericEventArgs;
 
 namespace pkd_application_service.VideoWallControl;
@@ -28,6 +29,13 @@ public interface IVideoWallApp
     
     /// <returns>Get a collection of data objects representing all controllable video wall devices.</returns>
     ReadOnlyCollection<VideoWallInfoContainer> GetAllVideoWalls();
+    
+    /// <param name="controlId">the id of the video wall controller to query.</param>
+    /// <returns>
+    /// a collection of all source data available to the target video wall controller.
+    /// Returns an empty list if no wall is found with a matching id.
+    /// </returns>
+    List<AvSourceInfoContainer> QueryAllVideoWallSources(string controlId);
     
     /// <param name="controlId">the id of the video wall controller to query.</param>
     /// <returns>true = device is online, false = device is offline.</returns>

@@ -54,10 +54,10 @@ namespace pkd_ui_service
         /// </summary>
         protected bool Disposed;
 #if DEBUG
-		/// <summary>
-		/// The amount of time to display the state change modal for interfaces that don't implement it locally.
-		/// </summary>
-		protected const int TransitionTime = 3000;
+        /// <summary>
+        /// The amount of time to display the state change modal for interfaces that don't implement it locally.
+        /// </summary>
+        protected const int TransitionTime = 3000;
 #else
         /// <summary>
         /// The amount of time to display the state change modal for interfaces that don't implement it locally.
@@ -281,14 +281,11 @@ namespace pkd_ui_service
         protected virtual void SubscribeToInterface(IUserInterface ui)
         {
             ui.OnlineStatusChanged += UiConnectionHandler;
-            ui.SystemStateChangeRequest += UiStatusChangeHandler;
-            ui.GlobalBlankToggleRequest += UiGlobalBlankHandler;
-            ui.GlobalFreezeToggleRequest += UiGlobalFreezeHandler;
 
-            if (ui is IRoutingUserInterface routingInterface)
-            {
-                routingInterface.AvRouteChangeRequest += UiRouteChangeHandler;
-            }
+            if (ui is ISupportsStateChangeControls stateUi) stateUi.SystemStateChangeRequest += UiStatusChangeHandler;
+            if (ui is ISupportsGlobalVideoBlank blankUi) blankUi.GlobalBlankToggleRequest += UiGlobalBlankHandler;
+            if (ui is ISupportsGlobalVideoFreeze freezeUi) freezeUi.GlobalFreezeToggleRequest += UiGlobalFreezeHandler;
+            if (ui is IRoutingUserInterface routingInterface) routingInterface.AvRouteChangeRequest += UiRouteChangeHandler;
 
             if (ui is IDisplayUserInterface displayInterface)
             {
@@ -361,9 +358,9 @@ namespace pkd_ui_service
             foreach (var ui in UiConnections)
             {
                 ui.OnlineStatusChanged -= UiConnectionHandler;
-                ui.SystemStateChangeRequest -= UiStatusChangeHandler;
-                ui.GlobalFreezeToggleRequest -= UiGlobalFreezeHandler;
-                ui.GlobalBlankToggleRequest -= UiGlobalBlankHandler;
+                if (ui is ISupportsStateChangeControls stateUi) stateUi.SystemStateChangeRequest -= UiStatusChangeHandler;
+                if (ui is ISupportsGlobalVideoBlank blankUi) blankUi.GlobalBlankToggleRequest -= UiGlobalBlankHandler;
+                if (ui is ISupportsGlobalVideoFreeze freezeUi) freezeUi.GlobalFreezeToggleRequest -= UiGlobalFreezeHandler;
 
                 if (ui is IRoutingUserInterface routingUserInterface)
                 {
@@ -421,7 +418,7 @@ namespace pkd_ui_service
         {
             foreach (var conn in UiConnections)
             {
-                conn.HideSystemStateChanging();
+                (conn as ISupportsStateChangeControls)?.HideSystemStateChanging();
             }
         }
 
@@ -503,7 +500,8 @@ namespace pkd_ui_service
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
         /// <param name="args">args.Arg = the id of the video wall that updated.</param>
-        protected virtual void VideoWallAppLayoutChangedHandler(object? sender, GenericDualEventArgs<string,string> args)
+        protected virtual void VideoWallAppLayoutChangedHandler(object? sender,
+            GenericDualEventArgs<string, string> args)
         {
             // TODO: VideoWallAppLayoutChangedHandler()
         }
@@ -534,7 +532,8 @@ namespace pkd_ui_service
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
         /// <param name="args">args.Arg1 = the id of the video wall that updated., Arg2 = ID of the cell that updated.</param>
-        protected virtual void VideoWallAppRouteHandler(object? sender, GenericTrippleEventArgs<string, string, string> args)
+        protected virtual void VideoWallAppRouteHandler(object? sender,
+            GenericTrippleEventArgs<string, string, string> args)
         {
             // TODO: VideoWallAppRouteHandler()
         }
@@ -779,7 +778,7 @@ namespace pkd_ui_service
                 {
                     displayUi.UpdateDisplayConnectionStatus(args.Arg1, args.Arg2);
                 }
-                
+
                 if (ui is not IErrorInterface errUi) continue;
                 if (args.Arg2)
                 {
@@ -1028,7 +1027,7 @@ namespace pkd_ui_service
             bool freezeState = AppService.QueryGlobalVideoFreeze();
             foreach (var ui in UiConnections)
             {
-                ui.SetGlobalFreezeState(freezeState);
+                (ui as ISupportsGlobalVideoFreeze)?.SetGlobalFreezeState(freezeState);
             }
 
             Fusion?.UpdateDisplayFreeze(freezeState);
@@ -1041,10 +1040,10 @@ namespace pkd_ui_service
         /// <param name="e">Generic empty event args.</param>
         protected virtual void AppServiceGlobalBlankHandler(object? sender, EventArgs e)
         {
-            bool blankState = AppService.QueryGlobalVideoBlank();
+            var blankState = AppService.QueryGlobalVideoBlank();
             foreach (var ui in UiConnections)
             {
-                ui.SetGlobalBlankState(blankState);
+                (ui as ISupportsGlobalVideoBlank)?.SetGlobalBlankState(blankState);
             }
 
             Fusion?.UpdateDisplayBlank(blankState);
@@ -1057,11 +1056,12 @@ namespace pkd_ui_service
         /// <param name="args">Generic empty event args.</param>
         protected virtual void AppServiceStateChangeHandler(object? sender, EventArgs args)
         {
-            bool state = AppService.CurrentSystemState;
+            var state = AppService.CurrentSystemState;
             foreach (var conn in UiConnections)
             {
-                conn.SetSystemState(state);
-                conn.ShowSystemStateChanging(state);
+                if (conn is not ISupportsStateChangeControls stateUi) continue;
+                stateUi.SetSystemState(state);
+                stateUi.ShowSystemStateChanging(state);
             }
 
             TriggerStateChangeTimer();
@@ -1184,9 +1184,9 @@ namespace pkd_ui_service
             }
             else
             {
-                found.SetSystemState(AppService.CurrentSystemState);
-                found.SetGlobalBlankState(AppService.QueryGlobalVideoBlank());
-                found.SetGlobalFreezeState(AppService.QueryGlobalVideoFreeze());
+                (found as ISupportsStateChangeControls)?.SetSystemState(AppService.CurrentSystemState);
+                (found as ISupportsGlobalVideoBlank)?.SetGlobalBlankState(AppService.QueryGlobalVideoBlank());
+                (found as ISupportsGlobalVideoFreeze)?.SetGlobalFreezeState(AppService.QueryGlobalVideoFreeze());
 
                 if (found is IAudioUserInterface audioUi)
                 {
@@ -1217,7 +1217,7 @@ namespace pkd_ui_service
                 {
                     lightingUi.SetLightingData(AppService.GetAllLightingDeviceInfo());
                 }
-                
+
                 Fusion?.ClearOfflineDevice(found.Id);
                 foreach (var ui in UiConnections)
                 {

@@ -12,9 +12,10 @@ public interface IVideoWallUserInterface
     /// <summary>
     /// Args package must be:<br/>
     /// Arg1 - id of the video wall controller<br/>
-    /// Arg2 - id of the new layout to set as active.
+    /// Arg2 - id of the canvas being updated.
+    /// Arg3 - id of the new layout to set as active.
     /// </summary>
-    event EventHandler<GenericDualEventArgs<string, string>> VideoWallLayoutChangeRequest;
+    event EventHandler<GenericTrippleEventArgs<string, string, string>> VideoWallLayoutChangeRequest;
     
     /// <summary>
     /// Args package must be:<br/>
@@ -34,16 +35,18 @@ public interface IVideoWallUserInterface
     /// Update the active layout on a target controller
     /// </summary>
     /// <param name="controlId">The id of the video wall controller getting updated.</param>
+    /// <param name="canvasId">The id of the canvas that was updated.</param>
     /// <param name="layoutId">The id of the new active layout.</param>
-    void UpdateActiveVideoWallLayout(string controlId, string layoutId);
+    void UpdateActiveVideoWallLayout(string controlId, string canvasId, string layoutId);
 
     /// <summary>
     /// update the currently routed source on a video wall layout cell/window.
     /// </summary>
     /// <param name="controlId">The id of the controller being updated.</param>
+    /// <param name="canvasId">The id of the canvas being updated.</param>
     /// <param name="cellId">The id of the cell/window being updated.</param>
     /// <param name="sourceId">The id of the source that has been routed.</param>
-    void UpdateCellRoutedSource(string controlId, string cellId, string sourceId);
+    void UpdateCellRoutedSource(string controlId, string canvasId, string cellId, string sourceId);
 
     /// <summary>
     /// Update the user interface with the online status of a video wall controller.

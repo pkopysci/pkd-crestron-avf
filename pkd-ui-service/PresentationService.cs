@@ -285,7 +285,8 @@ namespace pkd_ui_service
             if (ui is ISupportsStateChangeControls stateUi) stateUi.SystemStateChangeRequest += UiStatusChangeHandler;
             if (ui is ISupportsGlobalVideoBlank blankUi) blankUi.GlobalBlankToggleRequest += UiGlobalBlankHandler;
             if (ui is ISupportsGlobalVideoFreeze freezeUi) freezeUi.GlobalFreezeToggleRequest += UiGlobalFreezeHandler;
-            if (ui is IRoutingUserInterface routingInterface) routingInterface.AvRouteChangeRequest += UiRouteChangeHandler;
+            if (ui is IRoutingUserInterface routingInterface)
+                routingInterface.AvRouteChangeRequest += UiRouteChangeHandler;
 
             if (ui is IDisplayUserInterface displayInterface)
             {
@@ -358,9 +359,11 @@ namespace pkd_ui_service
             foreach (var ui in UiConnections)
             {
                 ui.OnlineStatusChanged -= UiConnectionHandler;
-                if (ui is ISupportsStateChangeControls stateUi) stateUi.SystemStateChangeRequest -= UiStatusChangeHandler;
+                if (ui is ISupportsStateChangeControls stateUi)
+                    stateUi.SystemStateChangeRequest -= UiStatusChangeHandler;
                 if (ui is ISupportsGlobalVideoBlank blankUi) blankUi.GlobalBlankToggleRequest -= UiGlobalBlankHandler;
-                if (ui is ISupportsGlobalVideoFreeze freezeUi) freezeUi.GlobalFreezeToggleRequest -= UiGlobalFreezeHandler;
+                if (ui is ISupportsGlobalVideoFreeze freezeUi)
+                    freezeUi.GlobalFreezeToggleRequest -= UiGlobalFreezeHandler;
 
                 if (ui is IRoutingUserInterface routingUserInterface)
                 {
@@ -1146,7 +1149,8 @@ namespace pkd_ui_service
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
         /// <param name="args">Arg1 = controller id, Arg2 = layout id</param>
-        protected virtual void VideoWallUiLayoutHandler(object? sender, GenericDualEventArgs<string, string> args)
+        protected virtual void VideoWallUiLayoutHandler(object? sender,
+            GenericTrippleEventArgs<string, string, string> args)
         {
             // TODO: VideoWallUiLayoutHandler()
         }

@@ -1,12 +1,8 @@
 ﻿// ReSharper disable SuspiciousTypeConversion.Global
 
-using System.Collections.ObjectModel;
 using Crestron.SimplSharpPro;
 using pkd_application_service;
-using pkd_application_service.CameraControl;
-using pkd_application_service.CustomEvents;
 using pkd_application_service.UserInterface;
-using pkd_application_service.VideoWallControl;
 using pkd_common_utils.FileOps;
 using pkd_common_utils.Logging;
 using pkd_common_utils.Validation;
@@ -123,6 +119,7 @@ namespace pkd_ui_service
             }
 
             device.SetUiData(uiData);
+            (device as ICrestronUserInterface)?.SetCrestronControl(parent);
             (device as IUsesApplicationService)?.SetApplicationService(appService);
             return device;
         }

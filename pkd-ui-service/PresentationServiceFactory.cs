@@ -119,8 +119,8 @@ namespace pkd_ui_service
             }
 
             device.SetUiData(uiData);
-            (device as ICrestronUserInterface)?.SetCrestronControl(parent);
             (device as IUsesApplicationService)?.SetApplicationService(appService);
+            (device as ICrestronUserInterface)?.SetCrestronControl(parent);
             return device;
         }
     }

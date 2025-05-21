@@ -1,20 +1,17 @@
 ﻿// ReSharper disable SuspiciousTypeConversion.Global
 
-using Crestron.SimplSharp;
 using Crestron.SimplSharpPro;
 using pkd_application_service;
 using pkd_application_service.CameraControl;
-using pkd_application_service.CustomEvents;
-using pkd_application_service.LightingControl;
 using pkd_application_service.VideoWallControl;
-using pkd_common_utils.DataObjects;
 using pkd_common_utils.GenericEventArgs;
 using pkd_common_utils.Logging;
 using pkd_common_utils.Validation;
 using pkd_ui_service.Fusion;
 using pkd_ui_service.Interfaces;
-using pkd_ui_service.Utility;
 
+// disabled because this class is meant to be extended
+// ReSharper disable ClassWithVirtualMembersNeverInherited.Global
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace pkd_ui_service
@@ -45,25 +42,9 @@ namespace pkd_ui_service
         protected IFusionInterface? Fusion;
 
         /// <summary>
-        /// timer for showing the powering on/off modal for interfaces that don't implement it locally. 
-        /// </summary>
-        protected CTimer? StateChangeTimer;
-
-        /// <summary>
         /// true = object is disposed, false = not disposed.
         /// </summary>
         protected bool Disposed;
-#if DEBUG
-        /// <summary>
-        /// The amount of time to display the state change modal for interfaces that don't implement it locally.
-        /// </summary>
-        protected const int TransitionTime = 3000;
-#else
-        /// <summary>
-        /// The amount of time to display the state change modal for interfaces that don't implement it locally.
-        /// </summary>
-        protected const int TransitionTime = 20000;
-#endif
 
         /// <param name="appService">The framework application implementation that handles state management.</param>
         /// <param name="control">the root Crestron control system object.</param>
@@ -75,8 +56,6 @@ namespace pkd_ui_service
             AppService = appService;
             Control = control;
             UiConnections = [];
-            BuildInterfaces();
-            SubscribeToAppService();
         }
 
         /// <inheritdoc />
@@ -95,6 +74,8 @@ namespace pkd_ui_service
         /// <inheritdoc/>
         public virtual void Initialize()
         {
+            BuildInterfaces();
+            SubscribeToAppService();
             foreach (var uiDevice in UiConnections)
             {
                 uiDevice.Connect();
@@ -120,8 +101,6 @@ namespace pkd_ui_service
                         disposableUiConn.Dispose();
                     }
                 }
-
-                StateChangeTimer?.Dispose();
 
                 if (Fusion != null)
                 {
@@ -180,49 +159,27 @@ namespace pkd_ui_service
         protected virtual void SubscribeToAppService()
         {
             AppService.AudioDspConnectionStatusChanged += AppServiceDspConnectionHandler;
-            AppService.AudioInputLevelChanged += AppServiceAudioInputLevelHandler;
             AppService.AudioInputMuteChanged += AppServiceAudioInputMuteHandler;
             AppService.AudioOutputLevelChanged += AppServiceAudioOutputLevelHandler;
             AppService.AudioOutputMuteChanged += AppServiceAudioOutputMuteHandler;
-            AppService.AudioOutputRouteChanged += AppServiceAudioOutputRouteHandler;
-            AppService.AudioZoneEnableChanged += AppServiceAudioZoneEnableHandler;
-            AppService.DisplayBlankChange += AppServiceDisplayBlankHandler;
-            AppService.DisplayFreezeChange += AppServiceDisplayFreezeHandler;
             AppService.DisplayConnectChange += AppServiceDisplayConnectionHandler;
             AppService.DisplayPowerChange += AppServiceDisplayPowerHandler;
-            AppService.DisplayInputChanged += AppServiceDisplayInputChangedHandler;
             AppService.EndpointConnectionChanged += AppServiceEndpointConnectionHandler;
-            AppService.EndpointRelayChanged += AppServiceEndpointChangedHandler;
             AppService.RouteChanged += AppServiceRouteHandler;
             AppService.RouterConnectChange += AppServiceRouterConnectionHandler;
             AppService.SystemStateChanged += AppServiceStateChangeHandler;
             AppService.GlobalVideoBlankChanged += AppServiceGlobalBlankHandler;
             AppService.GlobalVideoFreezeChanged += AppServiceGlobalFreezeHandler;
-            AppService.LightingSceneChanged += AppServiceLightingSceneHandler;
-            AppService.LightingLoadLevelChanged += AppServiceLightingLoadHandler;
             AppService.LightingControlConnectionChanged += AppServiceLightingConnectionHandler;
-
-            if (AppService is CustomEventAppService customEventService)
-            {
-                customEventService.CustomEventStateChanged += AppServiceCustomEventHandler;
-            }
-
-            if (AppService is ITechAuthGroupAppService techService)
-            {
-                techService.NonTechLockoutStateChangeRequest += AppServiceTechLockoutHandler;
-            }
 
             if (AppService is IVideoWallApp videoWallApp)
             {
-                videoWallApp.VideoWallLayoutChanged += VideoWallAppLayoutChangedHandler;
                 videoWallApp.VideoWallConnectionStatusChanged += VideoWallAppConnectionChangeHandler;
-                videoWallApp.VideoWallCellRouteChanged += VideoWallAppRouteHandler;
             }
 
             if (AppService is ICameraControlApp cameraApp)
             {
                 cameraApp.CameraControlConnectionChanged += CameraAppConnectionChangeHandler;
-                cameraApp.CameraPowerStateChanged += CameraAppPowerChangeHandler;
             }
         }
 
@@ -232,45 +189,23 @@ namespace pkd_ui_service
         protected virtual void UnsubscribeFromAppService()
         {
             AppService.AudioDspConnectionStatusChanged -= AppServiceDspConnectionHandler;
-            AppService.AudioInputLevelChanged -= AppServiceAudioInputLevelHandler;
             AppService.AudioInputMuteChanged -= AppServiceAudioInputMuteHandler;
             AppService.AudioOutputLevelChanged -= AppServiceAudioOutputLevelHandler;
             AppService.AudioOutputMuteChanged -= AppServiceAudioOutputMuteHandler;
-            AppService.AudioOutputRouteChanged -= AppServiceAudioOutputRouteHandler;
-            AppService.AudioZoneEnableChanged -= AppServiceAudioZoneEnableHandler;
-            AppService.DisplayBlankChange -= AppServiceDisplayBlankHandler;
-            AppService.DisplayFreezeChange -= AppServiceDisplayFreezeHandler;
             AppService.DisplayConnectChange -= AppServiceDisplayConnectionHandler;
             AppService.EndpointConnectionChanged -= AppServiceEndpointConnectionHandler;
-            AppService.EndpointRelayChanged -= AppServiceEndpointChangedHandler;
             AppService.RouteChanged -= AppServiceRouteHandler;
             AppService.RouterConnectChange -= AppServiceRouterConnectionHandler;
             AppService.SystemStateChanged -= AppServiceStateChangeHandler;
-            AppService.LightingSceneChanged -= AppServiceLightingSceneHandler;
-            AppService.LightingLoadLevelChanged -= AppServiceLightingLoadHandler;
             AppService.LightingControlConnectionChanged -= AppServiceLightingConnectionHandler;
-
-            if (AppService is CustomEventAppService customEventService)
-            {
-                customEventService.CustomEventStateChanged -= AppServiceCustomEventHandler;
-            }
-
-            if (AppService is ITechAuthGroupAppService securityService)
-            {
-                securityService.NonTechLockoutStateChangeRequest -= AppServiceTechLockoutHandler;
-            }
-
             if (AppService is IVideoWallApp videoWallApp)
             {
-                videoWallApp.VideoWallLayoutChanged -= VideoWallAppLayoutChangedHandler;
                 videoWallApp.VideoWallConnectionStatusChanged -= VideoWallAppConnectionChangeHandler;
-                videoWallApp.VideoWallCellRouteChanged -= VideoWallAppRouteHandler;
             }
 
             if (AppService is ICameraControlApp cameraApp)
             {
                 cameraApp.CameraControlConnectionChanged -= CameraAppConnectionChangeHandler;
-                cameraApp.CameraPowerStateChanged -= CameraAppPowerChangeHandler;
             }
         }
 
@@ -281,74 +216,6 @@ namespace pkd_ui_service
         protected virtual void SubscribeToInterface(IUserInterface ui)
         {
             ui.OnlineStatusChanged += UiConnectionHandler;
-
-            if (ui is ISupportsStateChangeControls stateUi) stateUi.SystemStateChangeRequest += UiStatusChangeHandler;
-            if (ui is ISupportsGlobalVideoBlank blankUi) blankUi.GlobalBlankToggleRequest += UiGlobalBlankHandler;
-            if (ui is ISupportsGlobalVideoFreeze freezeUi) freezeUi.GlobalFreezeToggleRequest += UiGlobalFreezeHandler;
-            if (ui is IRoutingUserInterface routingInterface)
-                routingInterface.AvRouteChangeRequest += UiRouteChangeHandler;
-
-            if (ui is IDisplayUserInterface displayInterface)
-            {
-                displayInterface.DisplayBlankChangeRequest += UiDisplayBlankHandler;
-                displayInterface.DisplayFreezeChangeRequest += UiDisplayFreezeHandler;
-                displayInterface.DisplayPowerChangeRequest += UiDisplayPowerHandler;
-                displayInterface.DisplayScreenDownRequest += UiDisplayScreenDownHandler;
-                displayInterface.DisplayScreenUpRequest += UiDisplayScreenUpHandler;
-                displayInterface.StationLecternInputRequest += UiSetStationLecternHandler;
-                displayInterface.StationLocalInputRequest += UiSetStationLocalHandler;
-            }
-
-            if (ui is IAudioUserInterface audioUi)
-            {
-                audioUi.AudioInputLevelDownRequest += UiAudioInputLevelDownRequest;
-                audioUi.AudioInputLevelUpRequest += UiAudioInputLevelUpRequest;
-                audioUi.AudioInputMuteChangeRequest += UiAudioInputMuteRequest;
-                audioUi.AudioOutputLevelDownRequest += UiAudioOutputLevelDownRequest;
-                audioUi.AudioOutputLevelUpRequest += UiAudioOutputLevelUpRequest;
-                audioUi.AudioOutputMuteChangeRequest += UiAudioOutputMuteRequest;
-                audioUi.AudioOutputRouteRequest += UiAudioOutputRouteRequest;
-                audioUi.AudioZoneEnableToggleRequest += UiAudioZoneToggleHandler;
-            }
-
-            if (ui is IAudioDiscreteLevelUserInterface discreteAudioUi)
-            {
-                discreteAudioUi.SetAudioInputLevelRequest += DiscreteAudioInputUiHandler;
-                discreteAudioUi.SetAudioOutputLevelRequest += DiscreteAudioOutputUiHandler;
-            }
-
-            if (ui is ITransportControlUserInterface transportUi)
-            {
-                transportUi.TransportControlRequest += TransportUi_TransportControlRequest;
-                transportUi.TransportDialFavoriteRequest += TransportUi_TransportDialFavoriteRequest;
-                transportUi.TransportDialRequest += TransportUi_TransportDialRequest;
-            }
-
-            if (ui is ICustomEventUserInterface eventUi)
-            {
-                eventUi.CustomEventChangeRequest += EventUi_CustomEventStateChanged;
-            }
-
-            if (ui is ILightingUserInterface lightingUi)
-            {
-                lightingUi.LightingSceneRecallRequest += LightingUiSceneHandler;
-                lightingUi.LightingLoadChangeRequest += LightingUiLoadHandler;
-            }
-
-            if (ui is IVideoWallUserInterface videoWallUi)
-            {
-                videoWallUi.VideoWallLayoutChangeRequest += VideoWallUiLayoutHandler;
-                videoWallUi.VideoWallRouteRequest += VideoWallRouteHandler;
-            }
-
-            if (ui is ICameraUserInterface cameraUi)
-            {
-                cameraUi.CameraPanTiltRequest += CameraUiPanTiltHandler;
-                cameraUi.CameraZoomRequest += CameraUiZoomHandler;
-                cameraUi.CameraPowerChangeRequest += CameraUiPowerHandler;
-                cameraUi.CameraPresetRecallRequest += CameraPresetRecallHandler;
-                cameraUi.CameraPresetSaveRequest += CameraPresetSaveHandler;
-            }
         }
 
         /// <summary>
@@ -359,87 +226,9 @@ namespace pkd_ui_service
             foreach (var ui in UiConnections)
             {
                 ui.OnlineStatusChanged -= UiConnectionHandler;
-                if (ui is ISupportsStateChangeControls stateUi)
-                    stateUi.SystemStateChangeRequest -= UiStatusChangeHandler;
-                if (ui is ISupportsGlobalVideoBlank blankUi) blankUi.GlobalBlankToggleRequest -= UiGlobalBlankHandler;
-                if (ui is ISupportsGlobalVideoFreeze freezeUi)
-                    freezeUi.GlobalFreezeToggleRequest -= UiGlobalFreezeHandler;
-
-                if (ui is IRoutingUserInterface routingUserInterface)
-                {
-                    routingUserInterface.AvRouteChangeRequest -= UiRouteChangeHandler;
-                }
-
-                if (ui is IDisplayUserInterface displayUi)
-                {
-                    displayUi.DisplayBlankChangeRequest -= UiDisplayBlankHandler;
-                    displayUi.DisplayFreezeChangeRequest -= UiDisplayFreezeHandler;
-                    displayUi.DisplayPowerChangeRequest -= UiDisplayPowerHandler;
-                    displayUi.DisplayScreenDownRequest += UiDisplayScreenDownHandler;
-                    displayUi.DisplayScreenUpRequest += UiDisplayScreenUpHandler;
-                }
-
-                if (ui is IAudioUserInterface audioUi)
-                {
-                    audioUi.AudioInputLevelDownRequest -= UiAudioInputLevelDownRequest;
-                    audioUi.AudioInputLevelUpRequest -= UiAudioInputLevelUpRequest;
-                    audioUi.AudioInputMuteChangeRequest -= UiAudioInputMuteRequest;
-                    audioUi.AudioOutputLevelDownRequest -= UiAudioOutputLevelDownRequest;
-                    audioUi.AudioOutputLevelUpRequest -= UiAudioOutputLevelUpRequest;
-                    audioUi.AudioOutputMuteChangeRequest -= UiAudioOutputMuteRequest;
-                    audioUi.AudioZoneEnableToggleRequest -= UiAudioZoneToggleHandler;
-                }
-
-                if (ui is ITransportControlUserInterface transportUi)
-                {
-                    transportUi.TransportControlRequest -= TransportUi_TransportControlRequest;
-                    transportUi.TransportDialFavoriteRequest -= TransportUi_TransportDialFavoriteRequest;
-                    transportUi.TransportDialRequest -= TransportUi_TransportDialRequest;
-                }
-
-                if (ui is ICustomEventUserInterface eventUi)
-                {
-                    eventUi.CustomEventChangeRequest -= EventUi_CustomEventStateChanged;
-                }
-
-                if (ui is ICameraUserInterface cameraUi)
-                {
-                    cameraUi.CameraPanTiltRequest -= CameraUiPanTiltHandler;
-                    cameraUi.CameraZoomRequest -= CameraUiZoomHandler;
-                    cameraUi.CameraPowerChangeRequest -= CameraUiPowerHandler;
-                    cameraUi.CameraPresetRecallRequest -= CameraPresetRecallHandler;
-                    cameraUi.CameraPresetSaveRequest -= CameraPresetSaveHandler;
-                }
             }
         }
-
-        /// <summary>
-        /// Callback action that is triggered once <see cref="StateChangeTimer"/> expires.
-        /// </summary>
-        /// <param name="obj">The user object provided when the timer is set.</param>
-        protected virtual void StateChangeTimerCallback(object? obj)
-        {
-            foreach (var conn in UiConnections)
-            {
-                (conn as ISupportsStateChangeControls)?.HideSystemStateChanging();
-            }
-        }
-
-        /// <summary>
-        /// Begin the timer for system state change events.
-        /// </summary>
-        protected virtual void TriggerStateChangeTimer()
-        {
-            if (StateChangeTimer != null)
-            {
-                StateChangeTimer.Reset(TransitionTime);
-            }
-            else
-            {
-                StateChangeTimer = new CTimer(StateChangeTimerCallback, TransitionTime);
-            }
-        }
-
+        
         #region AppService Handlers
 
         /// <summary>
@@ -451,26 +240,6 @@ namespace pkd_ui_service
         {
             if (sender is not ICameraControlApp cameraApp) return;
             var newState = cameraApp.QueryCameraConnectionStatus(args.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is ICameraUserInterface cameraUi)
-                {
-                    cameraUi.SetCameraConnectionStatus(args.Arg, newState);
-                }
-
-                if (ui is not IErrorInterface errUi) continue;
-                if (newState)
-                {
-                    errUi.ClearDeviceError(args.Arg);
-                }
-                else
-                {
-                    var cam = cameraApp.GetAllCameraDeviceInfo().First(x => x.Id == args.Arg);
-                    errUi.AddDeviceError(args.Arg, $"{cam.Label} is offline");
-                }
-            }
-
-
             if (newState)
             {
                 Fusion?.ClearOfflineDevice(args.Arg);
@@ -482,32 +251,6 @@ namespace pkd_ui_service
             }
         }
 
-        /// <summary>
-        /// Handle camera power status notifications from the application service.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">args.Arg = the id of the camera that updated.</param>
-        protected virtual void CameraAppPowerChangeHandler(object? sender, GenericSingleEventArgs<string> args)
-        {
-            if (sender is not ICameraControlApp cameraApp) return;
-            var newState = cameraApp.QueryCameraPowerStatus(args.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is not ICameraUserInterface cameraUi) continue;
-                cameraUi.SetCameraPowerState(args.Arg, newState);
-            }
-        }
-
-        /// <summary>
-        /// Handle video wall layout change notifications from the application service.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">args.Arg = the id of the video wall that updated.</param>
-        protected virtual void VideoWallAppLayoutChangedHandler(object? sender,
-            GenericDualEventArgs<string, string> args)
-        {
-            // TODO: VideoWallAppLayoutChangedHandler()
-        }
 
         /// <summary>
         /// Handle video wall device connection status notifications from the application service.
@@ -522,98 +265,6 @@ namespace pkd_ui_service
                 Fusion?.ClearOfflineDevice(args.Arg);
             else
                 Fusion?.AddOfflineDevice(args.Arg, $"Video Wall Controller {args.Arg}");
-
-            foreach (var ui in UiConnections)
-            {
-                if (ui is not IVideoWallUserInterface videoWallUi) continue;
-                videoWallUi.UpdateVideoWallConnectionStatus(args.Arg, onlineStatus);
-            }
-        }
-
-        /// <summary>
-        /// Handle video wall device connection status notifications from the application service.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">args.Arg1 = the id of the video wall that updated., Arg2 = ID of the cell that updated.</param>
-        protected virtual void VideoWallAppRouteHandler(object? sender,
-            GenericTrippleEventArgs<string, string, string> args)
-        {
-            // TODO: VideoWallAppRouteHandler()
-        }
-
-        /// <summary>
-        /// Handle technician "lockout" state notifications from the application service.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">args.Arg = true = all non-tech UIs should lock, false = unlock.</param>
-        protected virtual void AppServiceTechLockoutHandler(object? sender, GenericSingleEventArgs<bool> e)
-        {
-            foreach (var ui in UiConnections)
-            {
-                if (ui is not ISecurityUserInterface secureUi) continue;
-                if (e.Arg)
-                {
-                    secureUi.EnableTechOnlyLock();
-                }
-                else
-                {
-                    secureUi.DisableTechOnlyLock();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Handle technician "lockout" state notifications from the application service.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">args.Arg = true = all non-tech UIs should lock, false = unlock.</param>
-        protected virtual void AppServiceLightingLoadHandler(object? sender, GenericDualEventArgs<string, string> e)
-        {
-            Logger.Debug("PresentationService.AppServiceLightingLoadHandler({0}, {1})", e.Arg1, e.Arg2);
-            if (sender is not ILightingControlApp lightingService) return;
-
-            var loadLevel = lightingService.GetZoneLoad(e.Arg1, e.Arg2);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is ILightingUserInterface lightingUi)
-                {
-                    lightingUi.UpdateLightingZoneLoad(e.Arg1, e.Arg2, loadLevel);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Handle lighting scene change notifications from the application service.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = the id of the lighting controller that updated.</param>
-        protected virtual void AppServiceLightingSceneHandler(object? sender, GenericSingleEventArgs<string> e)
-        {
-            if (sender is not ILightingControlApp lightingService) return;
-            var scene = lightingService.GetActiveScene(e.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is ILightingUserInterface lightingUi)
-                {
-                    lightingUi.UpdateActiveLightingScene(e.Arg, scene);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Handle notifications from the application service for changes in event modes.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = the id of the event that changed.</param>
-        protected virtual void AppServiceCustomEventHandler(object? sender, GenericSingleEventArgs<string> e)
-        {
-            if (sender is not CustomEventAppService customAppService) return;
-            bool state = customAppService.QueryCustomEventState(e.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is not ICustomEventUserInterface eventUi) continue;
-                eventUi.UpdateCustomEvent(e.Arg, state);
-            }
         }
 
         /// <summary>
@@ -624,25 +275,6 @@ namespace pkd_ui_service
         protected virtual void AppServiceDspConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
         {
             var isOnline = AppService.QueryAudioDspConnectionStatus(args.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IAudioUserInterface audioUi)
-                {
-                    audioUi.UpdateAudioDeviceConnectionStatus(args.Arg, isOnline);
-                }
-
-                if (ui is not IErrorInterface errUi) continue;
-                if (isOnline)
-                {
-                    errUi.ClearDeviceError(args.Arg);
-                }
-                else
-                {
-                    var dsp = AppService.GetAllAudioDspDevices().First(x => x.Id == args.Arg);
-                    errUi.AddDeviceError(args.Arg, $"{dsp.Manufacturer} {dsp.Model} is offline");
-                }
-            }
-
             if (isOnline)
             {
                 Fusion?.ClearOfflineDevice(args.Arg);
@@ -656,23 +288,6 @@ namespace pkd_ui_service
         }
 
         /// <summary>
-        /// Handle notifications from the application service about volume level changes on inputs.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg = the id of the audio channel that changed.</param>
-        protected virtual void AppServiceAudioInputLevelHandler(object? sender, GenericSingleEventArgs<string> args)
-        {
-            var level = AppService.QueryAudioInputLevel(args.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IAudioUserInterface audioUi)
-                {
-                    audioUi.UpdateAudioInputLevel(args.Arg, level);
-                }
-            }
-        }
-
-        /// <summary>
         /// Handle notifications from the application service about mute state changes on inputs.
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
@@ -680,14 +295,6 @@ namespace pkd_ui_service
         protected virtual void AppServiceAudioInputMuteHandler(object? sender, GenericSingleEventArgs<string> args)
         {
             var newState = AppService.QueryAudioInputMute(args.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IAudioUserInterface audioUi)
-                {
-                    audioUi.UpdateAudioInputMute(args.Arg, newState);
-                }
-            }
-
             Fusion?.UpdateMicMute(args.Arg, newState);
         }
 
@@ -698,15 +305,6 @@ namespace pkd_ui_service
         /// <param name="args">Arg = the id of the audio channel that changed.</param>
         protected virtual void AppServiceAudioOutputLevelHandler(object? sender, GenericSingleEventArgs<string> args)
         {
-            var level = AppService.QueryAudioOutputLevel(args.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IAudioUserInterface audioUi)
-                {
-                    audioUi.UpdateAudioOutputLevel(args.Arg, level);
-                }
-            }
-
             UpdateFusionAudioFeedback();
         }
 
@@ -717,49 +315,7 @@ namespace pkd_ui_service
         /// <param name="args">Arg = the id of the audio channel that changed.</param>
         protected virtual void AppServiceAudioOutputMuteHandler(object? sender, GenericSingleEventArgs<string> args)
         {
-            var newState = AppService.QueryAudioOutputMute(args.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IAudioUserInterface audioUi)
-                {
-                    audioUi.UpdateAudioOutputMute(args.Arg, newState);
-                }
-            }
-
             UpdateFusionAudioFeedback();
-        }
-
-        /// <summary>
-        /// Handle notifications from the application service about audio route changes.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg = the id of the audio output channel that changed.</param>
-        protected virtual void AppServiceAudioOutputRouteHandler(object? sender, GenericSingleEventArgs<string> args)
-        {
-            var sourceId = AppService.QueryAudioOutputRoute(args.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IAudioUserInterface audioUi)
-                {
-                    audioUi.UpdateAudioOutputRoute(sourceId, args.Arg);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Handle notifications from the application service about zone enable/disable changes for microphones.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = the id of the audio channel being updated, Arg2 = the id of the zone that changed.</param>
-        protected virtual void AppServiceAudioZoneEnableHandler(object? sender,
-            GenericDualEventArgs<string, string> args)
-        {
-            var newState = AppService.QueryAudioZoneState(args.Arg1, args.Arg2);
-            foreach (var ui in UiConnections)
-            {
-                var audioUi = (ui as IAudioUserInterface);
-                audioUi?.UpdateAudioZoneState(args.Arg1, args.Arg2, newState);
-            }
         }
 
         /// <summary>
@@ -770,29 +326,9 @@ namespace pkd_ui_service
         protected virtual void AppServiceDisplayConnectionHandler(object? sender,
             GenericDualEventArgs<string, bool> args)
         {
-            Logger.Debug("PresentationService.AppServiceDisplayConnectionHandler() - {0}, {1}", args.Arg1, args.Arg2);
             var display = AppService.GetAllDisplayInfo()
                 .FirstOrDefault(x => x.Id.Equals(args.Arg1, StringComparison.InvariantCulture));
             if (display == null) return;
-
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IDisplayUserInterface displayUi)
-                {
-                    displayUi.UpdateDisplayConnectionStatus(args.Arg1, args.Arg2);
-                }
-
-                if (ui is not IErrorInterface errUi) continue;
-                if (args.Arg2)
-                {
-                    errUi.ClearDeviceError(args.Arg1);
-                }
-                else
-                {
-                    errUi.AddDeviceError(display.Id, $"{display.Label} ({display.Id}) is offline");
-                }
-            }
-
             if (args.Arg2)
             {
                 Fusion?.ClearOfflineDevice(args.Arg1);
@@ -804,55 +340,12 @@ namespace pkd_ui_service
         }
 
         /// <summary>
-        /// Handle notifications from the application service about video display/projector video blank status changes.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = the id of the display that changed. Arg2 = true is blanked, false is showing video.</param>
-        protected virtual void AppServiceDisplayBlankHandler(object? sender, GenericDualEventArgs<string, bool> args)
-        {
-            Logger.Debug("PresentationService.AppServiceDisplayBlankHandler() - {0}, {1}", args.Arg1, args.Arg2);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IDisplayUserInterface displayUi)
-                {
-                    displayUi.UpdateDisplayBlank(args.Arg1, args.Arg2);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Handle notifications from the application service about video display/projector video freeze status changes.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = the id of the display that changed. Arg2 = true is frozen, false is not frozen.</param>
-        protected virtual void AppServiceDisplayFreezeHandler(object? sender, GenericDualEventArgs<string, bool> args)
-        {
-            Logger.Debug("PresentationService.AppServiceDisplayFreezeHandler() - {0}, {1}", args.Arg1, args.Arg2);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IDisplayUserInterface displayUi)
-                {
-                    displayUi.UpdateDisplayFreeze(args.Arg1, args.Arg2);
-                }
-            }
-        }
-
-        /// <summary>
         /// Handle notifications from the application service about video display/projector power status changes.
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
         /// <param name="e">Arg1 = the id of the display that changed. Arg2 = true is on, false is off.</param>
         protected virtual void AppServiceDisplayPowerHandler(object? sender, GenericDualEventArgs<string, bool> e)
         {
-            Logger.Debug("PresentationService.AppServiceDisplayPowerHandler() - {0}, {1}", e.Arg1, e.Arg2);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IDisplayUserInterface displayUi)
-                {
-                    displayUi.UpdateDisplayPower(e.Arg1, e.Arg2);
-                }
-            }
-
             UpdateFusionDisplayPowerFeedback();
             if (e.Arg2)
             {
@@ -865,32 +358,6 @@ namespace pkd_ui_service
         }
 
         /// <summary>
-        /// Handle notifications from the application service about video display/projector input selection changes.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = the id of the display that changed.</param>
-        protected virtual void AppServiceDisplayInputChangedHandler(object? sender, GenericSingleEventArgs<string> e)
-        {
-            Logger.Debug("PresentationService.AppServiceDisplayInputChangedHandler({0})", e.Arg);
-
-            var isLectern = AppService.DisplayInputLecternQuery(e.Arg);
-            var isStation = AppService.DisplayInputStationQuery(e.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is not IDisplayUserInterface displayUi) continue;
-
-                if (isLectern)
-                {
-                    displayUi.SetStationLecternInput(e.Arg);
-                }
-                else if (isStation)
-                {
-                    displayUi.SetStationLocalInput(e.Arg);
-                }
-            }
-        }
-
-        /// <summary>
         /// Handle notifications from the application service about relay or control expander endpoint connection status changes.
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
@@ -898,29 +365,15 @@ namespace pkd_ui_service
         protected virtual void AppServiceEndpointConnectionHandler(object? sender,
             GenericDualEventArgs<string, bool> args)
         {
-            Logger.Debug("PresentationService.AppServiceEndpointConnectionHandler() - {0}, {1}", args.Arg1, args.Arg2);
-
             if (args.Arg2)
             {
                 Fusion?.ClearOfflineDevice(args.Arg1);
-                RemoveErrorFromUi(args.Arg1);
             }
             else
             {
                 var label = $"Endpoint {args.Arg1}";
                 Fusion?.AddOfflineDevice(args.Arg1, label);
-                AddErrorToUi(args.Arg1, label);
             }
-        }
-
-        /// <summary>
-        /// Handle notifications from the application service about endpoint state changes.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = the id of the endpoint that changed. Arg2 = the index on the endpoint device that changed.</param>
-        protected virtual void AppServiceEndpointChangedHandler(object? sender, GenericDualEventArgs<string, int> args)
-        {
-            Logger.Debug("PresentationService.AppServiceEndpointChangedHandler() - {0}", args.Arg1, args.Arg2);
         }
 
         /// <summary>
@@ -930,15 +383,6 @@ namespace pkd_ui_service
         /// <param name="args">Arg = the id of the destination that changed.</param>
         protected virtual void AppServiceRouteHandler(object? sender, GenericSingleEventArgs<string> args)
         {
-            var currentSrc = AppService.QueryCurrentRoute(args.Arg);
-            foreach (var conn in UiConnections)
-            {
-                if (conn is IRoutingUserInterface routingUi)
-                {
-                    routingUi.UpdateAvRoute(currentSrc, args.Arg);
-                }
-            }
-
             UpdateFusionRoutingFeedback();
         }
 
@@ -949,28 +393,7 @@ namespace pkd_ui_service
         /// <param name="args">Arg = the id of the AVR that updated.</param>
         protected virtual void AppServiceRouterConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
         {
-            Logger.Debug("PresentationService.AppServiceRouterConnectionHandler() - {0}", args.Arg);
-
             var isOnline = AppService.QueryRouterConnectionStatus(args.Arg);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IRoutingUserInterface routingUi)
-                {
-                    routingUi.UpdateAvRouterConnectionStatus(args.Arg, isOnline);
-                }
-
-                if (ui is not IErrorInterface errUi) continue;
-                if (isOnline)
-                {
-                    errUi.ClearDeviceError(args.Arg);
-                }
-                else
-                {
-                    var avr = AppService.GetAllAvRouters().First(x => x.Id == args.Arg);
-                    errUi.AddDeviceError(args.Arg, $"{avr.Model} is offline");
-                }
-            }
-
             if (isOnline)
             {
                 Fusion?.ClearOfflineDevice(args.Arg);
@@ -989,26 +412,6 @@ namespace pkd_ui_service
         /// <param name="e">Arg = the id of the lighting controller that updated.</param>
         protected virtual void AppServiceLightingConnectionHandler(object? sender, GenericDualEventArgs<string, bool> e)
         {
-            Logger.Debug("PresentationService.AppServiceLightingConnectionHandler({0}, 1)", e.Arg1, e.Arg2);
-            foreach (var ui in UiConnections)
-            {
-                if (ui is ILightingUserInterface lightingUi)
-                {
-                    lightingUi.UpdateLightingControlConnectionStatus(e.Arg1, e.Arg2);
-                }
-
-                if (ui is not IErrorInterface errUi) continue;
-                if (e.Arg2)
-                {
-                    errUi.ClearDeviceError(e.Arg1);
-                }
-                else
-                {
-                    var controller = AppService.GetAllLightingDeviceInfo().First(x => x.Id == e.Arg1);
-                    errUi.AddDeviceError(e.Arg1, $"Lighting device {controller.Model} is Offline");
-                }
-            }
-
             if (e.Arg2)
             {
                 Fusion?.ClearOfflineDevice(e.Arg1);
@@ -1027,12 +430,7 @@ namespace pkd_ui_service
         /// <param name="e">Arg = the id of the lighting controller that updated.</param>
         protected virtual void AppServiceGlobalFreezeHandler(object? sender, EventArgs e)
         {
-            bool freezeState = AppService.QueryGlobalVideoFreeze();
-            foreach (var ui in UiConnections)
-            {
-                (ui as ISupportsGlobalVideoFreeze)?.SetGlobalFreezeState(freezeState);
-            }
-
+            var freezeState = AppService.QueryGlobalVideoFreeze();
             Fusion?.UpdateDisplayFreeze(freezeState);
         }
 
@@ -1044,11 +442,6 @@ namespace pkd_ui_service
         protected virtual void AppServiceGlobalBlankHandler(object? sender, EventArgs e)
         {
             var blankState = AppService.QueryGlobalVideoBlank();
-            foreach (var ui in UiConnections)
-            {
-                (ui as ISupportsGlobalVideoBlank)?.SetGlobalBlankState(blankState);
-            }
-
             Fusion?.UpdateDisplayBlank(blankState);
         }
 
@@ -1060,14 +453,6 @@ namespace pkd_ui_service
         protected virtual void AppServiceStateChangeHandler(object? sender, EventArgs args)
         {
             var state = AppService.CurrentSystemState;
-            foreach (var conn in UiConnections)
-            {
-                if (conn is not ISupportsStateChangeControls stateUi) continue;
-                stateUi.SetSystemState(state);
-                stateUi.ShowSystemStateChanging(state);
-            }
-
-            TriggerStateChangeTimer();
             Fusion?.UpdateSystemState(state);
 
             // If system is powering off then stop recording usage, or start recording usage for the currently
@@ -1086,86 +471,7 @@ namespace pkd_ui_service
         }
 
         #endregion
-
-        #region Touchscreen Handlers
-
-        /// <summary>
-        /// Handle user interface triggered camera preset recall events.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = camera id, Arg2 = preset id</param>
-        protected virtual void CameraPresetRecallHandler(object? sender, GenericDualEventArgs<string, string> args)
-        {
-            if (AppService is not ICameraControlApp cameraApp) return;
-            cameraApp.SendCameraPresetRecall(args.Arg1, args.Arg2);
-        }
-
-        /// <summary>
-        /// Handle user interface triggered camera preset save events.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = camera id, Arg2 = preset id</param>
-        protected virtual void CameraPresetSaveHandler(object? sender, GenericDualEventArgs<string, string> args)
-        {
-            if (AppService is not ICameraControlApp cameraApp) return;
-            cameraApp.SendCameraPresetSave(args.Arg1, args.Arg2);
-        }
-
-        /// <summary>
-        /// Handle user interface triggered camera pan/tilt events.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = camera id, Arg2 = the direction to move the camera</param>
-        protected virtual void CameraUiPanTiltHandler(object? sender, GenericDualEventArgs<string, Vector2D> args)
-        {
-            if (AppService is not ICameraControlApp cameraApp) return;
-            cameraApp.SendCameraPanTilt(args.Arg1, args.Arg2);
-        }
-
-        /// <summary>
-        /// Handle user interface triggered camera zoom events.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = camera id, Arg2 = negative values for wide, positive for telephoto, 0 to stop.</param>
-        protected virtual void CameraUiZoomHandler(object? sender, GenericDualEventArgs<string, int> args)
-        {
-            if (AppService is not ICameraControlApp cameraApp) return;
-            cameraApp.SendCameraZoom(args.Arg1, args.Arg2);
-        }
-
-        /// <summary>
-        /// Handle user interface triggered camera power change events.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = camera id, Arg2 = true is on, false is off </param>
-        protected virtual void CameraUiPowerHandler(object? sender, GenericDualEventArgs<string, bool> args)
-        {
-            if (AppService is not ICameraControlApp cameraApp) return;
-            cameraApp.SendCameraPowerChange(args.Arg1, args.Arg2);
-        }
-
-        /// <summary>
-        /// Handle user interface triggered layout selection events.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = controller id, Arg2 = layout id</param>
-        protected virtual void VideoWallUiLayoutHandler(object? sender,
-            GenericTrippleEventArgs<string, string, string> args)
-        {
-            // TODO: VideoWallUiLayoutHandler()
-        }
-
-        /// <summary>
-        /// Handle user interface triggered video wall cell routing events.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = control id, Arg2 = cell id, Arg3 = source id</param>
-        protected virtual void VideoWallRouteHandler(object? sender,
-            GenericTrippleEventArgs<string, string, string> args)
-        {
-            // TODO: VideoWallRouteHandler()
-        }
-
+        
         /// <summary>
         /// Handle user interface connection changes.
         /// </summary>
@@ -1188,40 +494,6 @@ namespace pkd_ui_service
             }
             else
             {
-                (found as ISupportsStateChangeControls)?.SetSystemState(AppService.CurrentSystemState);
-                (found as ISupportsGlobalVideoBlank)?.SetGlobalBlankState(AppService.QueryGlobalVideoBlank());
-                (found as ISupportsGlobalVideoFreeze)?.SetGlobalFreezeState(AppService.QueryGlobalVideoFreeze());
-
-                if (found is IAudioUserInterface audioUi)
-                {
-                    foreach (var inChan in AppService.GetAudioInputChannels())
-                    {
-                        audioUi.UpdateAudioInputLevel(inChan.Id, AppService.QueryAudioInputLevel(inChan.Id));
-                        audioUi.UpdateAudioInputMute(inChan.Id, AppService.QueryAudioInputMute(inChan.Id));
-                    }
-
-                    foreach (var outChan in AppService.GetAudioOutputChannels())
-                    {
-                        audioUi.UpdateAudioOutputLevel(outChan.Id, AppService.QueryAudioOutputLevel(outChan.Id));
-                        audioUi.UpdateAudioOutputMute(outChan.Id, AppService.QueryAudioOutputMute(outChan.Id));
-                    }
-                }
-
-                if (found is ITransportControlUserInterface transportUi)
-                {
-                    transportUi.SetCableBoxData(AppService.GetAllCableBoxes());
-                }
-
-                if (found is ICustomEventUserInterface customEventUi)
-                {
-                    UpdateCustomEventUi(customEventUi);
-                }
-
-                if (found is ILightingUserInterface lightingUi)
-                {
-                    lightingUi.SetLightingData(AppService.GetAllLightingDeviceInfo());
-                }
-
                 Fusion?.ClearOfflineDevice(found.Id);
                 foreach (var ui in UiConnections)
                 {
@@ -1230,390 +502,6 @@ namespace pkd_ui_service
                 }
             }
         }
-
-        /// <summary>
-        /// update a user interface with the current state of all event modes, if the ui supports event control.
-        /// </summary>
-        /// <param name="ui">the user interface to update.</param>
-        protected virtual void UpdateCustomEventUi(ICustomEventUserInterface ui)
-        {
-            if (AppService is not CustomEventAppService eventServiceApp) return;
-            var events = eventServiceApp.QueryAllCustomEvents();
-            foreach (var evt in events)
-            {
-                ui.UpdateCustomEvent(evt.Id, eventServiceApp.QueryCustomEventState(evt.Id));
-            }
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for changing the use state of the system.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg = true to set state active, false to set state standby.</param>
-        protected virtual void UiStatusChangeHandler(object? sender, GenericSingleEventArgs<bool> args)
-        {
-            if (args.Arg)
-            {
-                AppService.SetActive();
-            }
-            else
-            {
-                AppService.SetStandby();
-            }
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for video routing.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="args">Arg1 = input id, Arg2 = output id.</param>
-        protected virtual void UiRouteChangeHandler(object? sender, GenericDualEventArgs<string, string> args)
-        {
-            Logger.Debug("PresentationService.UiRouteChangeHandler() - {0} -> {1}", args.Arg1, args.Arg2);
-
-            if (args.Arg2.Equals("ALL", StringComparison.InvariantCulture))
-            {
-                AppService.RouteToAll(args.Arg1);
-            }
-            else
-            {
-                AppService.MakeRoute(args.Arg1, args.Arg2);
-            }
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for changing display/projector power state.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = id of the display to change, Arg2 = true for on, false for off.</param>
-        protected virtual void UiDisplayPowerHandler(object? sender, GenericDualEventArgs<string, bool> e)
-        {
-            Logger.Debug("PresentationService.UiDisplayPowerHandler() - {0} - {1}", e.Arg1, e.Arg2);
-            AppService.SetDisplayPower(e.Arg1, e.Arg2);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for changing display freeze state.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = id of the display to change, Arg2 = true for freeze, false for disable freeze.</param>
-        protected virtual void UiDisplayFreezeHandler(object? sender, GenericSingleEventArgs<string> e)
-        {
-            bool currenState = AppService.DisplayFreezeQuery(e.Arg);
-            AppService.SetDisplayFreeze(e.Arg, !currenState);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for changing display video blank state.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = id of the display to change, Arg2 = true for blank, false for show video.</param>
-        protected virtual void UiDisplayBlankHandler(object? sender, GenericSingleEventArgs<string> e)
-        {
-            bool currentState = AppService.DisplayBlankQuery(e.Arg);
-            AppService.SetDisplayBlank(e.Arg, !currentState);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for changing global/AVR video blank.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = id of the display to change, Arg2 = true for blank, false for show video.</param>
-        protected virtual void UiGlobalBlankHandler(object? sender, EventArgs e)
-        {
-            Logger.Debug("PresentationService.UiGlobalBlankHandler()");
-            bool currentState = AppService.QueryGlobalVideoBlank();
-            AppService.SetGlobalVideoBlank(!currentState);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for changing global/AVR freeze state.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = id of the display to change, Arg2 = true for freeze, false for disable freeze.</param>
-        protected virtual void UiGlobalFreezeHandler(object? sender, EventArgs e)
-        {
-            Logger.Debug("PresentationService.UiGlobalFreezeHandler()");
-            bool currentState = AppService.QueryGlobalVideoFreeze();
-            AppService.SetGlobalVideoFreeze(!currentState);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for raising a screen associated with a projector.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = id of the display associated with the screen to raise.</param>
-        protected virtual void UiDisplayScreenUpHandler(object? sender, GenericSingleEventArgs<string> e)
-        {
-            AppService.RaiseScreen(e.Arg);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for lowering a screen associated with a projector.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = id of the display associated with the screen to lower.</param>
-        protected virtual void UiDisplayScreenDownHandler(object? sender, GenericSingleEventArgs<string> e)
-        {
-            AppService.LowerScreen(e.Arg);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for muting an audio output channel.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = id of the channel to mute.</param>
-        protected virtual void UiAudioOutputMuteRequest(object? sender, GenericSingleEventArgs<string> e)
-        {
-            Logger.Debug("PresentationService.UiAudioOutputMuteRequest() - {0}", e.Arg);
-            try
-            {
-                var current = AppService.QueryAudioOutputMute(e.Arg);
-                AppService.SetAudioOutputMute(e.Arg, !current);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "PresentationService.UiAudioOutputMuteRequest()");
-            }
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for increasing an audio output channel level.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = id of the channel to increase.</param>
-        protected virtual void UiAudioOutputLevelUpRequest(object? sender, GenericSingleEventArgs<string> e)
-        {
-            Logger.Debug("PresentationService.UiAudioOutputLevelUpRequest() - {0}", e.Arg);
-            var newLevel = AppService.QueryAudioOutputLevel(e.Arg) + 3;
-            AppService.SetAudioOutputLevel(e.Arg, newLevel < 100 ? newLevel : 100);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for decreasing an audio output channel level.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = id of the channel to decrease.</param>
-        protected virtual void UiAudioOutputLevelDownRequest(object? sender, GenericSingleEventArgs<string> e)
-        {
-            Logger.Debug("PresentationService.UiAudioOutputLevelDownRequest() - {0}", e.Arg);
-            var newLevel = AppService.QueryAudioOutputLevel(e.Arg) - 3;
-            AppService.SetAudioOutputLevel(e.Arg, newLevel > 0 ? newLevel : 0);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for audio routing events.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = id of the input channel, Arg2 = id of the output channel.</param>
-        protected virtual void UiAudioOutputRouteRequest(object? sender, GenericDualEventArgs<string, string> e)
-        {
-            AppService.SetAudioOutputRoute(e.Arg1, e.Arg2);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for input mute events.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = id of the input to mute.</param>
-        protected virtual void UiAudioInputMuteRequest(object? sender, GenericSingleEventArgs<string> e)
-        {
-            Logger.Debug("PresentationService.UiAudioInputMuteRequest() - {0}", e.Arg);
-            bool current = AppService.QueryAudioInputMute(e.Arg);
-            AppService.SetAudioInputMute(e.Arg, !current);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for decreasing an audio input channel level.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = id of the channel to decrease.</param>
-        protected virtual void UiAudioInputLevelDownRequest(object? sender, GenericSingleEventArgs<string> e)
-        {
-            Logger.Debug("PresentationService.UiAudioInputLevelDownRequest() - {0}", e.Arg);
-            int newLevel = AppService.QueryAudioInputLevel(e.Arg) - 3;
-            AppService.SetAudioInputLevel(e.Arg, newLevel > 0 ? newLevel : 0);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for increasing an audio input channel level.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = id of the channel to increase.</param>
-        protected virtual void UiAudioInputLevelUpRequest(object? sender, GenericSingleEventArgs<string> e)
-        {
-            Logger.Debug("PresentationService.UiAudioInputLevelUpRequest() - {0}", e.Arg);
-            int newLevel = AppService.QueryAudioInputLevel(e.Arg) + 3;
-            AppService.SetAudioInputLevel(e.Arg, newLevel < 100 ? newLevel : 100);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for toggling the input channel mix for a given output.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = id of the input channel. Arg2 = id of the output zone to toggle</param>
-        protected virtual void UiAudioZoneToggleHandler(object? sender, GenericDualEventArgs<string, string> e)
-        {
-            AppService.ToggleAudioZoneState(e.Arg1, e.Arg2);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for setting a level value for an audio output.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = id of the channel to adjust, Arg2 = the 0-100 value to set.</param>
-        protected virtual void DiscreteAudioOutputUiHandler(object? sender, GenericDualEventArgs<string, int> e)
-        {
-            var adjustedLevel = e.Arg2;
-            if (adjustedLevel < 0)
-            {
-                adjustedLevel = 0;
-            }
-            else if (adjustedLevel > 100)
-            {
-                adjustedLevel = 100;
-            }
-
-            AppService.SetAudioOutputLevel(e.Arg1, adjustedLevel);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for setting a level value for an audio input.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = id of the channel to adjust, Arg2 = the 0-100 value to set.</param>
-        protected virtual void DiscreteAudioInputUiHandler(object? sender, GenericDualEventArgs<string, int> e)
-        {
-            var adjustedLevel = e.Arg2;
-            if (adjustedLevel < 0)
-            {
-                adjustedLevel = 0;
-            }
-            else if (adjustedLevel > 100)
-            {
-                adjustedLevel = 100;
-            }
-
-            AppService.SetAudioInputLevel(e.Arg1, adjustedLevel);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for setting a load level for a lighting zone.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = id of the controller to adjust, Arg2 = id of the lighting zone, Arg3 = the 0-100 value to set.</param>
-        protected virtual void LightingUiLoadHandler(object? sender, GenericTrippleEventArgs<string, string, int> e)
-        {
-            AppService.SetLightingLoad(e.Arg1, e.Arg2, e.Arg3);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for setting a lighting scene on a given controller.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = id of the device to adjust, Arg2 = id of the scene to set.</param>
-        protected virtual void LightingUiSceneHandler(object? sender, GenericDualEventArgs<string, string> e)
-        {
-            AppService.RecallLightingScene(e.Arg1, e.Arg2);
-        }
-
-        /// <summary>
-        /// Update all user interfaces that support error reporting.
-        /// </summary>
-        /// <param name="id">The id of the error, used when referencing the specific error.</param>
-        /// <param name="label">The information to display on the user interface for the error.</param>
-        protected virtual void AddErrorToUi(string id, string label)
-        {
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IErrorInterface errorUi)
-                {
-                    errorUi.AddDeviceError(id, label);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Remove an existing error from all user interfaces.
-        /// </summary>
-        /// <param name="id">The id of the error that was added with <see cref="AddErrorToUi"/>.</param>
-        protected virtual void RemoveErrorFromUi(string id)
-        {
-            foreach (var ui in UiConnections)
-            {
-                if (ui is IErrorInterface errorUi)
-                {
-                    errorUi.ClearDeviceError(id);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for selecting the "station" input on a display.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = id of the display.</param>
-        protected virtual void UiSetStationLecternHandler(object? sender, GenericSingleEventArgs<string> e)
-        {
-            AppService.SetInputLectern(e.Arg);
-        }
-
-        /// <summary>
-        /// Handle user-interface triggers for selecting the "lectern" input on a display.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg = id of the display.</param>
-        protected virtual void UiSetStationLocalHandler(object? sender, GenericSingleEventArgs<string> e)
-        {
-            AppService.SetInputStation(e.Arg);
-        }
-
-        /// <summary>
-        /// Handle user interface requests to set a channel on a transport-controlled device (cable TV, DVR).
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = the id of the device to control, Arg2 = the channel to dial.</param>
-        protected virtual void TransportUi_TransportDialRequest(object? sender, GenericDualEventArgs<string, string> e)
-        {
-            AppService.TransportDial(e.Arg1, e.Arg2);
-        }
-
-        /// <summary>
-        /// Handle user interface requests to dial a saved favorite on a transport-controlled device (cable TV, DVR).
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = the id of the device to control, Arg2 = the id of the channel to dial.</param>
-        protected virtual void TransportUi_TransportDialFavoriteRequest(object? sender,
-            GenericDualEventArgs<string, string> e)
-        {
-            AppService.TransportDialFavorite(e.Arg1, e.Arg2);
-        }
-
-        /// <summary>
-        /// Handle user interface requests to send a transport/navigation to a device (cable TV, DVR).
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = the id of the device to control, Arg2 = transport control to trigger.</param>
-        protected virtual void TransportUi_TransportControlRequest(object? sender,
-            GenericDualEventArgs<string, TransportTypes> e)
-        {
-            TransportUtilities.SendCommand(AppService, e.Arg1, e.Arg2);
-        }
-
-        /// <summary>
-        /// Handle user interface requests to set a custom event state.
-        /// </summary>
-        /// <param name="sender">The object that triggered the event.</param>
-        /// <param name="e">Arg1 = the id of the event, Arg2 = true to set active, false to set inactive.</param>
-        protected virtual void EventUi_CustomEventStateChanged(object? sender, GenericDualEventArgs<string, bool> e)
-        {
-            if (AppService is ICustomEventAppService eventApp)
-            {
-                eventApp.ChangeCustomEventState(e.Arg1, e.Arg2);
-            }
-        }
-
-        #endregion
 
         #region Fusion Handlers
 

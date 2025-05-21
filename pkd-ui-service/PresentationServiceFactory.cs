@@ -1,12 +1,8 @@
 ﻿// ReSharper disable SuspiciousTypeConversion.Global
 
-using System.Collections.ObjectModel;
 using Crestron.SimplSharpPro;
 using pkd_application_service;
-using pkd_application_service.CameraControl;
-using pkd_application_service.CustomEvents;
 using pkd_application_service.UserInterface;
-using pkd_application_service.VideoWallControl;
 using pkd_common_utils.FileOps;
 using pkd_common_utils.Logging;
 using pkd_common_utils.Validation;
@@ -122,40 +118,9 @@ namespace pkd_ui_service
                 return null;
             }
 
-            (device as IHtmlUserInterface)?.SetSystemType(appService.GetRoomInfo().SystemType);
             device.SetUiData(uiData);
-            (device as ICrestronUserInterface)?.SetCrestronControl(parent, uiData.IpId);
-            (device as IDisplayUserInterface)?.SetDisplayData(appService.GetAllDisplayInfo());
-            (device as IRoutingUserInterface)?.SetRoutingData(appService.GetAllAvSources(),
-                appService.GetAllAvDestinations(), appService.GetAllAvRouters());
-            (device as IAudioUserInterface)?.SetAudioData(
-                appService.GetAudioInputChannels(),
-                appService.GetAudioOutputChannels(),
-                appService.GetAllAudioDspDevices());
-            (device as ITransportControlUserInterface)?.SetCableBoxData(appService.GetAllCableBoxes());
-            (device as ILightingUserInterface)?.SetLightingData(appService.GetAllLightingDeviceInfo());
             (device as IUsesApplicationService)?.SetApplicationService(appService);
-
-            if (device is ICustomEventUserInterface eventUi && appService is ICustomEventAppService eventApp)
-            {
-                foreach (var item in eventApp.QueryAllCustomEvents())
-                {
-                    eventUi.AddCustomEvent(item.Id, item.Label, item.IsActive);
-                }
-            }
-
-            if (device is IVideoWallUserInterface videoWallUi)
-            {
-                var wallDevices = (appService as IVideoWallApp)?.GetAllVideoWalls() ??
-                                  ReadOnlyCollection<VideoWallInfoContainer>.Empty;
-                videoWallUi.SetVideoWallData(wallDevices);
-            }
-
-            if (device is ICameraUserInterface cameraUi && appService is ICameraControlApp cameraControlApp)
-            {
-                cameraUi.SetCameraData(cameraControlApp.GetAllCameraDeviceInfo());
-            }
-
+            (device as ICrestronUserInterface)?.SetCrestronControl(parent);
             return device;
         }
     }

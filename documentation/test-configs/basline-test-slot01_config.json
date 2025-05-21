@@ -524,7 +524,49 @@
   "Cameras": [
     {
       "Id": "cam01",
-      "Label": "Axis Camera",
+      "Label": "Axis Camera 1",
+      "Manufacturer": "Axis",
+      "Model": "ME5525-E",
+      "ClassName": "AxisPtzCamera",
+      "Tags": [],
+      "Connection": {
+        "Id": "camcon01",
+        "Transport": "tcp",
+        "Driver": "AxisCameras.dll",
+        "Host": "10.16.6.169",
+        "Port": 80,
+        "Authentication": {
+          "Id": "auth01",
+          "UserName": "root",
+          "Password": "C@mpu$Tech"
+        }
+      },
+      "Presets": [
+        {
+          "Id": "cam01p01",
+          "Label": "Preset 1",
+          "Number": 1
+        },
+        {
+          "Id": "cam01p02",
+          "Label": "Preset 2",
+          "Number": 2
+        },
+        {
+          "Id": "cam01p03",
+          "Label": "Preset 3",
+          "Number": 3
+        },
+        {
+          "Id": "cam01p04",
+          "Label": "Preset 4",
+          "Number": 4
+        }
+      ]
+    },
+    {
+      "Id": "cam01",
+      "Label": "Axis Camera 2",
       "Manufacturer": "Axis",
       "Model": "ME5525-E",
       "ClassName": "AxisPtzCamera",

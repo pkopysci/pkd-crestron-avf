@@ -260,11 +260,12 @@ namespace pkd_ui_service
         protected virtual void VideoWallAppConnectionChangeHandler(object? sender, GenericSingleEventArgs<string> args)
         {
             if (sender is not IVideoWallApp videoWallApp) return;
-            var onlineStatus = videoWallApp.QueryVideoWallConnectionStatus(args.Arg);
-            if (onlineStatus)
+            var wall = videoWallApp.GetAllVideoWalls().FirstOrDefault(x => x.Id.Equals(args.Arg));
+            if (wall == null) return;
+            if (wall.IsOnline)
                 Fusion?.ClearOfflineDevice(args.Arg);
             else
-                Fusion?.AddOfflineDevice(args.Arg, $"Video Wall Controller {args.Arg}");
+                Fusion?.AddOfflineDevice(args.Arg, $"{wall.Model} ({wall.Id})");
         }
 
         /// <summary>
@@ -283,7 +284,7 @@ namespace pkd_ui_service
             {
                 var found = AppService.GetAllAudioDspDevices()
                     .First(x => x.Id.Equals(args.Arg, StringComparison.InvariantCulture));
-                Fusion?.AddOfflineDevice(args.Arg, found.Label);
+                Fusion?.AddOfflineDevice(args.Arg, $"{found.Model} {found.Label}");
             }
         }
 
@@ -335,7 +336,7 @@ namespace pkd_ui_service
             }
             else
             {
-                Fusion?.AddOfflineDevice(args.Arg1, display.Label);
+                Fusion?.AddOfflineDevice(args.Arg1, $"{display.Model} {display.Label}");
             }
         }
 
@@ -393,14 +394,15 @@ namespace pkd_ui_service
         /// <param name="args">Arg = the id of the AVR that updated.</param>
         protected virtual void AppServiceRouterConnectionHandler(object? sender, GenericSingleEventArgs<string> args)
         {
-            var isOnline = AppService.QueryRouterConnectionStatus(args.Arg);
-            if (isOnline)
+            var avr = AppService.GetAllAvRouters().FirstOrDefault(x => x.Id.Equals(args.Arg));
+            if (avr == null) return;
+            if (avr.IsOnline)
             {
                 Fusion?.ClearOfflineDevice(args.Arg);
             }
             else
             {
-                var label = $"Router {args.Arg} is offline";
+                var label = $"{avr.Model} ({args.Arg}) is offline";
                 Fusion?.AddOfflineDevice(args.Arg, label);
             }
         }

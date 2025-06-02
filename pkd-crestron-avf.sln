@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35506.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-crestron-avf", "pkd-crestron-avf\pkd-crestron-avf.csproj", "{F0F3484E-27BC-4C34-8531-5BF03064AE41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-common-utils", "pkd-common-utils\pkd-common-utils.csproj", "{36055B6B-D000-48C7-8DFE-085C5FCBEB6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-config-service", "pkd-config-service\pkd-config-service.csproj", "{6999381A-42EB-4E6F-8640-F797E391E97C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-domain-service", "pkd-domain-service\pkd-domain-service.csproj", "{7181CE28-0B50-48E2-BD2A-D0B6DC2C0702}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-hardware-service", "pkd-hardware-service\pkd-hardware-service.csproj", "{D63016B8-2871-4026-8596-0341AB751870}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-application-service", "pkd-application-service\pkd-application-service.csproj", "{65D1301A-1094-441F-B865-F9F1C5CDAD22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pkd-ui-service", "pkd-ui-service\pkd-ui-service.csproj", "{A0F139EE-F736-4541-A489-C944ABCBF7DC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F0F3484E-27BC-4C34-8531-5BF03064AE41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0F3484E-27BC-4C34-8531-5BF03064AE41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0F3484E-27BC-4C34-8531-5BF03064AE41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0F3484E-27BC-4C34-8531-5BF03064AE41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36055B6B-D000-48C7-8DFE-085C5FCBEB6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36055B6B-D000-48C7-8DFE-085C5FCBEB6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36055B6B-D000-48C7-8DFE-085C5FCBEB6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36055B6B-D000-48C7-8DFE-085C5FCBEB6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6999381A-42EB-4E6F-8640-F797E391E97C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6999381A-42EB-4E6F-8640-F797E391E97C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6999381A-42EB-4E6F-8640-F797E391E97C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6999381A-42EB-4E6F-8640-F797E391E97C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7181CE28-0B50-48E2-BD2A-D0B6DC2C0702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7181CE28-0B50-48E2-BD2A-D0B6DC2C0702}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7181CE28-0B50-48E2-BD2A-D0B6DC2C0702}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7181CE28-0B50-48E2-BD2A-D0B6DC2C0702}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D63016B8-2871-4026-8596-0341AB751870}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D63016B8-2871-4026-8596-0341AB751870}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D63016B8-2871-4026-8596-0341AB751870}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D63016B8-2871-4026-8596-0341AB751870}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65D1301A-1094-441F-B865-F9F1C5CDAD22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65D1301A-1094-441F-B865-F9F1C5CDAD22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65D1301A-1094-441F-B865-F9F1C5CDAD22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65D1301A-1094-441F-B865-F9F1C5CDAD22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0F139EE-F736-4541-A489-C944ABCBF7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0F139EE-F736-4541-A489-C944ABCBF7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0F139EE-F736-4541-A489-C944ABCBF7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0F139EE-F736-4541-A489-C944ABCBF7DC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

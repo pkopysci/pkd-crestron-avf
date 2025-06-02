@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>pkd_crestron_avf</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyVersion>3.0.0.1</AssemblyVersion>
+    <FileVersion></FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Crestron.SimplSharp.SDK.Program" Version="2.21.90" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\pkd-application-service\pkd-application-service.csproj" />
+    <ProjectReference Include="..\pkd-common-utils\pkd-common-utils.csproj" />
+    <ProjectReference Include="..\pkd-config-service\pkd-config-service.csproj" />
+    <ProjectReference Include="..\pkd-domain-service\pkd-domain-service.csproj" />
+    <ProjectReference Include="..\pkd-hardware-service\pkd-hardware-service.csproj" />
+    <ProjectReference Include="..\pkd-ui-service\pkd-ui-service.csproj" />
+  </ItemGroup>
+
+</Project>

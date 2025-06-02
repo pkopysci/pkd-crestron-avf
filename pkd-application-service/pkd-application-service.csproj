@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>pkd_application_service</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyVersion></AssemblyVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\pkd-application-service.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Crestron.SimplSharp.SDK.ProgramLibrary" Version="2.21.90" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\pkd-common-utils\pkd-common-utils.csproj" />
+      <ProjectReference Include="..\pkd-domain-service\pkd-domain-service.csproj" />
+      <ProjectReference Include="..\pkd-hardware-service\pkd-hardware-service.csproj" />
+    </ItemGroup>
+
+</Project>

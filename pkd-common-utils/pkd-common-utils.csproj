@@ -1,0 +1,86 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>pkd_common_utils</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DocumentationFile>bin\Debug\pkd-common-utils.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DocumentationFile>bin\Release\pkd-common-utils.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Crestron.SimplSharp.SDK.ProgramLibrary" Version="2.21.90" />
+    <PackageReference Include="SSH.NET" Version="2024.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Crestron.DeviceDrivers.Simpl">
+      <HintPath>..\dependencies\Crestron.DeviceDrivers.Simpl.dll</HintPath>
+    </Reference>
+    <Reference Include="Crestron.DeviceDrivers.SimplSharpPro">
+      <HintPath>..\dependencies\Crestron.DeviceDrivers.SimplSharpPro.dll</HintPath>
+    </Reference>
+    <Reference Include="CrestronCertifiedDriverResourcesLibrary">
+      <HintPath>..\dependencies\CrestronCertifiedDriverResourcesLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="IrAvReceiver">
+      <HintPath>..\dependencies\IrAvReceiver.dll</HintPath>
+    </Reference>
+    <Reference Include="IrAVSwitcher">
+      <HintPath>..\dependencies\IrAVSwitcher.dll</HintPath>
+    </Reference>
+    <Reference Include="IrBlurayPlayer">
+      <HintPath>..\dependencies\IrBlurayPlayer.dll</HintPath>
+    </Reference>
+    <Reference Include="IrCableBox">
+      <HintPath>..\dependencies\IrCableBox.dll</HintPath>
+    </Reference>
+    <Reference Include="IrDisplay">
+      <HintPath>..\dependencies\IrDisplay.dll</HintPath>
+    </Reference>
+    <Reference Include="IrVideoServer">
+      <HintPath>..\dependencies\IrVideoServer.dll</HintPath>
+    </Reference>
+    <Reference Include="RADAudioMixer">
+      <HintPath>..\dependencies\RADAudioMixer.dll</HintPath>
+    </Reference>
+    <Reference Include="RADAVReceiver">
+      <HintPath>..\dependencies\RADAVReceiver.dll</HintPath>
+    </Reference>
+    <Reference Include="RADBlurayPlayer">
+      <HintPath>..\dependencies\RADBlurayPlayer.dll</HintPath>
+    </Reference>
+    <Reference Include="RADCableBox">
+      <HintPath>..\dependencies\RADCableBox.dll</HintPath>
+    </Reference>
+    <Reference Include="RADCommon">
+      <HintPath>..\dependencies\RADCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="RADDisplay">
+      <HintPath>..\dependencies\RADDisplay.dll</HintPath>
+    </Reference>
+    <Reference Include="RADNetworkSwitch">
+      <HintPath>..\dependencies\RADNetworkSwitch.dll</HintPath>
+    </Reference>
+    <Reference Include="RADPowerController">
+      <HintPath>..\dependencies\RADPowerController.dll</HintPath>
+    </Reference>
+    <Reference Include="RADProTransports">
+      <HintPath>..\dependencies\RADProTransports.dll</HintPath>
+    </Reference>
+    <Reference Include="RADSecuritySystem">
+      <HintPath>..\dependencies\RADSecuritySystem.dll</HintPath>
+    </Reference>
+    <Reference Include="RADVideoServer">
+      <HintPath>..\dependencies\RADVideoServer.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -87,7 +87,7 @@ namespace pkd_application_service
 		/// should be sent to the individual displays.
 		/// </summary>
 		protected bool UseAvrMuteFreeze;
-		private bool disposed;
+		private bool _disposed;
 
 		/// <summary>
 		/// Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.
@@ -616,7 +616,7 @@ namespace pkd_application_service
 		/// <param name="disposing"></param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (disposed) return;
+			if (_disposed) return;
 			if (disposing)
 			{
 				foreach (var item in Disposables)
@@ -627,7 +627,7 @@ namespace pkd_application_service
 				Disposables.Clear();
 			}
 
-			disposed = true;
+			_disposed = true;
 		}
 
 		/// <summary>
@@ -807,11 +807,7 @@ namespace pkd_application_service
 				handler?.Invoke(this, evt);
 			};
 
-			RoutingControl.RouteChanged += (_, evt) =>
-			{
-				var handler = RouteChanged;
-				handler?.Invoke(this, evt);
-			};
+			RoutingControl.RouteChanged += OnRoutingControlRouteChange;
 
 			foreach (var avr in HwService.AvSwitchers.GetAllDevices())
 			{
@@ -850,6 +846,17 @@ namespace pkd_application_service
 				var handler = LightingControlConnectionChanged;
 				handler?.Invoke(this, evt);
 			};
+		}
+
+		/// <summary>
+		/// Event handler for when the routing control component indicates a route was changed.
+		/// </summary>
+		/// <param name="sender">The RoutingComponent that triggered the change</param>
+		/// <param name="args">Arg1 = ID of the destination that changed.</param>
+		protected virtual void OnRoutingControlRouteChange(object? sender, GenericSingleEventArgs<string> args)
+		{
+			var handler = RouteChanged;
+			handler?.Invoke(this, args);
 		}
 
 		/// <summary>

@@ -217,11 +217,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 	{
 		var switcher = _switchers.FirstOrDefault(x => x.Id.Equals(e.Arg1, StringComparison.InvariantCulture));
 		var dest = _destinations.Find(x => x.Output == e.Arg2 && x.Matrix.Equals(e.Arg1, StringComparison.InvariantCulture));
-		if (switcher == null || dest == null)
-		{
-			Logger.Error("Route change received for unknown switcher or destination: {0}-{1}", e.Arg1, e.Arg2);
-			return;
-		}
+		if (switcher == null || dest == null) return;
 
 		var newSrc = _sources.FirstOrDefault(
 			x => x.Input == switcher.GetCurrentVideoSource(e.Arg2) &&
@@ -229,11 +225,6 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 
 		if (newSrc == null)
 		{
-			Logger.Error(
-				"AvRoutingApp.SwitcherRouteChanged() - Device {0} return unknown input number: {1}",
-				switcher.Id,
-				switcher.GetCurrentVideoSource(e.Arg2));
-				
 			_currentRoutes[dest.Id] = Source.Empty;
 		}
 		else
@@ -258,7 +249,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 		// add all matrix input and output points to the collection of reachable nodes
 		foreach (var matrix in domain.RoutingInfo.MatrixData)
 		{
-			for (var i = 1; i <= matrix.Inputs; i++)
+			for (var i = 0; i <= matrix.Inputs; i++)
 			{
 				var vert = new Vertex($"{matrix.Id}.IN.{i}", VertexType.MatrixNode);
 				Nodes.Add(vert);
@@ -380,7 +371,7 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 
 	private void RouteHardware(string devId, uint input, uint output)
 	{
-		Logger.Debug($"AvROutingApp.RouteHardware() - sending input {input} to output {output} on device {devId}");
+		Logger.Debug($"AvRoutingApp.RouteHardware() - sending input {input} to output {output} on device {devId}");
 		
 		var device = _switchers.FirstOrDefault(x => x.Id.Equals(devId, StringComparison.InvariantCulture));
 		device?.RouteVideo(input, output);

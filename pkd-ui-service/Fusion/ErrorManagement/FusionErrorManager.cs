@@ -12,6 +12,7 @@ namespace pkd_ui_service.Fusion.ErrorManagement
 		private Queue<FusionDeviceData> offlineQueue;
 		private FusionDeviceData? currentNotice;
 		private readonly FusionRoom fusion;
+		private object _locker = new();
 
 		/// <summary>
 		/// Instantiate a new instance of <see cref="FusionErrorManager"/>.
@@ -30,29 +31,50 @@ namespace pkd_ui_service.Fusion.ErrorManagement
 			ParameterValidator.ThrowIfNullOrEmpty(devId, "FusionErrorManager.AddOfflineDevice", "devId");
 			ParameterValidator.ThrowIfNullOrEmpty(devName, "FusionErrorManager.AddOfflineDevice", "devName");
 
-			if (offlineQueue.Any(x => x.Id.Equals(devId, StringComparison.InvariantCulture)))
+			lock (_locker)
 			{
-				Logger.Debug("FusionErrorManager.AddOfflineDevice() - duplicate ID found: {0}", devId);
-				return;
-			}
+				try
+				{
+					if (offlineQueue.Any(x => x.Id.Equals(devId, StringComparison.InvariantCulture)))
+					{
+						Logger.Debug("FusionErrorManager.AddOfflineDevice() - duplicate ID found: {0}", devId);
+						return;
+					}
 
-			offlineQueue.Enqueue(new FusionDeviceData() { Id = devId, Label = devName });
-			if (currentNotice == null && offlineQueue.Count == 1)
-			{
-				SendNextError();
+					offlineQueue.Enqueue(new FusionDeviceData() { Id = devId, Label = devName });
+					if (currentNotice == null && offlineQueue.Count == 1)
+					{
+						SendNextError();
+					}
+				}
+				catch (Exception e)
+				{
+					Logger.Error(e, "FusionErrorManager.AddOfflineDevice()");
+				}
 			}
 		}
 
 		///<inheritdoc/>
 		public void ClearOfflineDevice(string devId)
 		{
-			ParameterValidator.ThrowIfNullOrEmpty(devId, "FusionErrorManager.ClearOfflineDevice", "devId");
-			Logger.Debug("Device Error EID: {0} - cleared", devId);
-			offlineQueue = new Queue<FusionDeviceData>(offlineQueue.Where(x => !x.Id.Equals(devId, StringComparison.InvariantCulture)));
-			if (currentNotice != null && currentNotice.Id.Equals(devId, StringComparison.InvariantCulture))
+			lock (_locker)
 			{
-				SendNextError();
+				try
+				{
+					ParameterValidator.ThrowIfNullOrEmpty(devId, "FusionErrorManager.ClearOfflineDevice", "devId");
+					Logger.Debug("Device Error EID: {0} - cleared", devId);
+					offlineQueue = new Queue<FusionDeviceData>(offlineQueue.Where(x => !x.Id.Equals(devId, StringComparison.InvariantCulture)));
+					if (currentNotice != null && currentNotice.Id.Equals(devId, StringComparison.InvariantCulture))
+					{
+						SendNextError();
+					}
+				}
+				catch (Exception e)
+				{
+					Logger.Error(e,  "FusionErrorManager.ClearOfflineDevice()");
+				}
 			}
+			
 		}
 
 		private void SendNextError()

@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using pkd_application_service.Base;
 using pkd_common_utils.GenericEventArgs;
+using pkd_hardware_service.AvSwitchDevices;
 
 namespace pkd_application_service.AvRouting;
 
@@ -22,11 +23,24 @@ public interface IAvRoutingApp
 	event EventHandler<GenericSingleEventArgs<string>> RouterConnectChange;
 
 	/// <summary>
+	/// Triggered when a video input sync drops or is established on an AVR device that supports <see cref="IVideoInputSyncDevice"/>.
+	/// Arg is the id of the video input that changed.
+	/// </summary>
+	event EventHandler<GenericSingleEventArgs<string>>? VideoInputSyncChanged;
+
+	/// <summary>
 	/// Request the current online/offline status of the target AV routing device.
 	/// </summary>
 	/// <param name="id">The unique ID of the device to query.</param>
 	/// <returns>True if the device is online, false otherwise.</returns>
 	bool QueryRouterConnectionStatus(string id);
+	
+	/// <summary>
+	/// Query the sync status of a video input. This will return false if the input does not support sync detection.
+	/// </summary>
+	/// <param name="id">The unique id of the video source to query.</param>
+	/// <returns>true of sync is detected, false if not or if the input does not support sync detection.</returns>
+	bool QueryVideoInputSyncStatus(string id);
 
 	/// <summary>
 	/// Query the service for all routable audio/video inputs.

@@ -23,11 +23,15 @@ public class AvSourceInfoContainer : InfoContainer
 	public AvSourceInfoContainer(string id, string label, string icon, List<string> tags, string controlId)
 		: base(id, label, icon, tags)
 	{
-		this.ControlId = controlId;
+		ControlId = controlId;
 	}
 
 	/// <summary>
 	/// Gets the controllable device that is associated with this source.
 	/// </summary>
 	public string ControlId { get; private set; }
+	
+	public bool SupportSync { get; init; }
+	
+	public bool HasSync { get; init; }
 }

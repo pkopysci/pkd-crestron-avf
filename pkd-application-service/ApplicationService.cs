@@ -12,7 +12,6 @@ using pkd_application_service.SystemPower;
 using pkd_application_service.TransportControl;
 using pkd_application_service.UserInterface;
 using pkd_common_utils.GenericEventArgs;
-using pkd_common_utils.Logging;
 using pkd_domain_service;
 using pkd_hardware_service;
 using pkd_hardware_service.DisplayDevices;
@@ -175,6 +174,9 @@ namespace pkd_application_service
 
 		/// <inheritdoc/>
 		public event EventHandler<GenericSingleEventArgs<string>>? RouteChanged;
+		
+		/// <inheritdoc/>
+		public event EventHandler<GenericSingleEventArgs<string>>? VideoInputSyncChanged;
 
 		/// <inheritdoc/>
 		public event EventHandler<GenericSingleEventArgs<string>>? AudioOutputRouteChanged;
@@ -400,6 +402,9 @@ namespace pkd_application_service
 
 		/// <inheritdoc/>
 		public virtual void ReportGraph() => RoutingControl.ReportGraph();
+
+		/// <inheritdoc/>
+		public bool QueryVideoInputSyncStatus(string id) => RoutingControl.QueryVideoInputSyncStatus(id);
 
 		/// <inheritdoc/>
 		public virtual AvSourceInfoContainer QueryCurrentRoute(string outputId) => RoutingControl.QueryCurrentRoute(outputId);
@@ -734,14 +739,12 @@ namespace pkd_application_service
 
 			DisplayControl.DisplayPowerChange += (_, evt) =>
 			{
-				Logger.Debug("ApplicationService.DisplayPowerChangeHandler");
 				var handler = DisplayPowerChange;
 				handler?.Invoke(this, evt);
 			};
 
 			DisplayControl.DisplayInputChanged += (_, evt) =>
 			{
-				Logger.Debug("ApplicationService.DisplayInputChangedHandler");
 				var handler = DisplayInputChanged;
 				handler?.Invoke(this, evt);
 			};
@@ -808,6 +811,11 @@ namespace pkd_application_service
 			};
 
 			RoutingControl.RouteChanged += OnRoutingControlRouteChange;
+			RoutingControl.VideoInputSyncChanged += (_, args) =>
+			{
+				var handler = VideoInputSyncChanged;
+				handler?.Invoke(this, args);
+			};
 
 			foreach (var avr in HwService.AvSwitchers.GetAllDevices())
 			{

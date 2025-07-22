@@ -237,6 +237,14 @@ namespace pkd_application_service
 		}
 
 		/// <inheritdoc/>
+		public virtual void UpdateUserInterfaceConnectionStatus(string id, bool connectionStatus)
+		{
+			var ui = InterfaceData.FirstOrDefault(x => x.Id.Equals(id));
+			if (ui == null) return;
+			ui.IsOnline = connectionStatus;
+		}
+
+		/// <inheritdoc/>
 		public virtual UserInterfaceDataContainer GetFusionInterface()
 		{
 			return new UserInterfaceDataContainer(

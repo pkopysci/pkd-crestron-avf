@@ -484,6 +484,7 @@ namespace pkd_ui_service
             var found = UiConnections.FirstOrDefault(x => x.Id.Equals(args.Arg, StringComparison.InvariantCulture));
             if (found == null) return;
 
+            AppService.UpdateUserInterfaceConnectionStatus(found.Id, found.IsOnline);
             if (found is { IsOnline: false, IsXpanel: false })
             {
                 Fusion?.AddOfflineDevice(found.Id, $"UI {found.Id}");

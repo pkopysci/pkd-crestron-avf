@@ -43,6 +43,14 @@ namespace pkd_application_service
 		ReadOnlyCollection<UserInterfaceDataContainer> GetAllUserInterfaces();
 
 		/// <summary>
+		/// Update the interface data collection with the current state of the device. This is usually handled by the
+		/// presentation service.
+		/// </summary>
+		/// <param name="id">the unique ID of the UI being updated.</param>
+		/// <param name="connectionStatus">true = is online, false = offline.</param>
+		void UpdateUserInterfaceConnectionStatus(string id, bool connectionStatus);
+		
+		/// <summary>
 		/// Query the service for the Fusion connection information. Data container properties that contain
 		/// information are:
 		/// Id = GUID used for Fusion discovery

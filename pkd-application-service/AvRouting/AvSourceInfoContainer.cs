@@ -31,7 +31,13 @@ public class AvSourceInfoContainer : InfoContainer
 	/// </summary>
 	public string ControlId { get; private set; }
 	
+	/// <summary>
+	/// true = the avr associated with this source supports video sync detection.
+	/// </summary>
 	public bool SupportSync { get; init; }
 	
+	/// <summary>
+	/// true = has sync, false = no sync detected or the avr associated with the device does not support sync detection.
+	/// </summary>
 	public bool HasSync { get; init; }
 }

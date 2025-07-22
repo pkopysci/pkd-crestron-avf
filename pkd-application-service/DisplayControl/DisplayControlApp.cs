@@ -16,7 +16,7 @@ namespace pkd_application_service.DisplayControl
 	internal sealed class DisplayControlApp : BaseApp<IDisplayDevice, Display>, IDisplayControlApp
 	{
 		private readonly IApplicationService _parent;
-		private readonly ReadOnlyCollection<DisplayInfoContainer> _displayInfo;
+		private readonly List<DisplayInfoContainer> _displayInfo;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DisplayControlApp"/> class.
@@ -61,7 +61,7 @@ namespace pkd_application_service.DisplayControl
 				});
 			}
 
-			_displayInfo = new ReadOnlyCollection<DisplayInfoContainer>(info);
+			_displayInfo = info;
 			RegisterHandlers();
 		}
 
@@ -144,7 +144,7 @@ namespace pkd_application_service.DisplayControl
 		/// <inheritdoc/>
 		public ReadOnlyCollection<DisplayInfoContainer> GetAllDisplayInfo()
 		{
-			return _displayInfo;
+			return new ReadOnlyCollection<DisplayInfoContainer>(_displayInfo);
 		}
 
 		/// <inheritdoc/>
@@ -314,6 +314,10 @@ namespace pkd_application_service.DisplayControl
 		private void Display_ConnectionChanged(object? sender, GenericSingleEventArgs<string> e)
 		{
 			if (sender is not IDisplayDevice display) return;
+
+			var target = _displayInfo.FirstOrDefault(x => x.Id.Equals(display.Id));
+			if (target != null) target.IsOnline = display.IsOnline;
+			
 			Notify(DisplayConnectChange, display.Id, display.IsOnline);
 			if (display.IsOnline)
 			{

@@ -282,9 +282,6 @@ internal class AvRoutingApp : IAvRoutingApp, IDisposable
 
     private void SwitcherInputSyncChanged(object? sender, GenericSingleEventArgs<uint> args)
     {
-        // TODO: Implement AvRoutingApp.SwitcherInputSyncChanged()
-        Console.WriteLine($"\n\rAvRoutingApp.SwitcherInputSyncChanged()\n\r");
-
         if (sender is not IBaseDevice baseDevice) return;
         var source = _sources.FirstOrDefault(x =>
             x.Input == args.Arg &&

@@ -194,8 +194,7 @@ namespace pkd_application_service.AudioControl
 					return routable.GetCurrentAudioSource(id);
 				}
 			}
-
-			Logger.Warn("AudioControlApp.QueryAudioOutputRoute() - Could not find channel with ID {0}", id);
+			
 			return string.Empty;
 		}
 
